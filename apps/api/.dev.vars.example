@@ -1,0 +1,27 @@
+# Cloudflare Worker local development secrets.
+# Copy this file to .dev.vars and fill in real values — never commit them.
+# .dev.vars is git-ignored.
+
+# Explicit development marker. Development-only behavior (e.g. the
+# /api/v1/staff/dev-options identity bootstrap and the X-Staff-Id fallback)
+# is served only when this is exactly "development". Production deploys never
+# set it, so that behavior is fail-closed there.
+APP_ENV=development
+
+# Staff session lifetime in hours (default 12). Development override allowed;
+# production can leave it unset.
+SESSION_HOURS=12
+
+# Whether the lh_staff_session cookie is marked Secure. Defaults to secure
+# except in development (where local hosts are plain HTTP). Production should
+# leave it unset so Secure is enabled automatically.
+SECURE_COOKIES=false
+
+# Future R2 bucket metadata (see wrangler.jsonc MEDIA_BUCKET binding).
+# CLOUDFLARE_ACCOUNT_ID=
+# R2_BUCKET_NAME=
+
+# NOTE: DATABASE_URL is read server-side by this Worker (see src/env.ts). For
+# local development it lives in the git-ignored .dev.vars file so that
+# `wrangler dev` exposes it to the Worker environment. Never expose it
+# client-side.

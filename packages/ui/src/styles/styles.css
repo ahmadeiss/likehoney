@@ -1,0 +1,1331 @@
+/**
+ * Like Honey Design System — styles.
+ *
+ * Single, self-contained stylesheet. Import once from the application shell:
+ *   import '@likehoney/ui/styles.css'
+ *
+ * Everything is driven by semantic tokens defined on CSS custom properties.
+ * Two theme scopes are provided:
+ *   .lh-theme-customer — warm, light, storefront (defaults live on :root too)
+ *   .lh-theme-admin    — dark, precise, operational console
+ *
+ * All layout and alignment uses CSS logical properties so the system is
+ * direction-aware (RTL for Arabic, LTR for English) by construction.
+ */
+
+/* =========================================================================
+   1. Design tokens
+   ========================================================================= */
+
+:root,
+.lh-theme-customer {
+  color-scheme: light;
+
+  /* Palette — customer (warm, light) */
+  --lh-color-canvas: #f6f1e6;
+  --lh-color-surface: #fffbf3;
+  --lh-color-surface-raised: #ffffff;
+  --lh-color-surface-muted: #efe8d8;
+  --lh-color-ink: #272118;
+  --lh-color-ink-2: #4c4536;
+  --lh-color-ink-3: #6e6655;
+  --lh-color-ink-4: #9a9180;
+  --lh-color-border: #e6ddc9;
+  --lh-color-border-strong: #d2c5a9;
+
+  /* Brand honey */
+  --lh-color-honey: #c3891b;
+  --lh-color-honey-strong: #a97412;
+  --lh-color-honey-deep: #8c5e0e;
+  --lh-color-honey-soft: #f5e8c8;
+  --lh-color-honey-soft-2: #fbf2dd;
+  --lh-color-on-honey: #231a07;
+
+  /* Semantic status */
+  --lh-color-success: #3e6b4f;
+  --lh-color-success-soft: #e7f0e6;
+  --lh-color-warning: #96610f;
+  --lh-color-warning-soft: #f8eed6;
+  --lh-color-danger: #a23622;
+  --lh-color-danger-soft: #f7e3dc;
+  --lh-color-info: #3e5c76;
+  --lh-color-info-soft: #e5edf3;
+
+  /* Radii */
+  --lh-radius-control: 0.375rem;
+  --lh-radius-soft: 0.5rem;
+  --lh-radius-card: 0.875rem;
+  --lh-radius-feature: 1.375rem;
+  --lh-radius-display: 1.75rem;
+  --lh-radius-pill: 999px;
+
+  /* Spacing scale */
+  --lh-space-0: 0;
+  --lh-space-1: 0.25rem;
+  --lh-space-2: 0.5rem;
+  --lh-space-3: 0.75rem;
+  --lh-space-4: 1rem;
+  --lh-space-5: 1.25rem;
+  --lh-space-6: 1.5rem;
+  --lh-space-7: 2rem;
+  --lh-space-8: 2.5rem;
+  --lh-space-9: 3rem;
+  --lh-space-10: 4rem;
+  --lh-space-11: 5rem;
+  --lh-space-12: 6rem;
+
+  /* Type */
+  --lh-font-display: 'Cairo Variable', 'IBM Plex Sans Arabic', system-ui, sans-serif;
+  --lh-font-body: 'IBM Plex Sans Arabic', 'Cairo Variable', system-ui, sans-serif;
+  --lh-type-display: clamp(2.5rem, 5vw, 3.5rem);
+  --lh-type-heading: clamp(1.75rem, 3vw, 2.25rem);
+  --lh-type-title: 1.375rem;
+  --lh-type-body: 1rem;
+  --lh-type-label: 0.875rem;
+  --lh-type-caption: 0.8125rem;
+  --lh-type-metric: clamp(1.5rem, 2.5vw, 1.875rem);
+
+  /* Elevation */
+  --lh-shadow-xs: 0 1px 2px rgb(46 36 20 / 0.06);
+  --lh-shadow-sm: 0 1px 2px rgb(46 36 20 / 0.05), 0 2px 6px rgb(46 36 20 / 0.05);
+  --lh-shadow-md: 0 2px 4px rgb(46 36 20 / 0.05), 0 12px 28px rgb(46 36 20 / 0.09);
+  --lh-shadow-lg: 0 4px 8px rgb(46 36 20 / 0.06), 0 24px 56px rgb(46 36 20 / 0.14);
+
+  /* Motion */
+  --lh-duration-fast: 120ms;
+  --lh-duration-base: 200ms;
+  --lh-duration-slow: 320ms;
+  --lh-duration-slower: 480ms;
+  --lh-ease-standard: cubic-bezier(0.2, 0, 0, 1);
+  --lh-ease-out: cubic-bezier(0, 0, 0.2, 1);
+
+  /* Layout */
+  --lh-container-sm: 40rem;
+  --lh-container-md: 56rem;
+  --lh-container-lg: 72rem;
+  --lh-container-pad: clamp(1rem, 4vw, 2rem);
+
+  /* Focus */
+  --lh-focus-ring: color-mix(in srgb, var(--lh-color-honey) 45%, transparent);
+}
+
+.lh-theme-admin {
+  /* The admin is a split-surface console: the shell (sidebar + toolbar) is
+     intentionally dark (see .lh-admin-shell below) while the workspace uses a
+     warm, neutral paper so it reads as a calm, high-fidelity operations desk. */
+  color-scheme: light;
+
+  /* Palette — admin workspace (warm neutral paper, precise, not beige-dominant) */
+  --lh-color-canvas: #f4f1ea;
+  --lh-color-surface: #fdfdf9;
+  --lh-color-surface-raised: #ffffff;
+  --lh-color-surface-muted: #efebe0;
+  --lh-color-ink: #1d1a14;
+  --lh-color-ink-2: #4a443a;
+  --lh-color-ink-3: #767060;
+  --lh-color-ink-4: #a19a89;
+  --lh-color-border: #e5dfd0;
+  --lh-color-border-strong: #ccc4ae;
+
+  /* Brand honey — restrained accent, not dominant */
+  --lh-color-honey: #b8860b;
+  --lh-color-honey-strong: #a1740f;
+  --lh-color-honey-deep: #8a5f0d;
+  --lh-color-honey-soft: #f4e7c4;
+  --lh-color-honey-soft-2: #faf0d6;
+  --lh-color-on-honey: #211a06;
+
+  /* Semantic status — warm light optimized */
+  --lh-color-success: #3f6b52;
+  --lh-color-success-soft: #e6efe7;
+  --lh-color-warning: #96610f;
+  --lh-color-warning-soft: #f6ecd3;
+  --lh-color-danger: #a23622;
+  --lh-color-danger-soft: #f6e3dc;
+  --lh-color-info: #3e5c76;
+  --lh-color-info-soft: #e5edf3;
+
+  /* Soft warm shadows for the light workspace */
+  --lh-shadow-xs: 0 1px 2px rgb(46 36 20 / 0.05);
+  --lh-shadow-sm: 0 1px 2px rgb(46 36 20 / 0.05), 0 2px 6px rgb(46 36 20 / 0.05);
+  --lh-shadow-md: 0 2px 4px rgb(46 36 20 / 0.05), 0 12px 28px rgb(46 36 20 / 0.08);
+  --lh-shadow-lg: 0 4px 8px rgb(46 36 20 / 0.06), 0 24px 56px rgb(46 36 20 / 0.13);
+}
+
+/* Dark shell scope — brand rail + toolbar. Applies the deep-charcoal operastional
+   palette only to the persistent chrome, independent of the light workspace. */
+.lh-admin-shell {
+  color-scheme: dark;
+  --lh-color-canvas: #101010;
+  --lh-color-surface: #171717;
+  --lh-color-surface-raised: #212121;
+  --lh-color-surface-muted: #262626;
+  --lh-color-ink: #f6f4ef;
+  --lh-color-ink-2: #b9b3a6;
+  --lh-color-ink-3: #8a8478;
+  --lh-color-ink-4: #615c52;
+  --lh-color-border: #2b2a26;
+  --lh-color-border-strong: #3d3a33;
+  --lh-color-honey: #d7ae55;
+  --lh-color-honey-strong: #e3bc67;
+  --lh-color-honey-deep: #e8c273;
+  --lh-color-honey-soft: #2b2414;
+  --lh-color-honey-soft-2: #1f1a0e;
+  --lh-color-on-honey: #1a1508;
+  --lh-color-success: #7ab384;
+  --lh-color-success-soft: #1d2c1f;
+  --lh-color-warning: #d7ae55;
+  --lh-color-warning-soft: #2b2414;
+  --lh-color-danger: #e77c69;
+  --lh-color-danger-soft: #331a15;
+  --lh-color-info: #7da6c8;
+  --lh-color-info-soft: #17222c;
+  --lh-shadow-xs: 0 1px 2px rgb(0 0 0 / 0.4);
+  --lh-shadow-sm: 0 1px 3px rgb(0 0 0 / 0.35), 0 2px 8px rgb(0 0 0 / 0.4);
+  --lh-shadow-md: 0 2px 4px rgb(0 0 0 / 0.35), 0 12px 32px rgb(0 0 0 / 0.55);
+  --lh-shadow-lg: 0 4px 10px rgb(0 0 0 / 0.4), 0 28px 64px rgb(0 0 0 / 0.65);
+}
+
+/* =========================================================================
+   2. Base — viewport, selection, reduced motion
+   ========================================================================= */
+
+.lh-viewport {
+  min-height: 100svh;
+  background: var(--lh-color-canvas);
+  color: var(--lh-color-ink);
+  font-family: var(--lh-font-body);
+  font-size: var(--lh-type-body);
+  line-height: 1.65;
+  -webkit-font-smoothing: antialiased;
+  text-rendering: optimizeLegibility;
+}
+
+.lh-viewport::selection {
+  background: var(--lh-color-honey-soft);
+  color: var(--lh-color-ink);
+}
+
+.lh-visually-hidden {
+  position: absolute;
+  width: 1px;
+  height: 1px;
+  padding: 0;
+  margin: -1px;
+  overflow: hidden;
+  clip: rect(0 0 0 0);
+  white-space: nowrap;
+  border: 0;
+}
+
+.lh-focus:focus-visible {
+  outline: 2px solid var(--lh-color-honey);
+  outline-offset: 2px;
+  border-radius: 2px;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  *,
+  *::before,
+  *::after {
+    animation-duration: 0.01ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 0.01ms !important;
+    scroll-behavior: auto !important;
+  }
+}
+
+/* =========================================================================
+   3. Typography roles
+   ========================================================================= */
+
+.lh-text-display {
+  font-family: var(--lh-font-display);
+  font-weight: 800;
+  font-size: var(--lh-type-display);
+  line-height: 1.1;
+  letter-spacing: -0.01em;
+  color: var(--lh-color-ink);
+}
+
+.lh-text-heading {
+  font-family: var(--lh-font-display);
+  font-weight: 800;
+  font-size: var(--lh-type-heading);
+  line-height: 1.15;
+  letter-spacing: -0.01em;
+  color: var(--lh-color-ink);
+}
+
+.lh-text-title {
+  font-family: var(--lh-font-display);
+  font-weight: 700;
+  font-size: var(--lh-type-title);
+  line-height: 1.3;
+  color: var(--lh-color-ink);
+}
+
+.lh-text-body {
+  font-weight: 400;
+  font-size: var(--lh-type-body);
+  line-height: 1.65;
+  color: var(--lh-color-ink);
+}
+
+.lh-text-label {
+  font-weight: 600;
+  font-size: var(--lh-type-label);
+  line-height: 1.5;
+  color: var(--lh-color-ink);
+}
+
+.lh-text-caption {
+  font-weight: 400;
+  font-size: var(--lh-type-caption);
+  line-height: 1.55;
+  color: var(--lh-color-ink-3);
+}
+
+.lh-text-eyebrow {
+  font-weight: 700;
+  font-size: 0.8125rem;
+  line-height: 1.4;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  color: var(--lh-color-honey-deep);
+}
+
+.lh-text-metric {
+  font-family: var(--lh-font-display);
+  font-weight: 800;
+  font-size: var(--lh-type-metric);
+  line-height: 1.1;
+  font-variant-numeric: tabular-nums;
+  color: var(--lh-color-ink);
+}
+
+/* =========================================================================
+   4. Layout primitives
+   ========================================================================= */
+
+.lh-container {
+  width: 100%;
+  max-width: var(--lh-container-lg);
+  margin-inline: auto;
+  padding-inline: var(--lh-container-pad);
+}
+
+.lh-container--sm {
+  max-width: var(--lh-container-sm);
+}
+
+.lh-container--md {
+  max-width: var(--lh-container-md);
+}
+
+.lh-section {
+  padding-block: var(--lh-section-pad, var(--lh-space-8));
+}
+
+.lh-section--xs {
+  --lh-section-pad: var(--lh-space-4);
+}
+
+.lh-section--sm {
+  --lh-section-pad: var(--lh-space-5);
+}
+
+.lh-section--md {
+  --lh-section-pad: var(--lh-space-7);
+}
+
+.lh-section--lg {
+  --lh-section-pad: var(--lh-space-9);
+}
+
+.lh-stack {
+  display: flex;
+  flex-direction: column;
+  align-items: var(--lh-stack-align, stretch);
+  gap: var(--lh-stack-gap, var(--lh-space-4));
+}
+
+.lh-inline {
+  display: inline-flex;
+  align-items: var(--lh-inline-align, center);
+  gap: var(--lh-inline-gap, var(--lh-space-3));
+  flex-wrap: var(--lh-inline-wrap, nowrap);
+}
+
+.lh-cluster {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: var(--lh-cluster-align, center);
+  justify-content: var(--lh-cluster-justify, flex-start);
+  gap: var(--lh-cluster-gap, var(--lh-space-3));
+}
+
+.lh-grid {
+  display: grid;
+  gap: var(--lh-grid-gap, var(--lh-space-4));
+  grid-template-columns: repeat(var(--lh-grid-cols, 1), minmax(0, 1fr));
+}
+
+.lh-grid--fluid {
+  grid-template-columns: repeat(auto-fill, minmax(min(100%, var(--lh-grid-min, 16rem)), 1fr));
+}
+
+/* Fixed-column grids stack to a single column on small screens. */
+@media (max-width: 44rem) {
+  .lh-grid:not(.lh-grid--fluid) {
+    grid-template-columns: minmax(0, 1fr);
+  }
+}
+
+/* =========================================================================
+   5. Buttons
+   ========================================================================= */
+
+.lh-button {
+  --lh-btn-pad-y: var(--lh-space-2);
+  --lh-btn-pad-x: var(--lh-space-4);
+
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: var(--lh-space-2);
+  min-height: 2.375rem;
+  padding: var(--lh-btn-pad-y) var(--lh-btn-pad-x);
+  border: 1px solid transparent;
+  border-radius: var(--lh-radius-control);
+  background: var(--lh-color-surface);
+  color: var(--lh-color-ink);
+  font-family: var(--lh-font-body);
+  font-size: 0.9375rem;
+  font-weight: 600;
+  line-height: 1;
+  white-space: nowrap;
+  text-decoration: none;
+  cursor: pointer;
+  user-select: none;
+  box-shadow: var(--lh-shadow-xs);
+  transition:
+    background-color var(--lh-duration-base) var(--lh-ease-standard),
+    border-color var(--lh-duration-base) var(--lh-ease-standard),
+    color var(--lh-duration-base) var(--lh-ease-standard),
+    box-shadow var(--lh-duration-base) var(--lh-ease-standard),
+    transform var(--lh-duration-fast) var(--lh-ease-out);
+}
+
+.lh-button:focus-visible {
+  outline: none;
+  box-shadow:
+    0 0 0 3px var(--lh-focus-ring),
+    var(--lh-shadow-xs);
+}
+
+.lh-button:active:not(:disabled) {
+  transform: translateY(1px);
+}
+
+.lh-button:disabled {
+  opacity: 0.55;
+  cursor: not-allowed;
+  pointer-events: none;
+}
+
+.lh-button--primary {
+  background: var(--lh-color-honey);
+  border-color: var(--lh-color-honey);
+  color: var(--lh-color-on-honey);
+  font-weight: 700;
+  box-shadow:
+    inset 0 1px 0 color-mix(in srgb, var(--lh-color-on-honey) 8%, transparent),
+    0 1px 2px color-mix(in srgb, var(--lh-color-honey) 25%, transparent);
+}
+
+.lh-button--primary:hover:not(:disabled) {
+  background: var(--lh-color-honey-strong);
+  border-color: var(--lh-color-honey-strong);
+}
+
+.lh-button--primary:active:not(:disabled) {
+  background: var(--lh-color-honey-deep);
+  border-color: var(--lh-color-honey-deep);
+  box-shadow: inset 0 1px 2px color-mix(in srgb, #000 16%, transparent);
+}
+
+.lh-button--secondary {
+  background: var(--lh-color-surface);
+  border-color: var(--lh-color-border);
+  color: var(--lh-color-ink);
+  box-shadow: none;
+}
+
+.lh-button--secondary:hover:not(:disabled) {
+  background: var(--lh-color-surface-raised);
+  border-color: var(--lh-color-ink-4);
+}
+
+.lh-button--subtle {
+  background: var(--lh-color-honey-soft);
+  border-color: transparent;
+  color: var(--lh-color-honey-deep);
+}
+
+.lh-button--subtle:hover:not(:disabled) {
+  background: color-mix(in srgb, var(--lh-color-honey-soft) 85%, var(--lh-color-ink));
+}
+
+.lh-button--ghost {
+  background: transparent;
+  border-color: transparent;
+  color: var(--lh-color-ink-2);
+  box-shadow: none;
+}
+
+.lh-button--ghost:hover:not(:disabled) {
+  background: var(--lh-color-surface-muted);
+  color: var(--lh-color-ink);
+}
+
+.lh-button--danger {
+  background: var(--lh-color-danger);
+  border-color: var(--lh-color-danger);
+  color: var(--lh-color-surface-raised);
+}
+
+.lh-button--danger:hover:not(:disabled) {
+  background: color-mix(in srgb, var(--lh-color-danger) 88%, #000);
+  border-color: color-mix(in srgb, var(--lh-color-danger) 88%, #000);
+}
+
+.lh-button--sm {
+  --lh-btn-pad-y: var(--lh-space-1);
+  --lh-btn-pad-x: var(--lh-space-3);
+  min-height: 1.875rem;
+  font-size: 0.8125rem;
+}
+
+.lh-button--lg {
+  --lh-btn-pad-y: var(--lh-space-3);
+  --lh-btn-pad-x: var(--lh-space-5);
+  min-height: 2.75rem;
+  font-size: 1rem;
+  border-radius: var(--lh-radius-soft);
+}
+
+.lh-button--block {
+  display: flex;
+  width: 100%;
+}
+
+.lh-button .lh-spinner {
+  flex: none;
+}
+
+/* =========================================================================
+   6. Icon button
+   ========================================================================= */
+
+.lh-icon-button {
+  display: inline-grid;
+  place-items: center;
+  width: var(--lh-icon-btn-size, 2.25rem);
+  height: var(--lh-icon-btn-size, 2.25rem);
+  border: 1px solid transparent;
+  border-radius: var(--lh-radius-control);
+  background: transparent;
+  color: var(--lh-color-ink-2);
+  cursor: pointer;
+  transition:
+    background-color var(--lh-duration-base) var(--lh-ease-standard),
+    color var(--lh-duration-base) var(--lh-ease-standard),
+    box-shadow var(--lh-duration-base) var(--lh-ease-standard),
+    transform var(--lh-duration-fast) var(--lh-ease-out);
+}
+
+.lh-icon-button--sm {
+  --lh-icon-btn-size: 2rem;
+}
+
+.lh-icon-button--lg {
+  --lh-icon-btn-size: 2.75rem;
+}
+
+.lh-icon-button:hover:not(:disabled) {
+  background: var(--lh-color-surface-muted);
+  color: var(--lh-color-ink);
+}
+
+.lh-icon-button:focus-visible {
+  outline: none;
+  box-shadow: 0 0 0 3px var(--lh-focus-ring);
+}
+
+.lh-icon-button:active:not(:disabled) {
+  transform: translateY(1px);
+}
+
+.lh-icon-button:disabled {
+  opacity: 0.5;
+  cursor: not-allowed;
+}
+
+.lh-icon-button--soft {
+  background: var(--lh-color-honey-soft);
+  color: var(--lh-color-honey-deep);
+}
+
+.lh-icon-button--soft:hover:not(:disabled) {
+  background: var(--lh-color-honey-soft-2);
+  color: var(--lh-color-honey-deep);
+}
+
+.lh-icon-button--plain {
+  background: var(--lh-color-surface);
+  border-color: var(--lh-color-border-strong);
+  color: var(--lh-color-ink-2);
+  box-shadow: var(--lh-shadow-xs);
+}
+
+.lh-icon-button--plain:hover:not(:disabled) {
+  background: var(--lh-color-surface-raised);
+  color: var(--lh-color-ink);
+}
+
+/* =========================================================================
+   7. Form fields
+   ========================================================================= */
+
+.lh-field {
+  display: grid;
+  gap: var(--lh-space-2);
+}
+
+.lh-field__label {
+  font-weight: 600;
+  font-size: var(--lh-type-label, 0.875rem);
+  line-height: 1.4;
+  color: var(--lh-color-ink);
+}
+
+.lh-field__required {
+  color: var(--lh-color-honey-deep);
+}
+
+.lh-field__hint {
+  font-size: var(--lh-type-caption, 0.8125rem);
+  line-height: 1.5;
+  color: var(--lh-color-ink-3);
+}
+
+.lh-field__error {
+  display: flex;
+  align-items: center;
+  gap: var(--lh-space-1);
+  font-size: 0.8125rem;
+  line-height: 1.5;
+  color: var(--lh-color-danger);
+}
+
+.lh-input,
+.lh-textarea {
+  width: 100%;
+  font-family: var(--lh-font-body);
+  font-size: 0.875rem;
+  font-weight: 400;
+  line-height: 1.5;
+  color: var(--lh-color-ink);
+  background: var(--lh-color-surface);
+  border: 1px solid var(--lh-color-border);
+  border-radius: var(--lh-radius-control);
+  padding: var(--lh-space-2) var(--lh-space-3);
+  transition:
+    border-color var(--lh-duration-base) var(--lh-ease-standard),
+    box-shadow var(--lh-duration-base) var(--lh-ease-standard),
+    background-color var(--lh-duration-base) var(--lh-ease-standard);
+}
+
+.lh-input {
+  min-height: 2.375rem;
+  accent-color: var(--lh-color-honey);
+}
+
+.lh-input::placeholder,
+.lh-textarea::placeholder {
+  color: var(--lh-color-ink-4);
+}
+
+.lh-input:hover:not(:disabled),
+.lh-textarea:hover:not(:disabled) {
+  border-color: var(--lh-color-ink-4);
+}
+
+.lh-input:focus-visible,
+.lh-textarea:focus-visible {
+  outline: none;
+  border-color: var(--lh-color-honey);
+  box-shadow: 0 0 0 3px var(--lh-focus-ring);
+}
+
+.lh-input:disabled,
+.lh-textarea:disabled {
+  background: var(--lh-color-surface-muted);
+  color: var(--lh-color-ink-3);
+  cursor: not-allowed;
+}
+
+.lh-input[aria-invalid='true'],
+.lh-textarea[aria-invalid='true'] {
+  border-color: var(--lh-color-danger);
+}
+
+.lh-input[aria-invalid='true']:focus-visible,
+.lh-textarea[aria-invalid='true']:focus-visible {
+  box-shadow: 0 0 0 3px color-mix(in srgb, var(--lh-color-danger) 30%, transparent);
+}
+
+.lh-input--lg {
+  padding: var(--lh-space-3) var(--lh-space-4);
+  font-size: 1rem;
+}
+
+.lh-textarea {
+  min-height: 8rem;
+  padding-block: var(--lh-space-3);
+  line-height: 1.6;
+  resize: vertical;
+}
+
+/* =========================================================================
+   8. Checkbox
+   ========================================================================= */
+
+.lh-checkbox {
+  display: inline-flex;
+  align-items: flex-start;
+  gap: var(--lh-space-2);
+  cursor: pointer;
+}
+
+.lh-checkbox--disabled {
+  opacity: 0.55;
+  cursor: not-allowed;
+}
+
+.lh-checkbox__input {
+  position: absolute;
+  width: 1px;
+  height: 1px;
+  margin: -1px;
+  padding: 0;
+  overflow: hidden;
+  clip: rect(0 0 0 0);
+  white-space: nowrap;
+  border: 0;
+}
+
+.lh-checkbox__box {
+  flex: none;
+  display: grid;
+  place-items: center;
+  width: 1.125rem;
+  height: 1.125rem;
+  margin-block-start: 0.1875rem;
+  border: 1px solid var(--lh-color-border-strong);
+  border-radius: var(--lh-radius-control);
+  background: var(--lh-color-surface);
+  color: var(--lh-color-on-honey);
+  transition:
+    background-color var(--lh-duration-base) var(--lh-ease-standard),
+    border-color var(--lh-duration-base) var(--lh-ease-standard),
+    box-shadow var(--lh-duration-base) var(--lh-ease-standard);
+}
+
+.lh-checkbox__box svg {
+  width: 0.75rem;
+  height: 0.75rem;
+  opacity: 0;
+  transform: scale(0.6);
+  transition:
+    opacity var(--lh-duration-base) var(--lh-ease-standard),
+    transform var(--lh-duration-base) var(--lh-ease-standard);
+}
+
+.lh-checkbox__input:checked + .lh-checkbox__box {
+  background: var(--lh-color-honey);
+  border-color: var(--lh-color-honey);
+}
+
+.lh-checkbox__input:checked + .lh-checkbox__box svg {
+  opacity: 1;
+  transform: none;
+}
+
+.lh-checkbox__input:focus-visible + .lh-checkbox__box {
+  border-color: var(--lh-color-honey);
+  box-shadow: 0 0 0 3px var(--lh-focus-ring);
+}
+
+.lh-checkbox__label {
+  font-size: 0.9375rem;
+  line-height: 1.5;
+  color: var(--lh-color-ink);
+}
+
+/* =========================================================================
+   9. Radio
+   ========================================================================= */
+
+.lh-radio {
+  display: inline-flex;
+  align-items: flex-start;
+  gap: var(--lh-space-2);
+  cursor: pointer;
+}
+
+.lh-radio--disabled {
+  opacity: 0.55;
+  cursor: not-allowed;
+}
+
+.lh-radio__input {
+  position: absolute;
+  width: 1px;
+  height: 1px;
+  margin: -1px;
+  padding: 0;
+  overflow: hidden;
+  clip: rect(0 0 0 0);
+  white-space: nowrap;
+  border: 0;
+}
+
+.lh-radio__circle {
+  flex: none;
+  width: 1.125rem;
+  height: 1.125rem;
+  margin-block-start: 0.1875rem;
+  border: 1px solid var(--lh-color-border-strong);
+  border-radius: 50%;
+  background: var(--lh-color-surface);
+  color: var(--lh-color-surface);
+  transition:
+    background-color var(--lh-duration-base) var(--lh-ease-standard),
+    border-color var(--lh-duration-base) var(--lh-ease-standard),
+    box-shadow var(--lh-duration-base) var(--lh-ease-standard);
+}
+
+.lh-radio__input:checked + .lh-radio__circle {
+  background: var(--lh-color-honey);
+  border-color: var(--lh-color-honey);
+  box-shadow: inset 0 0 0 3px var(--lh-color-surface);
+}
+
+.lh-radio__input:focus-visible + .lh-radio__circle {
+  border-color: var(--lh-color-honey);
+  box-shadow: 0 0 0 3px var(--lh-focus-ring);
+}
+
+.lh-radio__label {
+  font-size: 0.9375rem;
+  line-height: 1.5;
+  color: var(--lh-color-ink);
+}
+
+/* =========================================================================
+   10. Switch
+   ========================================================================= */
+
+.lh-switch {
+  display: inline-flex;
+  align-items: center;
+  gap: var(--lh-space-3);
+  cursor: pointer;
+}
+
+.lh-switch--disabled {
+  opacity: 0.55;
+  cursor: not-allowed;
+}
+
+.lh-switch__input {
+  position: absolute;
+  width: 1px;
+  height: 1px;
+  margin: -1px;
+  padding: 0;
+  overflow: hidden;
+  clip: rect(0 0 0 0);
+  white-space: nowrap;
+  border: 0;
+}
+
+.lh-switch__track {
+  position: relative;
+  flex: none;
+  width: 2.5rem;
+  height: 1.5rem;
+  border-radius: var(--lh-radius-pill);
+  background: var(--lh-color-ink-4);
+  transition: background-color var(--lh-duration-base) var(--lh-ease-standard);
+}
+
+.lh-switch__thumb {
+  position: absolute;
+  inset-block: 0.1875rem;
+  inset-inline-start: 0.1875rem;
+  width: 1.125rem;
+  height: 1.125rem;
+  border-radius: 50%;
+  background: var(--lh-color-surface-raised);
+  box-shadow: 0 1px 2px rgb(0 0 0 / 0.25);
+  transition: inset-inline-start var(--lh-duration-base) var(--lh-ease-standard);
+}
+
+.lh-switch__input:checked + .lh-switch__track {
+  background: var(--lh-color-honey);
+}
+
+.lh-switch__input:checked + .lh-switch__track .lh-switch__thumb {
+  inset-inline-start: calc(100% - 1.125rem - 0.1875rem);
+}
+
+.lh-switch__input:focus-visible + .lh-switch__track {
+  box-shadow: 0 0 0 3px var(--lh-focus-ring);
+}
+
+.lh-switch__label {
+  font-size: 0.9375rem;
+  line-height: 1.5;
+  color: var(--lh-color-ink);
+}
+
+/* =========================================================================
+   11. Badge
+   ========================================================================= */
+
+.lh-badge {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.375rem;
+  padding: 0.2rem 0.55rem;
+  border-radius: var(--lh-radius-pill);
+  font-family: var(--lh-font-body);
+  font-weight: 600;
+  font-size: 0.75rem;
+  line-height: 1.4;
+  letter-spacing: 0.01em;
+  white-space: nowrap;
+  color: var(--lh-color-ink-2);
+  background: var(--lh-color-surface-muted);
+}
+
+.lh-badge--honey {
+  background: var(--lh-color-honey-soft);
+  color: var(--lh-color-honey-deep);
+}
+
+.lh-badge--success {
+  background: var(--lh-color-success-soft);
+  color: var(--lh-color-success);
+}
+
+.lh-badge--warning {
+  background: var(--lh-color-warning-soft);
+  color: var(--lh-color-warning);
+}
+
+.lh-badge--danger {
+  background: var(--lh-color-danger-soft);
+  color: var(--lh-color-danger);
+}
+
+.lh-badge--info {
+  background: var(--lh-color-info-soft);
+  color: var(--lh-color-info);
+}
+
+.lh-badge--outline {
+  background: transparent;
+  border: 1px solid var(--lh-color-border-strong);
+  color: var(--lh-color-ink-2);
+}
+
+.lh-badge--dot::before {
+  content: '';
+  width: 0.375rem;
+  height: 0.375rem;
+  border-radius: 50%;
+  background: currentColor;
+}
+
+/* =========================================================================
+   12. Card & Surface
+   ========================================================================= */
+
+.lh-card {
+  padding: var(--lh-card-pad, var(--lh-space-4));
+  background: var(--lh-color-surface);
+  border: 1px solid var(--lh-color-border);
+  border-radius: var(--lh-radius-card);
+  color: var(--lh-color-ink);
+  box-shadow: var(--lh-shadow-sm);
+}
+
+.lh-card--flush {
+  padding: 0 !important;
+  overflow: hidden;
+}
+
+.lh-card--interactive {
+  cursor: pointer;
+  transition:
+    border-color var(--lh-duration-base) var(--lh-ease-standard),
+    box-shadow var(--lh-duration-base) var(--lh-ease-standard),
+    transform var(--lh-duration-base) var(--lh-ease-out);
+}
+
+.lh-card--interactive:hover {
+  border-color: var(--lh-color-border-strong);
+  box-shadow: var(--lh-shadow-md);
+  transform: translateY(-2px);
+}
+
+.lh-card--accent {
+  border-block-start: 2px solid var(--lh-color-honey);
+}
+
+.lh-card__media {
+  display: block;
+  margin: 0;
+}
+
+.lh-card__media img {
+  display: block;
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+}
+
+.lh-surface {
+  background: var(--lh-color-surface);
+  border: 1px solid var(--lh-color-border);
+  border-radius: var(--lh-radius-card);
+  padding: var(--lh-space-5);
+}
+
+/* =========================================================================
+   13. Divider
+   ========================================================================= */
+
+.lh-divider {
+  height: 1px;
+  margin-block: var(--lh-divider-margin, var(--lh-space-4));
+  border: 0;
+  background: var(--lh-color-border);
+}
+
+.lh-divider--label {
+  display: flex;
+  align-items: center;
+  gap: var(--lh-space-3);
+  height: auto;
+  background: transparent;
+  font-size: 0.8125rem;
+  font-weight: 600;
+  color: var(--lh-color-ink-3);
+}
+
+.lh-divider--label::before,
+.lh-divider--label::after {
+  content: '';
+  flex: 1;
+  height: 1px;
+  background: var(--lh-color-border);
+}
+
+/* =========================================================================
+   14. Skeleton & Spinner
+   ========================================================================= */
+
+.lh-skeleton {
+  position: relative;
+  display: block;
+  overflow: hidden;
+  border-radius: var(--lh-radius-soft);
+  background: var(--lh-color-surface-muted);
+}
+
+.lh-skeleton::after {
+  content: '';
+  position: absolute;
+  inset: 0;
+  transform: translateX(-100%);
+  background: linear-gradient(
+    90deg,
+    transparent,
+    color-mix(in srgb, var(--lh-color-surface-raised) 55%, transparent),
+    transparent
+  );
+  animation: lh-shimmer 1.8s infinite;
+}
+
+@keyframes lh-shimmer {
+  to {
+    transform: translateX(100%);
+  }
+}
+
+.lh-spinner {
+  width: var(--lh-spinner-size, 1em);
+  height: var(--lh-spinner-size, 1em);
+  border: 2px solid color-mix(in srgb, currentColor 22%, transparent);
+  border-block-start-color: currentColor;
+  border-radius: 50%;
+  animation: lh-spin var(--lh-duration-slower) linear infinite;
+}
+
+.lh-spinner--lg {
+  --lh-spinner-size: 2rem;
+}
+
+@keyframes lh-spin {
+  to {
+    transform: rotate(1turn);
+  }
+}
+
+/* =========================================================================
+   15. Empty state
+   ========================================================================= */
+
+.lh-empty-state {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: var(--lh-space-3);
+  padding-block: var(--lh-space-8);
+  text-align: center;
+  color: var(--lh-color-ink-3);
+}
+
+.lh-empty-state__icon {
+  display: grid;
+  place-items: center;
+  width: 3.5rem;
+  height: 3.5rem;
+  border-radius: 50%;
+  background: var(--lh-color-honey-soft);
+  color: var(--lh-color-honey-deep);
+}
+
+.lh-empty-state__title {
+  font-weight: 700;
+  font-size: 1.0625rem;
+  color: var(--lh-color-ink);
+}
+
+.lh-empty-state__text {
+  max-width: 26rem;
+  font-size: 0.9375rem;
+}
+
+/* =========================================================================
+   16. Select
+   ========================================================================= */
+
+.lh-select {
+  display: block;
+  position: relative;
+  width: 100%;
+}
+
+.lh-select__control {
+  width: 100%;
+  min-height: 2.375rem;
+  appearance: none;
+  -webkit-appearance: none;
+  font-family: var(--lh-font-body);
+  font-size: 0.875rem;
+  font-weight: 400;
+  line-height: 1.4;
+  color: var(--lh-color-ink);
+  background: var(--lh-color-surface);
+  border: 1px solid var(--lh-color-border);
+  border-radius: var(--lh-radius-control);
+  padding: var(--lh-space-2) calc(var(--lh-space-3) + 1.25rem) var(--lh-space-2) var(--lh-space-3);
+  cursor: pointer;
+  transition:
+    border-color var(--lh-duration-base) var(--lh-ease-standard),
+    box-shadow var(--lh-duration-base) var(--lh-ease-standard);
+}
+
+[dir='rtl'] .lh-select__control {
+  padding-inline-start: calc(var(--lh-space-3) + 1.25rem);
+  padding-inline-end: var(--lh-space-3);
+}
+
+.lh-select::after {
+  content: '';
+  position: absolute;
+  top: 50%;
+  inset-inline-end: var(--lh-space-3);
+  width: 0.75rem;
+  height: 0.75rem;
+  border-inline-end: 2px solid currentColor;
+  border-block-end: 2px solid currentColor;
+  color: var(--lh-color-ink-3);
+  transform: translateY(-65%) rotate(45deg);
+  pointer-events: none;
+}
+
+.lh-select--lg .lh-select__control {
+  padding-block: var(--lh-space-3);
+  font-size: 1rem;
+}
+
+.lh-select__control::placeholder {
+  color: var(--lh-color-ink-4);
+}
+
+.lh-select__control:hover:not(:disabled) {
+  border-color: var(--lh-color-ink-4);
+}
+
+.lh-select__control:focus-visible {
+  outline: none;
+  border-color: var(--lh-color-honey);
+  box-shadow: 0 0 0 3px var(--lh-focus-ring);
+}
+
+.lh-select__control:disabled {
+  background: var(--lh-color-surface-muted);
+  color: var(--lh-color-ink-3);
+  cursor: not-allowed;
+}
+
+.lh-select--invalid .lh-select__control {
+  border-color: var(--lh-color-danger);
+}
+
+/* =========================================================================
+   17. Table
+   ========================================================================= */
+
+.lh-table {
+  width: 100%;
+  border-collapse: collapse;
+  font-size: 0.875rem;
+  line-height: 1.5;
+}
+
+.lh-table__cell {
+  padding: var(--lh-space-3) var(--lh-space-4);
+  border-block-end: 1px solid var(--lh-color-border);
+  vertical-align: middle;
+  text-align: start;
+  color: var(--lh-color-ink);
+}
+
+.lh-table__cell--head {
+  border-block-end: 1px solid var(--lh-color-border-strong);
+  background: var(--lh-color-surface-muted);
+  font-size: 0.75rem;
+  font-weight: 700;
+  letter-spacing: 0.02em;
+  text-transform: uppercase;
+  color: var(--lh-color-ink-3);
+  white-space: nowrap;
+}
+
+.lh-table__row:last-child .lh-table__cell {
+  border-block-end: 0;
+}
+
+.lh-table__row:hover .lh-table__cell {
+  background: color-mix(in srgb, var(--lh-color-surface-muted) 45%, transparent);
+}
+
+.lh-table__cell--num {
+  font-variant-numeric: tabular-nums;
+  text-align: end;
+}
+
+/* =========================================================================
+   18. Dialog
+   ========================================================================= */
+
+.lh-dialog {
+  /* A `:modal` <dialog> is centered by the UA via `margin: auto` on the
+     fixed-position box; Tailwind Preflight's `dialog { margin: 0 }` reset wipes
+     that, pinning it to a corner. Restore it explicitly (desktop + mobile). */
+  position: fixed;
+  inset: 0;
+  margin: auto;
+  width: min(100% - 2rem, 34rem);
+  max-height: min(100svh - 2rem, 85vh);
+  padding: 0;
+  border: 1px solid var(--lh-color-border-strong);
+  border-radius: var(--lh-radius-card);
+  background: var(--lh-color-surface);
+  color: var(--lh-color-ink);
+  box-shadow: var(--lh-shadow-lg);
+}
+
+@media (max-width: 30rem) {
+  .lh-dialog {
+    width: calc(100% - 1.5rem);
+  }
+}
+
+.lh-dialog::backdrop {
+  background: rgb(0 0 0 / 0.55);
+}
+
+.lh-dialog[open] {
+  animation: lh-dialog-in var(--lh-duration-base) var(--lh-ease-out);
+}
+
+@keyframes lh-dialog-in {
+  from {
+    opacity: 0;
+    transform: translateY(8px) scale(0.98);
+  }
+  to {
+    opacity: 1;
+    transform: none;
+  }
+}
+
+.lh-dialog__header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: var(--lh-space-3);
+  padding: var(--lh-space-4) var(--lh-space-5);
+  border-block-end: 1px solid var(--lh-color-border);
+}
+
+.lh-dialog__title {
+  margin: 0;
+  font-family: var(--lh-font-display);
+  font-weight: 700;
+  font-size: 1.0625rem;
+  line-height: 1.4;
+  color: var(--lh-color-ink);
+}
+
+.lh-dialog__body {
+  padding: var(--lh-space-5);
+  overflow-y: auto;
+}
+
+.lh-dialog__footer {
+  display: flex;
+  justify-content: flex-end;
+  gap: var(--lh-space-3);
+  padding: var(--lh-space-4) var(--lh-space-5);
+  border-block-start: 1px solid var(--lh-color-border);
+}

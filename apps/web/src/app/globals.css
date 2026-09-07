@@ -1,0 +1,2078 @@
+@import 'tailwindcss';
+
+/*
+ * Map the Like Honey design tokens to Tailwind utility surfaces so the
+ * design-lab pages can compose freely with utilities while every value stays
+ * theme-driven (customer light vs admin dark).
+ *
+ * Use the primitives in packages/ui for real product surfaces; this bridge is
+ * for lab layout dressing.
+ */
+@theme inline {
+  --color-canvas: var(--lh-color-canvas);
+  --color-surface: var(--lh-color-surface);
+  --color-surface-raised: var(--lh-color-surface-raised);
+  --color-surface-muted: var(--lh-color-surface-muted);
+  --color-ink: var(--lh-color-ink);
+  --color-ink-2: var(--lh-color-ink-2);
+  --color-ink-3: var(--lh-color-ink-3);
+  --color-ink-4: var(--lh-color-ink-4);
+  --color-border: var(--lh-color-border);
+  --color-border-strong: var(--lh-color-border-strong);
+  --color-honey: var(--lh-color-honey);
+  --color-honey-strong: var(--lh-color-honey-strong);
+  --color-honey-deep: var(--lh-color-honey-deep);
+  --color-honey-soft: var(--lh-color-honey-soft);
+  --color-on-honey: var(--lh-color-on-honey);
+  --color-success: var(--lh-color-success);
+  --color-success-soft: var(--lh-color-success-soft);
+  --color-warning: var(--lh-color-warning);
+  --color-warning-soft: var(--lh-color-warning-soft);
+  --color-danger: var(--lh-color-danger);
+  --color-danger-soft: var(--lh-color-danger-soft);
+  --color-info: var(--lh-color-info);
+  --color-info-soft: var(--lh-color-info-soft);
+
+  --font-display: var(--lh-font-display);
+  --font-body: var(--lh-font-body);
+
+  --shadow-xs: var(--lh-shadow-xs);
+  --shadow-sm: var(--lh-shadow-sm);
+  --shadow-md: var(--lh-shadow-md);
+  --shadow-lg: var(--lh-shadow-lg);
+
+  --radius-content: var(--lh-radius-card);
+  --radius-feature: var(--lh-radius-feature);
+}
+
+/* =========================================================================
+   LIKE HONEY ADMIN — visual system
+   A calm, premium operations console. Split surface: a deep near-black shell
+   (rail + top bar) frames a warm-paper workspace. Restrained colour: neutral
+   ink everywhere, one honey accent for primary action / selection / the single
+   key metric. Vocabulary is deliberately varied — panels, list modules, stat
+   strips, timelines, toolbars — not "white card × 20".
+   ========================================================================= */
+
+.lh-theme-admin {
+  /* Compact operational density */
+  --lh-space-1: 0.1875rem;
+  --lh-space-2: 0.375rem;
+  --lh-space-3: 0.625rem;
+  --lh-space-4: 0.875rem;
+  --lh-space-5: 1.125rem;
+  --lh-space-6: 1.375rem;
+  --lh-space-7: 2rem;
+  --lh-space-8: 2.5rem;
+  --lh-space-9: 3rem;
+  --lh-space-10: 3.75rem;
+
+  --lh-radius-control: 0.4375rem;
+  --lh-radius-soft: 0.5625rem;
+  --lh-radius-card: 0.75rem;
+  --lh-radius-feature: 1rem;
+
+  --lh-type-body: 0.875rem;
+  --lh-type-label: 0.8125rem;
+  --lh-type-caption: 0.75rem;
+
+  line-height: 1.5;
+}
+
+/* -------------------------------------------------------------------------
+   1. Shell — dark rail + top bar
+   ------------------------------------------------------------------------- */
+
+.lh-admin-sidebar {
+  background: var(--lh-color-surface);
+  border-inline-end: 1px solid var(--lh-color-border);
+}
+
+.lh-admin-sidebar-brand {
+  display: flex;
+  align-items: center;
+  gap: var(--lh-space-3);
+  padding: var(--lh-space-5) var(--lh-space-5);
+  border-block-end: 1px solid var(--lh-color-border);
+}
+
+.lh-admin-sidebar-brand-icon {
+  display: grid;
+  place-items: center;
+  width: 2.25rem;
+  height: 2.25rem;
+  flex: none;
+  border-radius: var(--lh-radius-soft);
+  background: linear-gradient(150deg, var(--lh-color-honey) 0%, var(--lh-color-honey-strong) 100%);
+  color: var(--lh-color-on-honey);
+  box-shadow: var(--lh-shadow-sm);
+}
+
+.lh-admin-sidebar-scroll {
+  flex: 1;
+  min-height: 0;
+  overflow-y: auto;
+  padding: var(--lh-space-4) var(--lh-space-3) var(--lh-space-5);
+  display: flex;
+  flex-direction: column;
+  gap: var(--lh-space-6);
+}
+
+.lh-admin-nav-group {
+  display: flex;
+  flex-direction: column;
+  gap: 0.125rem;
+}
+
+.lh-admin-nav-label {
+  padding: 0 var(--lh-space-3) var(--lh-space-2);
+  font-size: 0.6875rem;
+  font-weight: 700;
+  letter-spacing: 0.02em;
+  color: var(--lh-color-ink-3);
+}
+
+.lh-admin-nav-item {
+  position: relative;
+  display: flex;
+  align-items: center;
+  gap: var(--lh-space-3);
+  padding: 0.5rem var(--lh-space-3);
+  border-radius: var(--lh-radius-control);
+  font-size: 0.875rem;
+  font-weight: 500;
+  line-height: 1.2;
+  color: var(--lh-color-ink-2);
+  text-decoration: none;
+  transition:
+    background-color 150ms var(--lh-ease-standard),
+    color 150ms var(--lh-ease-standard);
+}
+
+.lh-admin-nav-item svg {
+  flex: none;
+  color: var(--lh-color-ink-3);
+  transition: color 150ms var(--lh-ease-standard);
+}
+
+.lh-admin-nav-item:hover {
+  background: var(--lh-color-surface-raised);
+  color: var(--lh-color-ink);
+}
+
+.lh-admin-nav-item:hover svg {
+  color: var(--lh-color-ink-2);
+}
+
+.lh-admin-nav-item:focus-visible {
+  outline: 2px solid var(--lh-color-honey);
+  outline-offset: -2px;
+}
+
+.lh-admin-nav-item--active,
+.lh-admin-nav-item--active:hover {
+  background: var(--lh-color-honey-soft);
+  color: var(--lh-color-ink);
+  font-weight: 650;
+}
+
+.lh-admin-nav-item--active svg {
+  color: var(--lh-color-honey-deep);
+}
+
+.lh-admin-nav-item--active::before {
+  content: '';
+  position: absolute;
+  inset-block: 22%;
+  inset-inline-start: -0.375rem;
+  width: 3px;
+  border-radius: var(--lh-radius-pill);
+  background: var(--lh-color-honey);
+}
+
+.lh-admin-nav-badge {
+  margin-inline-start: auto;
+  min-width: 1.25rem;
+  padding: 0 0.35rem;
+  border-radius: var(--lh-radius-pill);
+  background: var(--lh-color-danger-soft);
+  color: var(--lh-color-danger);
+  font-size: 0.6875rem;
+  font-weight: 700;
+  font-variant-numeric: tabular-nums;
+  text-align: center;
+}
+
+.lh-admin-nav-item--active .lh-admin-nav-badge {
+  background: color-mix(in srgb, var(--lh-color-honey) 22%, transparent);
+  color: var(--lh-color-honey-deep);
+}
+
+/* Mobile menu toggle — shown only below the desktop rail breakpoint. A plain
+   class + media query so it wins over `.lh-icon-button { display: inline-grid }`
+   regardless of stylesheet order (Tailwind's `lg:hidden` does not). */
+.lh-admin-menu-btn {
+  display: inline-grid;
+}
+
+@media (min-width: 1024px) {
+  .lh-admin-menu-btn {
+    display: none;
+  }
+}
+
+.lh-admin-sidebar-foot {
+  display: flex;
+  flex-direction: column;
+  gap: var(--lh-space-3);
+  padding: var(--lh-space-4) var(--lh-space-4) var(--lh-space-5);
+  border-block-start: 1px solid var(--lh-color-border);
+}
+
+.lh-admin-user {
+  display: flex;
+  align-items: center;
+  gap: var(--lh-space-3);
+  padding: var(--lh-space-2) var(--lh-space-3);
+  border-radius: var(--lh-radius-soft);
+  background: var(--lh-color-surface-raised);
+  border: 1px solid var(--lh-color-border);
+}
+
+.lh-admin-user-avatar {
+  display: grid;
+  place-items: center;
+  width: 2rem;
+  height: 2rem;
+  flex: none;
+  border-radius: var(--lh-radius-pill);
+  background: var(--lh-color-honey-soft);
+  color: var(--lh-color-honey-deep);
+  font-size: 0.8125rem;
+  font-weight: 700;
+}
+
+.lh-admin-role-tag {
+  align-self: flex-start;
+  display: inline-flex;
+  align-items: center;
+  gap: 0.3rem;
+  padding: 0.1rem 0.5rem;
+  border-radius: var(--lh-radius-pill);
+  font-size: 0.6875rem;
+  font-weight: 700;
+  background: var(--lh-color-surface-muted);
+  color: var(--lh-color-ink-2);
+}
+
+.lh-admin-role-tag--owner {
+  background: var(--lh-color-honey-soft);
+  color: var(--lh-color-honey-deep);
+}
+
+.lh-admin-header {
+  position: sticky;
+  top: 0;
+  z-index: 30;
+  background: color-mix(in srgb, var(--lh-color-canvas) 88%, transparent);
+  backdrop-filter: saturate(180%) blur(8px);
+  border-block-end: 1px solid var(--lh-color-border);
+}
+
+.lh-admin-header-inner {
+  display: flex;
+  align-items: center;
+  gap: var(--lh-space-3);
+  height: 3.25rem;
+  padding-inline: var(--lh-space-4);
+}
+
+@media (min-width: 1024px) {
+  .lh-admin-header-inner {
+    padding-inline: var(--lh-space-7);
+  }
+}
+
+.lh-admin-crumb {
+  display: none;
+  min-width: 0;
+  align-items: center;
+  gap: var(--lh-space-2);
+  font-size: 0.8125rem;
+}
+
+@media (min-width: 640px) {
+  .lh-admin-crumb {
+    display: flex;
+  }
+}
+
+.lh-admin-crumb-root {
+  color: var(--lh-color-ink-3);
+  font-weight: 500;
+}
+
+.lh-admin-crumb-sep {
+  width: 3px;
+  height: 3px;
+  border-radius: 50%;
+  background: var(--lh-color-ink-4);
+  flex: none;
+}
+
+.lh-admin-crumb-current {
+  color: var(--lh-color-ink);
+  font-weight: 650;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+/* -------------------------------------------------------------------------
+   2. Global search (header)
+   ------------------------------------------------------------------------- */
+
+.lh-admin-search {
+  position: relative;
+  flex: 1 1 auto;
+  max-width: 30rem;
+}
+
+.lh-admin-search-input {
+  width: 100%;
+  min-height: 2.25rem;
+  padding-block: 0.4rem;
+  padding-inline: 2.25rem var(--lh-space-3);
+  border: 1px solid var(--lh-color-border);
+  border-radius: var(--lh-radius-control);
+  background: var(--lh-color-surface);
+  color: var(--lh-color-ink);
+  font-family: var(--lh-font-body);
+  font-size: 0.8125rem;
+  transition:
+    border-color 150ms var(--lh-ease-standard),
+    box-shadow 150ms var(--lh-ease-standard);
+}
+
+.lh-admin-search-input::placeholder {
+  color: var(--lh-color-ink-4);
+}
+
+.lh-admin-search-input:focus-visible {
+  outline: none;
+  border-color: var(--lh-color-honey);
+  box-shadow: 0 0 0 3px var(--lh-focus-ring);
+}
+
+.lh-admin-search-icon {
+  position: absolute;
+  inset-inline-start: 0.6rem;
+  top: 50%;
+  transform: translateY(-50%);
+  color: var(--lh-color-ink-4);
+  pointer-events: none;
+}
+
+.lh-admin-search-kbd {
+  position: absolute;
+  inset-inline-end: 0.45rem;
+  top: 50%;
+  transform: translateY(-50%);
+  padding: 0.05rem 0.35rem;
+  border: 1px solid var(--lh-color-border);
+  border-radius: 0.3rem;
+  background: var(--lh-color-surface-muted);
+  color: var(--lh-color-ink-3);
+  font-size: 0.625rem;
+  font-weight: 600;
+  pointer-events: none;
+}
+
+.lh-admin-search-pop {
+  position: absolute;
+  z-index: 40;
+  inset-inline: 0;
+  margin-block-start: var(--lh-space-2);
+  max-height: 24rem;
+  overflow-y: auto;
+  border: 1px solid var(--lh-color-border-strong);
+  border-radius: var(--lh-radius-soft);
+  background: var(--lh-color-surface-raised);
+  box-shadow: var(--lh-shadow-lg);
+  padding: var(--lh-space-2);
+}
+
+.lh-admin-search-sec {
+  padding: var(--lh-space-2) var(--lh-space-3) var(--lh-space-1);
+  font-size: 0.625rem;
+  font-weight: 700;
+  letter-spacing: 0.02em;
+  color: var(--lh-color-ink-3);
+}
+
+.lh-admin-search-item {
+  display: flex;
+  align-items: center;
+  gap: var(--lh-space-3);
+  padding: var(--lh-space-2) var(--lh-space-3);
+  border-radius: var(--lh-radius-control);
+  color: var(--lh-color-ink);
+  text-decoration: none;
+  font-size: 0.8125rem;
+  cursor: pointer;
+}
+
+.lh-admin-search-item:hover,
+.lh-admin-search-item[aria-selected='true'] {
+  background: var(--lh-color-honey-soft);
+}
+
+.lh-admin-search-item-meta {
+  margin-inline-start: auto;
+  font-size: 0.6875rem;
+  color: var(--lh-color-ink-3);
+}
+
+.lh-admin-search-empty {
+  padding: var(--lh-space-4) var(--lh-space-3);
+  text-align: center;
+  font-size: 0.8125rem;
+  color: var(--lh-color-ink-3);
+}
+
+/* -------------------------------------------------------------------------
+   3. Page scaffold
+   ------------------------------------------------------------------------- */
+
+.lh-admin-page {
+  width: 100%;
+  max-width: 1120px;
+  margin-inline: auto;
+  display: flex;
+  flex-direction: column;
+  gap: var(--lh-space-7);
+}
+
+.lh-admin-page--wide {
+  max-width: 1280px;
+}
+
+/* Reports & Insights — an executive workspace that uses the desktop canvas
+   more confidently while staying within the calm Admin language. */
+.lh-admin-page--report {
+  max-width: 1440px;
+}
+
+/* Reports KPI card — number-forward, clear label hierarchy, subtle grouping. */
+.lh-report-kpi {
+  display: flex;
+  flex-direction: column;
+  gap: 0.375rem;
+  padding: 1rem 1.125rem;
+  border: 1px solid var(--lh-color-border);
+  border-radius: var(--lh-radius-soft);
+  background: var(--lh-color-surface);
+}
+.lh-report-kpi--primary {
+  background: var(--lh-color-surface-raised);
+  border-color: var(--lh-color-border-strong);
+}
+.lh-report-kpi-label {
+  font-size: 0.75rem;
+  font-weight: 600;
+  letter-spacing: 0.01em;
+  color: var(--lh-color-ink-3);
+}
+.lh-report-kpi-value {
+  font-size: 1.5rem;
+  line-height: 1.15;
+  font-weight: 800;
+  font-variant-numeric: tabular-nums;
+  color: var(--lh-color-ink);
+}
+.lh-report-kpi--primary .lh-report-kpi-value {
+  font-size: 1.75rem;
+}
+.lh-report-kpi-note {
+  font-size: 0.6875rem;
+  line-height: 1.35;
+  color: var(--lh-color-ink-4);
+}
+.lh-report-section-title {
+  font-size: 0.8125rem;
+  font-weight: 700;
+  letter-spacing: 0.02em;
+  text-transform: none;
+  color: var(--lh-color-ink-2);
+  margin-bottom: 0.625rem;
+}
+.lh-report-toolbar {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: flex-end;
+  gap: 0.75rem;
+  padding: 0.625rem 0.75rem;
+  border: 1px solid var(--lh-color-border);
+  border-radius: var(--lh-radius-soft);
+  background: var(--lh-color-surface-raised);
+  margin-bottom: 1rem;
+}
+
+@media (min-width: 1280px) {
+  .lh-report-kpi-value {
+    font-size: 1.625rem;
+  }
+  .lh-report-kpi--primary .lh-report-kpi-value {
+    font-size: 2rem;
+  }
+}
+
+.lh-admin-page--dash {
+  max-width: 1200px;
+}
+
+.lh-admin-page--form {
+  max-width: 1200px;
+}
+
+.lh-admin-page-header {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: flex-start;
+  justify-content: space-between;
+  gap: var(--lh-space-4);
+}
+
+.lh-admin-page-header h1 {
+  font-family: var(--lh-font-display);
+  font-size: 1.375rem;
+  font-weight: 800;
+  letter-spacing: -0.01em;
+  line-height: 1.2;
+  color: var(--lh-color-ink);
+}
+
+.lh-admin-page-header p {
+  margin-block-start: 0.25rem;
+  max-width: 44ch;
+  font-size: 0.8125rem;
+  line-height: 1.55;
+  color: var(--lh-color-ink-3);
+}
+
+.lh-admin-actions {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: var(--lh-space-2);
+}
+
+/* Dashboard greeting — the one place a larger heading is allowed */
+.lh-admin-greeting {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: flex-start;
+  justify-content: space-between;
+  gap: var(--lh-space-4);
+}
+
+.lh-admin-greeting-date {
+  display: inline-flex;
+  align-items: center;
+  gap: var(--lh-space-2);
+  font-size: 0.75rem;
+  font-weight: 600;
+  color: var(--lh-color-ink-3);
+}
+
+.lh-admin-greeting-date::before {
+  content: '';
+  width: 0.375rem;
+  height: 0.375rem;
+  border-radius: 50%;
+  background: var(--lh-color-honey);
+}
+
+.lh-admin-greeting h1 {
+  margin-block-start: var(--lh-space-2);
+  font-family: var(--lh-font-display);
+  font-size: 1.5rem;
+  font-weight: 800;
+  letter-spacing: -0.015em;
+  line-height: 1.15;
+  color: var(--lh-color-ink);
+}
+
+.lh-admin-greeting p {
+  margin-block-start: var(--lh-space-1);
+  max-width: 46ch;
+  font-size: 0.875rem;
+  color: var(--lh-color-ink-3);
+}
+
+/* -------------------------------------------------------------------------
+   4. Panel + section
+   ------------------------------------------------------------------------- */
+
+.lh-admin-panel {
+  background: var(--lh-color-surface);
+  border: 1px solid var(--lh-color-border);
+  border-radius: var(--lh-radius-card);
+  box-shadow: var(--lh-shadow-sm);
+  padding: var(--lh-space-5);
+}
+
+.lh-admin-panel--flush {
+  padding: 0;
+  overflow: hidden;
+}
+
+.lh-admin-panel--plain {
+  box-shadow: none;
+  background: transparent;
+  border-color: transparent;
+  padding: 0;
+}
+
+.lh-admin-section {
+  display: flex;
+  flex-direction: column;
+  gap: var(--lh-space-4);
+}
+
+.lh-admin-section-head {
+  display: flex;
+  align-items: flex-end;
+  justify-content: space-between;
+  gap: var(--lh-space-3);
+}
+
+.lh-admin-section-title {
+  font-size: 0.9375rem;
+  font-weight: 700;
+  letter-spacing: -0.01em;
+  color: var(--lh-color-ink);
+}
+
+.lh-admin-section-sub {
+  margin-block-start: 0.15rem;
+  font-size: 0.75rem;
+  color: var(--lh-color-ink-3);
+}
+
+.lh-admin-panel-head {
+  display: flex;
+  align-items: flex-end;
+  justify-content: space-between;
+  gap: var(--lh-space-3);
+  padding: var(--lh-space-4) var(--lh-space-5);
+  border-block-end: 1px solid var(--lh-color-border);
+}
+
+.lh-admin-link {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.25rem;
+  font-size: 0.8125rem;
+  font-weight: 650;
+  color: var(--lh-color-honey-deep);
+  text-decoration: none;
+  white-space: nowrap;
+}
+
+.lh-admin-link:hover {
+  color: var(--lh-color-honey-strong);
+}
+
+.lh-admin-link svg {
+  transition: transform 150ms var(--lh-ease-out);
+}
+
+.lh-admin-link:hover svg {
+  transform: translateX(0.125rem);
+}
+
+[dir='rtl'] .lh-admin-link svg {
+  transform: scaleX(-1);
+}
+
+[dir='rtl'] .lh-admin-link:hover svg {
+  transform: scaleX(-1) translateX(0.125rem);
+}
+
+/* -------------------------------------------------------------------------
+   5. Stat strip
+   ------------------------------------------------------------------------- */
+
+.lh-admin-stat-strip {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(9rem, 1fr));
+  gap: 1px;
+  background: var(--lh-color-border);
+  border: 1px solid var(--lh-color-border);
+  border-radius: var(--lh-radius-card);
+  overflow: hidden;
+  box-shadow: var(--lh-shadow-sm);
+}
+
+.lh-admin-stat {
+  display: flex;
+  flex-direction: column;
+  gap: var(--lh-space-2);
+  padding: var(--lh-space-4) var(--lh-space-5);
+  background: var(--lh-color-surface);
+  text-decoration: none;
+  color: inherit;
+  transition: background-color 150ms var(--lh-ease-standard);
+}
+
+a.lh-admin-stat:hover {
+  background: var(--lh-color-surface-raised);
+}
+
+button.lh-admin-stat {
+  appearance: none;
+  border: none;
+  width: 100%;
+  cursor: pointer;
+  text-align: inherit;
+  font: inherit;
+  position: relative;
+}
+
+button.lh-admin-stat:hover {
+  background: var(--lh-color-surface-raised);
+}
+
+button.lh-admin-stat:focus-visible {
+  outline: 2px solid var(--lh-color-honey-deep);
+  outline-offset: -2px;
+  z-index: 1;
+}
+
+/* Active filter: a restrained inset accent line, never a loud fill —
+   the state must also be readable by the label weight, not color alone. */
+button.lh-admin-stat.lh-admin-stat--active {
+  background: var(--lh-color-surface-raised);
+  box-shadow: inset 0 -2px 0 0 var(--lh-color-honey-deep);
+}
+
+button.lh-admin-stat.lh-admin-stat--active .lh-admin-stat-label {
+  color: var(--lh-color-ink);
+}
+
+.lh-admin-stat-label {
+  display: flex;
+  align-items: center;
+  gap: 0.35rem;
+  font-size: 0.75rem;
+  font-weight: 600;
+  color: var(--lh-color-ink-3);
+}
+
+.lh-admin-stat-value {
+  font-family: var(--lh-font-display);
+  font-size: 1.75rem;
+  font-weight: 800;
+  font-variant-numeric: tabular-nums;
+  line-height: 1;
+  color: var(--lh-color-ink);
+}
+
+.lh-admin-stat--accent .lh-admin-stat-value {
+  color: var(--lh-color-honey-deep);
+}
+
+.lh-admin-stat--danger .lh-admin-stat-value {
+  color: var(--lh-color-danger);
+}
+
+.lh-admin-stat--warning .lh-admin-stat-value {
+  color: var(--lh-color-warning);
+}
+
+.lh-admin-stat--success .lh-admin-stat-value {
+  color: var(--lh-color-success);
+}
+
+.lh-admin-stat-note {
+  font-size: 0.6875rem;
+  color: var(--lh-color-ink-3);
+}
+
+/* -------------------------------------------------------------------------
+   6. List module
+   ------------------------------------------------------------------------- */
+
+.lh-admin-list {
+  display: flex;
+  flex-direction: column;
+  list-style: none;
+  margin: 0;
+  padding: 0;
+}
+
+.lh-admin-list-row {
+  display: flex;
+  align-items: center;
+  gap: var(--lh-space-3);
+  padding: var(--lh-space-3) var(--lh-space-5);
+  color: var(--lh-color-ink);
+  text-decoration: none;
+}
+
+.lh-admin-list-row + .lh-admin-list-row {
+  border-block-start: 1px solid var(--lh-color-border);
+}
+
+a.lh-admin-list-row,
+button.lh-admin-list-row {
+  width: 100%;
+  background: none;
+  border: 0;
+  font: inherit;
+  text-align: start;
+  cursor: pointer;
+  transition: background-color 150ms var(--lh-ease-standard);
+}
+
+a.lh-admin-list-row:hover,
+button.lh-admin-list-row:hover {
+  background: color-mix(in srgb, var(--lh-color-surface-muted) 50%, transparent);
+}
+
+.lh-admin-list-glyph {
+  display: grid;
+  place-items: center;
+  width: 2rem;
+  height: 2rem;
+  flex: none;
+  border-radius: var(--lh-radius-control);
+  background: var(--lh-color-surface-muted);
+  color: var(--lh-color-ink-3);
+}
+
+.lh-admin-list-glyph--danger {
+  background: var(--lh-color-danger-soft);
+  color: var(--lh-color-danger);
+}
+
+.lh-admin-list-glyph--warning {
+  background: var(--lh-color-warning-soft);
+  color: var(--lh-color-warning);
+}
+
+.lh-admin-list-glyph--success {
+  background: var(--lh-color-success-soft);
+  color: var(--lh-color-success);
+}
+
+.lh-admin-list-glyph--honey {
+  background: var(--lh-color-honey-soft);
+  color: var(--lh-color-honey-deep);
+}
+
+.lh-admin-list-glyph--info {
+  background: var(--lh-color-info-soft);
+  color: var(--lh-color-info);
+}
+
+.lh-admin-list-body {
+  min-width: 0;
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  gap: 0.1rem;
+}
+
+.lh-admin-list-title {
+  font-size: 0.875rem;
+  font-weight: 600;
+  color: var(--lh-color-ink);
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+.lh-admin-list-meta {
+  font-size: 0.75rem;
+  color: var(--lh-color-ink-3);
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+.lh-admin-list-trail {
+  flex: none;
+  display: flex;
+  align-items: center;
+  gap: var(--lh-space-3);
+  font-variant-numeric: tabular-nums;
+}
+
+.lh-admin-list-num {
+  font-size: 0.9375rem;
+  font-weight: 700;
+  color: var(--lh-color-ink-2);
+  font-variant-numeric: tabular-nums;
+}
+
+/* Grouped list (reorder by supplier) */
+.lh-admin-group + .lh-admin-group {
+  border-block-start: 1px solid var(--lh-color-border);
+}
+
+.lh-admin-group-head {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: var(--lh-space-3);
+  padding: var(--lh-space-3) var(--lh-space-5);
+  background: color-mix(in srgb, var(--lh-color-surface-muted) 45%, transparent);
+}
+
+.lh-admin-group-name {
+  font-size: 0.8125rem;
+  font-weight: 700;
+  color: var(--lh-color-ink);
+}
+
+.lh-admin-group-count {
+  font-size: 0.6875rem;
+  font-weight: 600;
+  color: var(--lh-color-ink-3);
+}
+
+/* -------------------------------------------------------------------------
+   7. Activity timeline
+   ------------------------------------------------------------------------- */
+
+.lh-admin-activity {
+  display: flex;
+  flex-direction: column;
+  list-style: none;
+  margin: 0;
+  padding: var(--lh-space-4) var(--lh-space-5);
+}
+
+.lh-admin-activity-item {
+  position: relative;
+  display: flex;
+  gap: var(--lh-space-3);
+  padding-block: var(--lh-space-3);
+}
+
+.lh-admin-activity-item::before {
+  content: '';
+  position: absolute;
+  inset-inline-start: 0.3125rem;
+  top: calc(var(--lh-space-3) + 0.75rem);
+  bottom: -0.75rem;
+  width: 1px;
+  background: var(--lh-color-border);
+}
+
+.lh-admin-activity-item:last-child::before {
+  display: none;
+}
+
+.lh-admin-activity-dot {
+  position: relative;
+  z-index: 1;
+  margin-block-start: 0.35rem;
+  width: 0.625rem;
+  height: 0.625rem;
+  flex: none;
+  border-radius: 50%;
+  background: var(--lh-color-surface);
+  border: 2px solid var(--lh-color-border-strong);
+}
+
+.lh-admin-activity-dot--in {
+  border-color: var(--lh-color-success);
+}
+
+.lh-admin-activity-dot--out {
+  border-color: var(--lh-color-danger);
+}
+
+.lh-admin-activity-text {
+  font-size: 0.8125rem;
+  color: var(--lh-color-ink);
+}
+
+.lh-admin-activity-meta {
+  margin-block-start: 0.1rem;
+  font-size: 0.6875rem;
+  color: var(--lh-color-ink-3);
+}
+
+/* -------------------------------------------------------------------------
+   8. Filter toolbar
+   ------------------------------------------------------------------------- */
+
+.lh-admin-toolbar {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: var(--lh-space-2);
+  padding: var(--lh-space-2);
+  border: 1px solid var(--lh-color-border);
+  border-radius: var(--lh-radius-soft);
+  background: var(--lh-color-surface);
+}
+
+.lh-admin-toolbar-search {
+  position: relative;
+  order: -1;
+  flex: 1 1 16rem;
+  min-width: 12rem;
+}
+
+.lh-admin-toolbar-search svg {
+  position: absolute;
+  inset-inline-start: 0.6rem;
+  top: 50%;
+  transform: translateY(-50%);
+  color: var(--lh-color-ink-4);
+  pointer-events: none;
+}
+
+.lh-admin-toolbar-search .lh-input {
+  padding-inline-start: 2rem;
+}
+
+/* Selects inside the bar are content-width, not full-row. Outside the bar
+   (e.g. the mobile filter sheet) they keep the design-system default. */
+.lh-admin-toolbar > .lh-select,
+.lh-admin-toolbar .lh-admin-toolbar-field {
+  flex: 0 1 10.5rem;
+  width: auto;
+}
+
+.lh-admin-toolbar-field {
+  display: flex;
+  flex-direction: column;
+  gap: 0.1875rem;
+}
+
+.lh-admin-toolbar-field > .lh-select {
+  width: 100%;
+}
+
+.lh-admin-field-label {
+  font-size: 0.6875rem;
+  font-weight: 600;
+  color: var(--lh-color-ink-3);
+  padding-inline-start: 0.125rem;
+}
+
+.lh-admin-toolbar-count {
+  margin-inline-start: auto;
+  padding-inline: var(--lh-space-2);
+  font-size: 0.75rem;
+  font-weight: 600;
+  color: var(--lh-color-ink-3);
+  font-variant-numeric: tabular-nums;
+  white-space: nowrap;
+}
+
+.lh-admin-filter-trigger {
+  display: none;
+}
+
+@media (max-width: 640px) {
+  .lh-admin-toolbar--collapsible > .lh-admin-toolbar-field {
+    display: none;
+  }
+
+  .lh-admin-toolbar--collapsible .lh-admin-filter-trigger {
+    display: inline-flex;
+  }
+}
+
+/* -------------------------------------------------------------------------
+   9. Data table
+   ------------------------------------------------------------------------- */
+
+.lh-admin-table {
+  width: 100%;
+  border-collapse: collapse;
+  font-size: 0.8125rem;
+  line-height: 1.5;
+}
+
+.lh-admin-table thead th {
+  position: sticky;
+  top: 0;
+  z-index: 1;
+  padding: var(--lh-space-3) var(--lh-space-4);
+  background: var(--lh-color-surface-muted);
+  border-block-end: 1px solid var(--lh-color-border-strong);
+  font-size: 0.6875rem;
+  font-weight: 700;
+  color: var(--lh-color-ink-3);
+  text-align: start;
+  white-space: nowrap;
+}
+
+.lh-admin-table tbody td {
+  padding: var(--lh-space-3) var(--lh-space-4);
+  border-block-end: 1px solid var(--lh-color-border);
+  color: var(--lh-color-ink);
+  vertical-align: middle;
+}
+
+.lh-admin-table tbody tr:last-child td {
+  border-block-end: 0;
+}
+
+.lh-admin-table tbody tr {
+  transition: background-color 120ms var(--lh-ease-standard);
+}
+
+.lh-admin-table tbody tr:hover td {
+  background: color-mix(in srgb, var(--lh-color-surface-muted) 45%, transparent);
+}
+
+.lh-admin-table th:first-child,
+.lh-admin-table td:first-child {
+  padding-inline-start: var(--lh-space-5);
+}
+
+.lh-admin-table th:last-child,
+.lh-admin-table td:last-child {
+  padding-inline-end: var(--lh-space-5);
+}
+
+.lh-admin-td-num {
+  font-variant-numeric: tabular-nums;
+  text-align: end;
+}
+
+.lh-admin-cell-lead {
+  display: flex;
+  align-items: center;
+  gap: var(--lh-space-3);
+  min-width: 0;
+}
+
+.lh-admin-thumb {
+  display: grid;
+  place-items: center;
+  width: 2.25rem;
+  height: 2.25rem;
+  flex: none;
+  border-radius: var(--lh-radius-control);
+  background: var(--lh-color-honey-soft);
+  color: var(--lh-color-honey-deep);
+  font-size: 0.75rem;
+  font-weight: 700;
+  overflow: hidden;
+}
+
+.lh-admin-thumb img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+}
+
+.lh-admin-cell-title {
+  font-weight: 600;
+  color: var(--lh-color-ink);
+  line-height: 1.3;
+}
+
+.lh-admin-cell-sub {
+  font-size: 0.6875rem;
+  color: var(--lh-color-ink-3);
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  max-width: 22ch;
+}
+
+/* Mobile record card (table → cards) */
+.lh-admin-record {
+  display: flex;
+  align-items: center;
+  gap: var(--lh-space-3);
+  padding: var(--lh-space-3) var(--lh-space-4);
+  border: 1px solid var(--lh-color-border);
+  border-radius: var(--lh-radius-soft);
+  background: var(--lh-color-surface);
+  text-decoration: none;
+  color: var(--lh-color-ink);
+  transition: border-color 150ms var(--lh-ease-standard);
+}
+
+.lh-admin-record:hover {
+  border-color: var(--lh-color-border-strong);
+}
+
+.lh-admin-record-body {
+  min-width: 0;
+  flex: 1;
+}
+
+.lh-admin-record-title {
+  font-size: 0.875rem;
+  font-weight: 600;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+.lh-admin-record-meta {
+  margin-block-start: 0.25rem;
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 0.35rem;
+  font-size: 0.6875rem;
+  color: var(--lh-color-ink-3);
+}
+
+/* -------------------------------------------------------------------------
+   10. Status chip + stock pill
+   ------------------------------------------------------------------------- */
+
+.lh-admin-chip {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.3rem;
+  padding: 0.15rem 0.5rem;
+  border-radius: var(--lh-radius-pill);
+  font-size: 0.6875rem;
+  font-weight: 650;
+  white-space: nowrap;
+  background: var(--lh-color-surface-muted);
+  color: var(--lh-color-ink-2);
+}
+
+.lh-admin-chip::before {
+  content: '';
+  width: 0.375rem;
+  height: 0.375rem;
+  border-radius: 50%;
+  background: currentColor;
+  flex: none;
+}
+
+.lh-admin-chip--active,
+.lh-admin-chip--in,
+.lh-admin-chip--done {
+  background: var(--lh-color-success-soft);
+  color: var(--lh-color-success);
+}
+
+.lh-admin-chip--draft,
+.lh-admin-chip--low,
+.lh-admin-chip--pending {
+  background: var(--lh-color-warning-soft);
+  color: var(--lh-color-warning);
+}
+
+.lh-admin-chip--out,
+.lh-admin-chip--danger {
+  background: var(--lh-color-danger-soft);
+  color: var(--lh-color-danger);
+}
+
+.lh-admin-chip--inactive,
+.lh-admin-chip--archived {
+  background: var(--lh-color-surface-muted);
+  color: var(--lh-color-ink-3);
+}
+
+.lh-admin-chip--honey {
+  background: var(--lh-color-honey-soft);
+  color: var(--lh-color-honey-deep);
+}
+
+.lh-stock-pill {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.3rem;
+  padding: 0.15rem 0.5rem;
+  border-radius: var(--lh-radius-pill);
+  font-size: 0.6875rem;
+  font-weight: 700;
+  white-space: nowrap;
+}
+
+.lh-stock-pill::before {
+  content: '';
+  width: 0.375rem;
+  height: 0.375rem;
+  border-radius: 50%;
+  background: currentColor;
+  flex: none;
+}
+
+.lh-stock-pill--out {
+  background: var(--lh-color-danger-soft);
+  color: var(--lh-color-danger);
+}
+
+.lh-stock-pill--low {
+  background: var(--lh-color-warning-soft);
+  color: var(--lh-color-warning);
+}
+
+.lh-stock-pill--available,
+.lh-stock-pill--in {
+  background: var(--lh-color-success-soft);
+  color: var(--lh-color-success);
+}
+
+/* -------------------------------------------------------------------------
+   11. Quick action (employee home / dashboard shortcuts)
+   ------------------------------------------------------------------------- */
+
+.lh-admin-quick {
+  display: flex;
+  align-items: center;
+  gap: var(--lh-space-3);
+  padding: var(--lh-space-4);
+  border: 1px solid var(--lh-color-border);
+  border-radius: var(--lh-radius-soft);
+  background: var(--lh-color-surface);
+  text-decoration: none;
+  color: var(--lh-color-ink);
+  min-height: 3.5rem;
+  transition:
+    border-color 150ms var(--lh-ease-standard),
+    background-color 150ms var(--lh-ease-standard),
+    transform 120ms var(--lh-ease-out);
+}
+
+.lh-admin-quick:hover {
+  border-color: var(--lh-color-border-strong);
+  background: var(--lh-color-surface-raised);
+}
+
+.lh-admin-quick:active {
+  transform: translateY(1px);
+}
+
+.lh-admin-quick-icon {
+  display: grid;
+  place-items: center;
+  width: 2.5rem;
+  height: 2.5rem;
+  flex: none;
+  border-radius: var(--lh-radius-control);
+  background: var(--lh-color-surface-muted);
+  color: var(--lh-color-ink-2);
+}
+
+.lh-admin-quick--primary {
+  border-color: var(--lh-color-honey);
+  background: var(--lh-color-honey-soft);
+}
+
+.lh-admin-quick--primary:hover {
+  background: var(--lh-color-honey-soft-2);
+  border-color: var(--lh-color-honey-strong);
+}
+
+.lh-admin-quick--primary .lh-admin-quick-icon {
+  background: var(--lh-color-honey);
+  color: var(--lh-color-on-honey);
+}
+
+.lh-admin-quick > span {
+  min-width: 0;
+}
+
+.lh-admin-quick-title {
+  display: block;
+  font-size: 0.9375rem;
+  font-weight: 650;
+  line-height: 1.3;
+  color: var(--lh-color-ink);
+}
+
+.lh-admin-quick-sub {
+  display: block;
+  margin-block-start: 0.15rem;
+  font-size: 0.75rem;
+  line-height: 1.4;
+  color: var(--lh-color-ink-3);
+}
+
+.lh-admin-quick-count {
+  margin-inline-start: auto;
+  font-family: var(--lh-font-display);
+  font-size: 1.5rem;
+  font-weight: 800;
+  font-variant-numeric: tabular-nums;
+  color: var(--lh-color-ink);
+}
+
+/* -------------------------------------------------------------------------
+   12. Empty state + coming soon + key/value
+   ------------------------------------------------------------------------- */
+
+.lh-admin-empty {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: var(--lh-space-3);
+  padding: var(--lh-space-9) var(--lh-space-5);
+  text-align: center;
+}
+
+.lh-admin-empty-icon {
+  display: grid;
+  place-items: center;
+  width: 3rem;
+  height: 3rem;
+  border-radius: 50%;
+  background: var(--lh-color-honey-soft);
+  color: var(--lh-color-honey-deep);
+}
+
+.lh-admin-empty-title {
+  font-size: 0.9375rem;
+  font-weight: 700;
+  color: var(--lh-color-ink);
+}
+
+.lh-admin-empty-text {
+  max-width: 32ch;
+  font-size: 0.8125rem;
+  color: var(--lh-color-ink-3);
+}
+
+.lh-admin-soon {
+  display: flex;
+  flex-direction: column;
+  gap: var(--lh-space-3);
+  padding: var(--lh-space-5);
+  border: 1px dashed var(--lh-color-border-strong);
+  border-radius: var(--lh-radius-card);
+  background: color-mix(in srgb, var(--lh-color-surface-muted) 40%, transparent);
+}
+
+.lh-admin-soon-tag {
+  align-self: flex-start;
+  display: inline-flex;
+  align-items: center;
+  gap: 0.3rem;
+  padding: 0.1rem 0.5rem;
+  border-radius: var(--lh-radius-pill);
+  background: var(--lh-color-surface-muted);
+  color: var(--lh-color-ink-3);
+  font-size: 0.6875rem;
+  font-weight: 700;
+}
+
+.lh-admin-soon-title {
+  font-size: 0.875rem;
+  font-weight: 650;
+  color: var(--lh-color-ink-2);
+}
+
+.lh-admin-soon-text {
+  font-size: 0.75rem;
+  color: var(--lh-color-ink-3);
+  max-width: 48ch;
+}
+
+.lh-admin-kv {
+  display: flex;
+  align-items: baseline;
+  justify-content: space-between;
+  gap: var(--lh-space-4);
+  padding-block: var(--lh-space-2);
+  font-size: 0.8125rem;
+}
+
+.lh-admin-kv + .lh-admin-kv {
+  border-block-start: 1px solid var(--lh-color-border);
+}
+
+.lh-admin-kv-key {
+  color: var(--lh-color-ink-3);
+}
+
+.lh-admin-kv-val {
+  font-weight: 600;
+  color: var(--lh-color-ink);
+  font-variant-numeric: tabular-nums;
+  text-align: end;
+}
+
+/* -------------------------------------------------------------------------
+   13. Calm form section + progress rail (create product)
+   ------------------------------------------------------------------------- */
+
+.lh-admin-form-section {
+  display: flex;
+  flex-direction: column;
+  gap: var(--lh-space-4);
+  padding-block: var(--lh-space-6);
+}
+
+.lh-admin-form-section:first-child {
+  padding-block-start: 0;
+}
+
+.lh-admin-form-section:last-child {
+  padding-block-end: 0;
+}
+
+.lh-admin-form-section + .lh-admin-form-section {
+  border-block-start: 1px solid var(--lh-color-border);
+}
+
+.lh-admin-form-section-title {
+  font-size: 0.9375rem;
+  font-weight: 700;
+  letter-spacing: -0.01em;
+  color: var(--lh-color-ink);
+}
+
+.lh-admin-form-section-hint {
+  margin-block-start: 0.2rem;
+  font-size: 0.75rem;
+  color: var(--lh-color-ink-3);
+  max-width: 52ch;
+}
+
+.lh-admin-progress {
+  display: flex;
+  flex-direction: column;
+  gap: 0;
+  list-style: none;
+  margin: 0;
+  padding: 0;
+}
+
+.lh-admin-progress-step {
+  position: relative;
+  display: flex;
+  align-items: center;
+  gap: var(--lh-space-3);
+  padding-block: var(--lh-space-2);
+  font-size: 0.8125rem;
+  color: var(--lh-color-ink-3);
+}
+
+.lh-admin-progress-step::before {
+  content: '';
+  position: absolute;
+  inset-inline-start: 0.625rem;
+  top: 1.75rem;
+  bottom: -0.25rem;
+  width: 1px;
+  background: var(--lh-color-border);
+}
+
+.lh-admin-progress-step:last-child::before {
+  display: none;
+}
+
+.lh-admin-progress-dot {
+  display: grid;
+  place-items: center;
+  width: 1.3125rem;
+  height: 1.3125rem;
+  flex: none;
+  border-radius: 50%;
+  background: var(--lh-color-surface-muted);
+  color: var(--lh-color-ink-3);
+  font-size: 0.6875rem;
+  font-weight: 700;
+}
+
+.lh-admin-progress-step--done {
+  color: var(--lh-color-ink);
+  font-weight: 600;
+}
+
+.lh-admin-progress-step--done .lh-admin-progress-dot {
+  background: var(--lh-color-honey);
+  color: var(--lh-color-on-honey);
+}
+
+/* -------------------------------------------------------------------------
+   14. Settings hub (side nav / tabs)
+   ------------------------------------------------------------------------- */
+
+.lh-admin-hub {
+  display: grid;
+  gap: var(--lh-space-6);
+  grid-template-columns: 1fr;
+}
+
+@media (min-width: 900px) {
+  .lh-admin-hub {
+    grid-template-columns: 13rem 1fr;
+    align-items: start;
+  }
+}
+
+.lh-admin-hub-nav {
+  display: flex;
+  gap: var(--lh-space-1);
+  overflow-x: auto;
+  padding-block-end: var(--lh-space-2);
+}
+
+@media (min-width: 900px) {
+  .lh-admin-hub-nav {
+    position: sticky;
+    top: 4.25rem;
+    flex-direction: column;
+    overflow: visible;
+    padding-block-end: 0;
+  }
+}
+
+.lh-admin-hub-tab {
+  display: flex;
+  align-items: center;
+  gap: var(--lh-space-2);
+  padding: 0.5rem var(--lh-space-3);
+  border-radius: var(--lh-radius-control);
+  font-size: 0.8125rem;
+  font-weight: 600;
+  color: var(--lh-color-ink-2);
+  background: none;
+  border: 0;
+  cursor: pointer;
+  white-space: nowrap;
+  text-align: start;
+  transition: background-color 150ms var(--lh-ease-standard);
+}
+
+.lh-admin-hub-tab:hover {
+  background: var(--lh-color-surface-muted);
+  color: var(--lh-color-ink);
+}
+
+.lh-admin-hub-tab--active,
+.lh-admin-hub-tab--active:hover {
+  background: var(--lh-color-honey-soft);
+  color: var(--lh-color-honey-deep);
+}
+
+.lh-admin-hub-panels {
+  display: flex;
+  flex-direction: column;
+  gap: var(--lh-space-6);
+  min-width: 0;
+}
+
+/* -------------------------------------------------------------------------
+   15. Permission toggle groups (staff)
+   ------------------------------------------------------------------------- */
+
+.lh-admin-perm-group {
+  border: 1px solid var(--lh-color-border);
+  border-radius: var(--lh-radius-soft);
+  padding: var(--lh-space-4);
+}
+
+.lh-admin-perm-group + .lh-admin-perm-group {
+  margin-block-start: var(--lh-space-3);
+}
+
+.lh-admin-perm-group-title {
+  display: flex;
+  align-items: center;
+  gap: var(--lh-space-2);
+  font-size: 0.8125rem;
+  font-weight: 700;
+  color: var(--lh-color-ink);
+  margin-block-end: var(--lh-space-3);
+}
+
+.lh-admin-perm-toggles {
+  display: grid;
+  gap: var(--lh-space-2);
+  grid-template-columns: repeat(auto-fit, minmax(12rem, 1fr));
+}
+
+/* -------------------------------------------------------------------------
+   16. Skeletons + misc
+   ------------------------------------------------------------------------- */
+
+.lh-admin-skeleton {
+  position: relative;
+  overflow: hidden;
+  border-radius: var(--lh-radius-control);
+  background: var(--lh-color-surface-muted);
+}
+
+.lh-admin-skeleton::after {
+  content: '';
+  position: absolute;
+  inset: 0;
+  transform: translateX(-100%);
+  background: linear-gradient(
+    90deg,
+    transparent,
+    color-mix(in srgb, var(--lh-color-surface-raised) 55%, transparent),
+    transparent
+  );
+  animation: lh-shimmer 1.6s infinite;
+}
+
+[dir='rtl'] .lh-admin-skeleton::after {
+  animation-name: lh-shimmer-rtl;
+}
+
+@keyframes lh-shimmer {
+  to {
+    transform: translateX(100%);
+  }
+}
+
+@keyframes lh-shimmer-rtl {
+  to {
+    transform: translateX(-200%);
+  }
+}
+
+.lh-admin-flash {
+  display: flex;
+  align-items: center;
+  gap: var(--lh-space-2);
+  padding: var(--lh-space-3) var(--lh-space-4);
+  border-radius: var(--lh-radius-soft);
+  font-size: 0.8125rem;
+  font-weight: 600;
+  border: 1px solid transparent;
+}
+
+.lh-admin-flash--ok {
+  background: var(--lh-color-success-soft);
+  border-color: color-mix(in srgb, var(--lh-color-success) 30%, transparent);
+  color: var(--lh-color-success);
+}
+
+.lh-admin-flash--error {
+  background: var(--lh-color-danger-soft);
+  border-color: color-mix(in srgb, var(--lh-color-danger) 30%, transparent);
+  color: var(--lh-color-danger);
+}
+
+/* A calm actionable notice — e.g. "6 combinations created, review before
+   activating" — distinct from --ok/--error flash (nothing succeeded or
+   failed yet, it's a prompt to act). */
+.lh-admin-callout {
+  padding: var(--lh-space-4);
+  border-radius: var(--lh-radius-soft);
+  background: var(--lh-color-honey-soft);
+  border: 1px solid color-mix(in srgb, var(--lh-color-honey) 30%, transparent);
+}
+
+.lh-admin-add-value-btn {
+  align-self: center;
+  padding: 0.4rem 0.75rem;
+  border-radius: var(--lh-radius-soft);
+  border: 1px dashed color-mix(in srgb, var(--lh-color-honey) 55%, transparent);
+  background: transparent;
+  color: var(--lh-color-honey-ink, var(--lh-color-honey));
+  font-size: 0.8125rem;
+  font-weight: 600;
+  cursor: pointer;
+  transition: background-color 0.15s ease;
+}
+
+.lh-admin-add-value-btn:hover {
+  background: var(--lh-color-honey-soft);
+}
+
+.lh-admin-inline-actions {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: var(--lh-space-2);
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .lh-admin-skeleton::after {
+    animation: none;
+  }
+}
+
+/* staggered first-load reveal for small modules (≤4 rows) */
+@media (prefers-reduced-motion: no-preference) {
+  .lh-admin-reveal > * {
+    animation: lh-admin-rise 260ms var(--lh-ease-out) both;
+  }
+
+  .lh-admin-reveal > *:nth-child(2) {
+    animation-delay: 30ms;
+  }
+  .lh-admin-reveal > *:nth-child(3) {
+    animation-delay: 60ms;
+  }
+  .lh-admin-reveal > *:nth-child(4) {
+    animation-delay: 90ms;
+  }
+}
+
+@keyframes lh-admin-rise {
+  from {
+    opacity: 0;
+    transform: translateY(6px);
+  }
+}
+
+/* -------------------------------------------------------------------------
+   Orders — responsive sheet: bottom sheet on phones, centred dialog ≥ 40rem.
+   Scoped to the Orders workspace; the shared UI <Dialog> is untouched.
+   ------------------------------------------------------------------------- */
+.lh-sheet {
+  position: fixed;
+  inset: 0;
+  margin: 0;
+  width: 100%;
+  max-width: 100%;
+  /* Chrome's UA style gives <dialog> `height: fit-content`; without an explicit
+     height the box collapses to 0 because the panel is absolutely positioned. */
+  height: 100dvh;
+  max-height: 100dvh;
+  padding: 0;
+  border: 0;
+  background: transparent;
+  color: var(--lh-color-ink);
+  overflow: visible;
+}
+
+.lh-sheet::backdrop {
+  background: rgb(18 14 10 / 0.66);
+  backdrop-filter: blur(2px);
+}
+
+.lh-sheet__panel {
+  position: absolute;
+  inset-inline: 0;
+  inset-block-end: 0;
+  display: flex;
+  flex-direction: column;
+  max-height: 92svh;
+  background: var(--lh-color-surface);
+  border-start-start-radius: var(--lh-radius-feature);
+  border-start-end-radius: var(--lh-radius-feature);
+  box-shadow: var(--lh-shadow-lg);
+}
+
+.lh-sheet__grip {
+  align-self: center;
+  width: 2.25rem;
+  height: 0.25rem;
+  margin-block: 0.55rem 0.1rem;
+  border-radius: var(--lh-radius-pill);
+  background: var(--lh-color-border-strong);
+}
+
+.lh-sheet__header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: var(--lh-space-3);
+  padding: var(--lh-space-3) var(--lh-space-5) var(--lh-space-4);
+  border-block-end: 1px solid var(--lh-color-border);
+}
+
+.lh-sheet__title {
+  margin: 0;
+  font-family: var(--lh-font-display);
+  font-weight: 700;
+  font-size: 1.0625rem;
+  line-height: 1.35;
+  color: var(--lh-color-ink);
+}
+
+.lh-sheet__close {
+  flex: none;
+  display: grid;
+  place-items: center;
+  width: 2rem;
+  height: 2rem;
+  border-radius: var(--lh-radius-control);
+  color: var(--lh-color-ink-3);
+  background: none;
+  border: 0;
+  cursor: pointer;
+  transition: background-color 120ms var(--lh-ease-standard);
+}
+.lh-sheet__close:hover {
+  background: var(--lh-color-surface-muted);
+  color: var(--lh-color-ink);
+}
+
+.lh-sheet__body {
+  padding: var(--lh-space-5);
+  overflow-y: auto;
+  overscroll-behavior: contain;
+}
+
+.lh-sheet__footer {
+  display: flex;
+  gap: var(--lh-space-3);
+  padding: var(--lh-space-4) var(--lh-space-5);
+  padding-block-end: calc(var(--lh-space-4) + env(safe-area-inset-bottom));
+  border-block-start: 1px solid var(--lh-color-border);
+  background: var(--lh-color-surface);
+}
+.lh-sheet__footer > * {
+  flex: 1;
+}
+
+@media (min-width: 40rem) {
+  .lh-sheet {
+    display: grid;
+    place-items: center;
+  }
+  .lh-sheet__panel {
+    position: static;
+    margin: auto;
+    width: min(100% - 2rem, 32rem);
+    max-height: min(100svh - 2rem, 85vh);
+    border: 1px solid var(--lh-color-border-strong);
+    border-radius: var(--lh-radius-card);
+  }
+  .lh-sheet__grip {
+    display: none;
+  }
+  .lh-sheet__footer {
+    justify-content: flex-end;
+    padding-block-end: var(--lh-space-4);
+  }
+  .lh-sheet__footer > * {
+    flex: 0 0 auto;
+  }
+}
+
+.lh-sheet[open] {
+  animation: lh-sheet-fade 150ms var(--lh-ease-out);
+}
+@media (prefers-reduced-motion: no-preference) {
+  .lh-sheet[open] .lh-sheet__panel {
+    animation: lh-sheet-rise 220ms var(--lh-ease-out);
+  }
+}
+@keyframes lh-sheet-fade {
+  from {
+    opacity: 0;
+  }
+}
+@keyframes lh-sheet-rise {
+  from {
+    transform: translateY(14px);
+  }
+}
+
+/* Deliberate choice card (delivering restock decision) */
+.lh-choice {
+  position: relative;
+  display: flex;
+  gap: var(--lh-space-3);
+  padding: var(--lh-space-4);
+  border: 1px solid var(--lh-color-border);
+  border-radius: var(--lh-radius-soft);
+  cursor: pointer;
+  transition:
+    border-color 120ms var(--lh-ease-standard),
+    background-color 120ms var(--lh-ease-standard);
+}
+.lh-choice:hover {
+  border-color: var(--lh-color-border-strong);
+}
+.lh-choice input {
+  position: absolute;
+  opacity: 0;
+  pointer-events: none;
+}
+.lh-choice__mark {
+  flex: none;
+  margin-block-start: 0.1rem;
+  width: 1.15rem;
+  height: 1.15rem;
+  border-radius: 50%;
+  border: 2px solid var(--lh-color-border-strong);
+  display: grid;
+  place-items: center;
+}
+.lh-choice__mark::after {
+  content: '';
+  width: 0.55rem;
+  height: 0.55rem;
+  border-radius: 50%;
+  background: transparent;
+}
+.lh-choice:has(input:checked) {
+  border-color: var(--lh-color-honey-strong);
+  background: var(--lh-color-honey-soft);
+}
+.lh-choice:has(input:checked) .lh-choice__mark {
+  border-color: var(--lh-color-honey-strong);
+}
+.lh-choice:has(input:checked) .lh-choice__mark::after {
+  background: var(--lh-color-honey-strong);
+}
+.lh-choice:has(input:focus-visible) .lh-choice__mark {
+  outline: 2px solid var(--lh-color-honey);
+  outline-offset: 2px;
+}
+.lh-choice > span:last-child {
+  min-width: 0;
+}
+.lh-choice__title {
+  display: block;
+  font-weight: 650;
+  font-size: 0.875rem;
+  color: var(--lh-color-ink);
+}
+.lh-choice__hint {
+  display: block;
+  margin-block-start: 0.2rem;
+  font-size: 0.75rem;
+  line-height: 1.55;
+  color: var(--lh-color-ink-3);
+}
+
+/* Compact operational order-detail header */
+.lh-order-hero {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: flex-start;
+  justify-content: space-between;
+  gap: var(--lh-space-4);
+  padding: var(--lh-space-4) var(--lh-space-5);
+  background: var(--lh-color-surface);
+  border: 1px solid var(--lh-color-border);
+  border-radius: var(--lh-radius-card);
+  box-shadow: var(--lh-shadow-sm);
+}
+
+/* Product media reorder controls — accessible move up/down, works the same
+   at every viewport (no drag-only mechanism). */
+.lh-admin-media-move {
+  display: inline-grid;
+  place-items: center;
+  width: 2rem;
+  height: 2rem;
+  border-radius: 50%;
+  background: color-mix(in srgb, var(--lh-color-surface) 88%, transparent);
+  color: var(--lh-color-ink);
+  border: 1px solid var(--lh-color-border-strong);
+  box-shadow: var(--lh-shadow-sm);
+}
+
+.lh-admin-media-move:hover:not(:disabled) {
+  background: var(--lh-color-surface);
+}
+
+.lh-admin-media-move:disabled {
+  opacity: 0.35;
+  cursor: not-allowed;
+}

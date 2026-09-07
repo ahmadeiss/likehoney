@@ -1,0 +1,14 @@
+packages:
+  - 'apps/*'
+  - 'packages/*'
+
+# Native build scripts that must be allowed to run (pnpm blocks them by default).
+allowBuilds:
+  esbuild: true
+  unrs-resolver: true
+  workerd: true
+
+minimumReleaseAgeExclude:
+  - '@cloudflare/workers-types@5.20260827.1'
+  - miniflare@5.20260826.0-alpha
+  - wrangler@4.127.0

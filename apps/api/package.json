@@ -1,0 +1,32 @@
+{
+  "name": "@likehoney/api",
+  "version": "0.1.0",
+  "private": true,
+  "type": "module",
+  "description": "Like Honey API — Hono on Cloudflare Workers. Production endpoints will live under /api/v1/...",
+  "scripts": {
+    "predev": "node ./scripts/free-port.mjs 8787 && node ../../packages/db/scripts/runtime-check.mjs --env-file .dev.vars",
+    "dev": "wrangler dev --port 8787 --ip 127.0.0.1",
+    "dev:r2-remote": "wrangler dev --port 8787 --ip 127.0.0.1 --env r2-remote",
+    "build": "wrangler deploy --dry-run --outdir dist",
+    "lint": "eslint .",
+    "typecheck": "tsc --noEmit",
+    "test": "node --import tsx --test src/**/*.test.ts",
+    "cf:typegen": "wrangler types"
+  },
+  "dependencies": {
+    "@likehoney/db": "workspace:*",
+    "@likehoney/shared": "workspace:*",
+    "hono": "^4.13.5",
+    "zod": "^4.4.3"
+  },
+  "devDependencies": {
+    "@cloudflare/workers-types": "^5.20260827.1",
+    "@likehoney/config": "workspace:*",
+    "@neondatabase/serverless": "^1.1.0",
+    "eslint": "^9.39.5",
+    "tsx": "^4.23.13",
+    "typescript": "^5.9.3",
+    "wrangler": "^4.127.0"
+  }
+}

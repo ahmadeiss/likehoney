@@ -1,0 +1,12 @@
+# Generated database migration artifacts — drizzle-kit owns their formatting.
+# Prettier reflowing the snapshot JSON desyncs future `drizzle-kit generate` diffs.
+packages/db/drizzle/**
+
+# Generated lockfile — pnpm owns its formatting.
+pnpm-lock.yaml
+
+# Vendored Claude Code tooling (skills, local config) — not project source.
+.claude/**
+
+# Underscore-prefixed dev scratch scripts (one-off inspection / repair tooling).
+packages/db/scripts/_*

@@ -1,0 +1,238 @@
+{
+  "at": "2026-09-02",
+  "rootCause": "Dev catalog/content fixture Arabic rows were stored double-encoded (mojibake). The DB client -> API service -> JSON -> frontend path is a clean UTF-8 passthrough; only the stored fixture values were corrupt. English columns were intact and used as the authoritative source for reconstruction.",
+  "method": "Reconstructed correct Arabic from intact English for confirmed synthetic dev-fixture rows only (no heuristic reverse-decoding, no DB reset, no schema change). Guarded, idempotent UPDATEs keyed on the exact corrupt value. One cell (Soft Feeding Bib description_ar) had no English twin, so its corrupt Arabic was cleared to NULL rather than fabricated.",
+  "changed": [
+    {
+      "kind": "category",
+      "code": "ACC",
+      "field": "name_ar",
+      "before": "ط¥ظƒط³ط³ظˆط§ط±ط§طھ",
+      "after": "إكسسوارات"
+    },
+    {
+      "kind": "category",
+      "code": "BABY",
+      "field": "name_ar",
+      "before": "ظ…ط³طھظ„ط²ظ…ط§طھ ط§ظ„ط±ط¶ط¹",
+      "after": "مستلزمات الرّضّع"
+    },
+    {
+      "kind": "category",
+      "code": "BAGS",
+      "field": "name_ar",
+      "before": "ط­ظ‚ط§ط¦ط¨ ظˆط´ظ†ط·",
+      "after": "حقائب الظهر"
+    },
+    {
+      "kind": "category",
+      "code": "CLOTH",
+      "field": "name_ar",
+      "before": "ظ…ظ„ط§ط¨ط³ ط£ط·ظپط§ظ„",
+      "after": "ملابس الأطفال"
+    },
+    {
+      "kind": "category",
+      "code": "ESSN",
+      "field": "name_ar",
+      "before": "ط£ط³ط§ط³ظٹط§طھ ط§ظ„ط£ط·ظپط§ظ„",
+      "after": "أساسيات الأطفال"
+    },
+    {
+      "kind": "category",
+      "code": "GIFT",
+      "field": "name_ar",
+      "before": "ظ‡ط¯ط§ظٹط§",
+      "after": "هدايا"
+    },
+    {
+      "kind": "category",
+      "code": "SHOE",
+      "field": "name_ar",
+      "before": "ط£ط­ط°ظٹط© ط£ط·ظپط§ظ„",
+      "after": "أحذية الأطفال"
+    },
+    {
+      "kind": "category",
+      "code": "TOYS",
+      "field": "name_ar",
+      "before": "ط£ظ„ط¹ط§ط¨ ط£ط·ظپط§ظ„",
+      "after": "ألعاب الأطفال"
+    },
+    {
+      "kind": "product",
+      "id": "c3c86404-0fdb-4f83-9345-be59a78e2b7a",
+      "field": "name_ar",
+      "before": "ظپط³طھط§ظ† ط£ط·ظپط§ظ„ ظ…ط®ظ…ظ„ظٹ",
+      "after": "فستان الأطفال المخملي"
+    },
+    {
+      "kind": "product",
+      "id": "3ae42178-3df2-4211-9ca8-0ea92eb66cd5",
+      "field": "name_ar",
+      "before": "ظ‚ظ…ظٹطµ ط£ط·ظپط§ظ„ ظ‚ط·ظ†ظٹ",
+      "after": "قميص الأطفال القطني"
+    },
+    {
+      "kind": "product",
+      "id": "809b23ee-e182-48cb-9a2e-bbe4653f5212",
+      "field": "name_ar",
+      "before": "ط­ط°ط§ط، ط±ظٹط§ط¶ظٹ ظ„ظ„ط£ط·ظپط§ظ„",
+      "after": "حذاء الأطفال الرياضي"
+    },
+    {
+      "kind": "product",
+      "id": "376ea18f-2db1-4c62-a6cb-2c41ea9c45a0",
+      "field": "name_ar",
+      "before": "ظ…ظƒط¹ط¨ط§طھ ط¨ظ†ط§ط، ط®ط´ط¨ظٹط©",
+      "after": "مكعبات البناء الخشبية"
+    },
+    {
+      "kind": "product",
+      "id": "1b8bfd82-c2c4-4839-a8b6-4565f3d15d5d",
+      "field": "name_ar",
+      "before": "ظ…ط±ظٹظˆظ„ طھط؛ط°ظٹط© ظ„ط·ظٹظپ",
+      "after": "مريلة التغذية الناعمة"
+    },
+    {
+      "kind": "product",
+      "id": "c3c86404-0fdb-4f83-9345-be59a78e2b7a",
+      "field": "description_ar",
+      "before": "ظپط³طھط§ظ† ظ…ط®ظ…ظ„ظٹ ظ…ط±ظٹط­ ظ„ظ„ط¨ظ†ط§طھ ط¨ط£ظ„ظˆط§ظ† ظ‡ط§ط¯ط¦ط©",
+      "after": "فستان مخملي مريح للبنات بألوان ناعمة"
+    },
+    {
+      "kind": "product",
+      "id": "1b8bfd82-c2c4-4839-a8b6-4565f3d15d5d",
+      "field": "description_ar",
+      "before": "ظ…ط±ظٹظˆظ„ ظ†ط§ط¹ظ… ظ…ظ‚ط§ظˆظ… ظ„ظ„ظ…ط§ط، ظ„ط³ظ‡ظˆظ„ط© ط§ظ„طھظ†ط¸ظٹظپ",
+      "after": null
+    },
+    {
+      "kind": "option",
+      "id": "f9c17e37-9dbe-4615-9da6-550625fb3dd5",
+      "field": "name_ar",
+      "before": "ط§ظ„ظ…ظ‚ط§ط³",
+      "after": "المقاس"
+    },
+    {
+      "kind": "option",
+      "id": "fc8eafc2-9640-46c9-8994-cef89df2381d",
+      "field": "name_ar",
+      "before": "ط§ظ„ظ„ظˆظ†",
+      "after": "اللون"
+    },
+    {
+      "kind": "option_value",
+      "id": "S",
+      "field": "value_ar",
+      "before": "طµط؛ظٹط±",
+      "after": "صغير"
+    },
+    {
+      "kind": "option_value",
+      "id": "M",
+      "field": "value_ar",
+      "before": "ظ…طھظˆط³ط·",
+      "after": "وسط"
+    },
+    {
+      "kind": "option_value",
+      "id": "L",
+      "field": "value_ar",
+      "before": "ظƒط¨ظٹط±",
+      "after": "كبير"
+    },
+    {
+      "kind": "option_value",
+      "id": "NV",
+      "field": "value_ar",
+      "before": "ظƒط­ظ„ظٹ",
+      "after": "كحلي"
+    },
+    {
+      "kind": "option_value",
+      "id": "WH",
+      "field": "value_ar",
+      "before": "ط£ط¨ظٹط¶",
+      "after": "أبيض"
+    },
+    {
+      "kind": "variant",
+      "id": "LH-CLOTH-000002-S-NV",
+      "field": "option_label_ar",
+      "before": "طµط؛ظٹط± / ظƒط­ظ„ظٹ",
+      "after": "صغير / كحلي"
+    },
+    {
+      "kind": "variant",
+      "id": "LH-CLOTH-000002-S-WH",
+      "field": "option_label_ar",
+      "before": "طµط؛ظٹط± / ط£ط¨ظٹط¶",
+      "after": "صغير / أبيض"
+    },
+    {
+      "kind": "variant",
+      "id": "LH-CLOTH-000002-M-NV",
+      "field": "option_label_ar",
+      "before": "ظ…طھظˆط³ط· / ظƒط­ظ„ظٹ",
+      "after": "وسط / كحلي"
+    },
+    {
+      "kind": "variant",
+      "id": "LH-CLOTH-000002-M-WH",
+      "field": "option_label_ar",
+      "before": "ظ…طھظˆط³ط· / ط£ط¨ظٹط¶",
+      "after": "وسط / أبيض"
+    },
+    {
+      "kind": "variant",
+      "id": "LH-CLOTH-000002-L-NV",
+      "field": "option_label_ar",
+      "before": "ظƒط¨ظٹط± / ظƒط­ظ„ظٹ",
+      "after": "كبير / كحلي"
+    },
+    {
+      "kind": "variant",
+      "id": "LH-CLOTH-000002-L-WH",
+      "field": "option_label_ar",
+      "before": "ظƒط¨ظٹط± / ط£ط¨ظٹط¶",
+      "after": "كبير / أبيض"
+    },
+    {
+      "kind": "media",
+      "id": "0d98bf2e-b604-497f-9e84-da48a1fa5b1d",
+      "field": "alt_ar",
+      "before": "ظپط³طھط§ظ† ط£ط·ظپط§ظ„ ظ…ط®ظ…ظ„ظٹ",
+      "after": "فستان الأطفال المخملي"
+    },
+    {
+      "kind": "delivery_zone",
+      "code": "JER",
+      "field": "name_ar",
+      "before": "ط§ظ„ظ‚ط¯ط³",
+      "after": "القدس"
+    },
+    {
+      "kind": "supplier",
+      "id": "a041a978-c02c-45df-ae98-eac6063b4bce",
+      "field": "name_ar",
+      "before": "ط§ظ„ظ…ظˆط±ط¯ ط§ظ„ط£ظˆظ„ ظ„ظ„ظ…ظ„ط§ط¨ط³",
+      "after": "المورّد الأول لملابس الأطفال"
+    },
+    {
+      "kind": "supplier",
+      "id": "a1117b1d-79fc-47c2-9cca-9866908180ae",
+      "field": "name_ar",
+      "before": "ظ…ط¤ط³ط³ط© ط£ط­ط°ظٹط© ط§ظ„ط£ط·ظپط§ظ„",
+      "after": "مؤسسة أحذية الأطفال"
+    },
+    {
+      "kind": "supplier",
+      "id": "159ba696-ba65-44f2-ad65-1299f17a123f",
+      "field": "name_ar",
+      "before": "ظ…ظˆط±ط¯ ظ„ط¹ط¨ ط§ظ„ط£ط·ظپط§ظ„",
+      "after": "مورّد ألعاب الأطفال"
+    }
+  ]
+}

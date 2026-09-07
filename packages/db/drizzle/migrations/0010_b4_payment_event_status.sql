@@ -1,0 +1,2 @@
+ALTER TABLE "payment_events" ADD COLUMN "payment_status" text NOT NULL;--> statement-breakpoint
+ALTER TABLE "payment_events" ADD CONSTRAINT "payment_events_payment_status_valid" CHECK ("payment_events"."payment_status" in ('pending','succeeded','failed','expired','unknown'));

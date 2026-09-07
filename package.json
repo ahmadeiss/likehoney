@@ -1,0 +1,25 @@
+{
+  "name": "likehoney",
+  "version": "0.1.0",
+  "private": true,
+  "description": "Like Honey — premium bilingual (Arabic-first / English) commerce platform.",
+  "type": "module",
+  "engines": {
+    "node": ">=24.0.0 <25"
+  },
+  "packageManager": "pnpm@11.3.0",
+  "scripts": {
+    "dev": "pnpm --parallel --filter @likehoney/web --filter @likehoney/api dev",
+    "dev:web": "pnpm --filter @likehoney/web dev",
+    "dev:api": "pnpm --filter @likehoney/api dev",
+    "dev:web:vinext": "pnpm --filter @likehoney/web dev:vinext",
+    "build": "pnpm -r build",
+    "lint": "pnpm -r lint",
+    "typecheck": "pnpm -r typecheck",
+    "format": "prettier --write .",
+    "format:check": "prettier --check ."
+  },
+  "devDependencies": {
+    "prettier": "3.9.6"
+  }
+}

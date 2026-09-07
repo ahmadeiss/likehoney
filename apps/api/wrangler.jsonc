@@ -1,0 +1,53 @@
+{
+  "$schema": "node_modules/wrangler/config-schema.json",
+  "name": "likehoney-api",
+  "main": "src/index.ts",
+  "compatibility_date": "2026-08-27",
+  "compatibility_flags": ["nodejs_compat"],
+  "observability": {
+    "enabled": true,
+  },
+  // Gate B4 Stage 4 — reconciliation sweep (§46): unprocessed webhook events +
+  // reservations past their reconcile_after window. Safe under overlap (§76).
+  "triggers": {
+    "crons": ["*/5 * * * *"],
+  },
+  // Default/local environment — ordinary `pnpm dev`. `MEDIA_BUCKET` resolves
+  // to local Miniflare R2 (no `remote`, so it never touches a real bucket);
+  // safe for every normal developer session without any Cloudflare account.
+  "r2_buckets": [
+    {
+      "binding": "MEDIA_BUCKET",
+      "bucket_name": "likehoney-media",
+    },
+  ],
+  "env": {
+    // Explicit real-Cloudflare-R2 development mode: `wrangler dev --env
+    // r2-remote`. Worker code still runs LOCALLY; only the R2 binding is
+    // `remote: true`, so R2 reads/writes hit the real `likehoney-media-dev`
+    // bucket while everything else (routing, DB, auth) stays local. Never
+    // the plain `dev` script — that name would make it too easy to mutate
+    // real Cloudflare data from an ordinary local session.
+    "r2-remote": {
+      "r2_buckets": [
+        {
+          "binding": "MEDIA_BUCKET",
+          "bucket_name": "likehoney-media-dev",
+          "remote": true,
+        },
+      ],
+    },
+    // Production binding only — this phase does not deploy it. Same logical
+    // binding name, physical bucket is the production one. No `remote` flag:
+    // a real `wrangler deploy --env production` always runs against the real
+    // bucket already; `remote` only matters for local `wrangler dev`.
+    "production": {
+      "r2_buckets": [
+        {
+          "binding": "MEDIA_BUCKET",
+          "bucket_name": "likehoney-media-prod",
+        },
+      ],
+    },
+  },
+}

@@ -1,0 +1,10 @@
+{
+  "extends": "../../tsconfig.base.json",
+  "compilerOptions": {
+    "noEmit": true,
+    // Shared runs in Cloudflare Workers and Node ≥ 20; both expose the Web
+    // Crypto + encoding globals (crypto.subtle, TextEncoder) used by fingerprints.
+    "lib": ["ES2022", "WebWorker"]
+  },
+  "include": ["src"]
+}
