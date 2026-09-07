@@ -5,9 +5,23 @@ import { useCallback, useState } from 'react'
 
 import { Button, Dialog, Field, Input, Select, Textarea } from '@likehoney/ui'
 
-import { client, type CategoryDoc, type EntityStatus } from '../../../lib/admin/client'
+import {
+  client,
+  type CategoryCreateInput,
+  type CategoryDoc,
+  type CategoryUpdateInput,
+  type EntityStatus,
+} from '../../../lib/admin/client'
+import {
+  buildCategoryCreatePayload,
+  buildCategoryUpdatePayload,
+  type CategoryField,
+  type CategoryFormErrorCode,
+  type CategoryFormErrors,
+  type CategoryFormValues,
+} from '../../../lib/admin/category-form'
 import { useMutation, useResource } from '../../../lib/admin/hooks'
-import { useLocale, useT } from '../../../lib/admin/i18n'
+import { useLocale, useT, type DictKey } from '../../../lib/admin/i18n'
 import { formatCount } from '../../../lib/admin/format'
 import {
   AdminEmpty,
@@ -20,6 +34,7 @@ import {
   Panel,
   RowSkeleton,
   StatusBadge,
+  errorMessage,
 } from '../_components/shared'
 
 type EditorState = { mode: 'closed' } | { mode: 'create' } | { mode: 'edit'; category: CategoryDoc }
@@ -175,6 +190,26 @@ export default function AdminCategoriesPage() {
 // Editor / delete (logic unchanged)
 // ---------------------------------------------------------------------------
 
+const CATEGORY_FIELD_ERROR: Record<
+  CategoryField,
+  Partial<Record<CategoryFormErrorCode, DictKey>>
+> = {
+  nameAr: { required: 'categories.errorNameArRequired' },
+  nameEn: { required: 'categories.errorNameEnRequired' },
+  code: { required: 'categories.errorCodeRequired', codeFormat: 'categories.errorCodeFormat' },
+  slug: { slugFormat: 'categories.errorSlugFormat' },
+}
+
+const CATEGORY_FIELD_ORDER: readonly CategoryField[] = ['nameAr', 'nameEn', 'code', 'slug']
+
+function categoryFieldMessageKey(errors: CategoryFormErrors): DictKey | null {
+  for (const field of CATEGORY_FIELD_ORDER) {
+    const code = errors[field]
+    if (code !== undefined) return CATEGORY_FIELD_ERROR[field][code] ?? null
+  }
+  return null
+}
+
 function CategoryEditor({
   initialState,
   onSave,
@@ -196,39 +231,32 @@ function CategoryEditor({
   const [advanced, setAdvanced] = useState(false)
   const [fieldError, setFieldError] = useState<string | null>(null)
 
-  const { run, pending } = useMutation(() =>
-    isEdit
-      ? client.updateCategory(initialState.id, {
-          nameAr: nameAr.trim(),
-          nameEn: nameEn.trim(),
-          slug: slug.trim(),
-          descriptionAr: descriptionAr.trim() || null,
-          descriptionEn: descriptionEn.trim() || null,
-          status,
-        })
-      : client.createCategory({
-          nameAr: nameAr.trim(),
-          nameEn: nameEn.trim(),
-          code: code.trim().toUpperCase(),
-          slug: slug.trim(),
-          descriptionAr: descriptionAr.trim() || undefined,
-          descriptionEn: descriptionEn.trim() || undefined,
-          status,
-        }),
-  )
+  const { run, pending } = useMutation((input: CategoryCreateInput | CategoryUpdateInput) => {
+    if (isEdit) return client.updateCategory(initialState.id, input as CategoryUpdateInput)
+    return client.createCategory(input as CategoryCreateInput)
+  })
 
   const submit = async () => {
-    if (nameAr.trim().length === 0 || nameEn.trim().length === 0) {
-      setFieldError(t('error.invalid'))
+    const values: CategoryFormValues = {
+      nameAr,
+      nameEn,
+      code,
+      slug,
+      descriptionAr,
+      descriptionEn,
+      status,
+    }
+    const { payload, errors } = isEdit
+      ? buildCategoryUpdatePayload(values)
+      : buildCategoryCreatePayload(values)
+    if (payload === undefined) {
+      const key = categoryFieldMessageKey(errors)
+      setFieldError(key !== null ? t(key) : t('error.invalid'))
       return
     }
-    if (!isEdit && code.trim().length === 0) {
-      setFieldError(t('error.invalid'))
-      return
-    }
-    const result = await run()
+    const result = await run(payload)
     if (result.ok) onSave()
-    else setFieldError(t('error.generic'))
+    else setFieldError(errorMessage(result.error, t))
   }
 
   return (
@@ -279,7 +307,10 @@ function CategoryEditor({
           {advanced ? (
             <div className="mt-3 flex flex-col gap-3">
               <p className="text-xs text-ink-3">{t('categories.advancedHint')}</p>
-              <Field label={t('categories.slug')}>
+              <Field
+                label={t('categories.slug')}
+                hint={isEdit ? t('categories.slugKeepOnEdit') : t('categories.slugAuto')}
+              >
                 <Input
                   dir="ltr"
                   value={slug}

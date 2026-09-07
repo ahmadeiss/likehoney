@@ -705,6 +705,28 @@ export const dict = {
     en: 'The code is usually all that’s needed. It’s used inside the product code.',
   },
   'categories.productCount': { ar: 'عدد المنتجات', en: 'Products' },
+  'categories.slugAuto': {
+    ar: 'اتركه فارغًا لإنشائه تلقائيًا من الاسم بالإنجليزية.',
+    en: 'Leave blank to auto-generate from the English name.',
+  },
+  'categories.slugKeepOnEdit': {
+    ar: 'اتركه فارغًا للإبقاء على الرابط الحالي.',
+    en: 'Leave blank to keep the current link.',
+  },
+  'categories.errorNameArRequired': { ar: 'الاسم بالعربية مطلوب.', en: 'Arabic name is required.' },
+  'categories.errorNameEnRequired': {
+    ar: 'الاسم بالإنجليزية مطلوب.',
+    en: 'English name is required.',
+  },
+  'categories.errorCodeRequired': { ar: 'الرمز مطلوب.', en: 'Code is required.' },
+  'categories.errorCodeFormat': {
+    ar: 'الرمز يجب أن يكون أحرفًا وأرقامًا إنجليزية كبيرة (1–8) بدون مسافات.',
+    en: 'Code must be 1–8 uppercase letters or digits with no spaces.',
+  },
+  'categories.errorSlugFormat': {
+    ar: 'الرابط يجب أن يكون أحرفًا صغيرة وأرقامًا مفصولة بشرطات، بدون مسافات.',
+    en: 'Slug must be lowercase letters/digits separated by hyphens, with no spaces.',
+  },
 
   // ---------------------------------------------------------------------------
   // Suppliers

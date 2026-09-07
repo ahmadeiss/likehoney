@@ -644,8 +644,8 @@ export interface CategoryUpdateInput {
   nameAr?: string
   nameEn?: string
   slug?: string
-  descriptionEn?: string | null
-  descriptionAr?: string | null
+  descriptionEn?: string
+  descriptionAr?: string
   status?: EntityStatus
 }
 
