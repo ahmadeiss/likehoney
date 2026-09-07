@@ -106,7 +106,7 @@ test('verification reads the iteration count from the stored hash format', async
 })
 
 test('setStaffPassword (change/reset flow) writes a 100000-iteration hash', async () => {
-  let staffWrite: { passwordHash: string; mustChangePassword: boolean } | undefined
+  let staffWrite: { passwordHash: string } | undefined
   const db = {
     // Covers the two query shapes setStaffPassword uses: the staff password
     // update (has returning()) and revokeAllStaffSessions' sessions update
@@ -116,10 +116,7 @@ test('setStaffPassword (change/reset flow) writes a 100000-iteration hash', asyn
         where: () => ({
           returning: () => {
             if (typeof values.passwordHash === 'string') {
-              staffWrite = {
-                passwordHash: values.passwordHash,
-                mustChangePassword: Boolean(values.mustChangePassword),
-              }
+              staffWrite = { passwordHash: values.passwordHash }
             }
             return Promise.resolve([{ id: 'staff-1' }])
           },
@@ -135,7 +132,6 @@ test('setStaffPassword (change/reset flow) writes a 100000-iteration hash', asyn
   assert.equal(parts[0], 'pbkdf2')
   assert.equal(Number(parts[1]), 100_000)
   assert.equal(await verifyPassword('new-password-123', staffWrite!.passwordHash), true)
-  assert.equal(staffWrite!.mustChangePassword, false)
 })
 
 test('an iteration count above the Cloudflare 100000 cap fails as a handled ServiceError, not an unhandled platform error', async (t) => {

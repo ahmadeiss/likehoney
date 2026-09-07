@@ -333,7 +333,6 @@ export interface AuthStaffDoc {
   email: string | null
   phoneNormalized: string | null
   status: EntityStatus
-  mustChangePassword: boolean
 }
 
 /** `GET /auth/me` document. */
@@ -1183,7 +1182,7 @@ export const client = {
       method: 'POST',
       body: JSON.stringify({ currentPassword, newPassword }),
     }),
-  /** Admin sets/resets a staff member's password (forces change on next login). */
+  /** Admin sets/resets a staff member's password (revokes their sessions). */
   setStaffPassword: (id: string, password: string) =>
     apiRequest<{ ok: boolean }>(`/staff/${id}/password`, {
       method: 'PUT',

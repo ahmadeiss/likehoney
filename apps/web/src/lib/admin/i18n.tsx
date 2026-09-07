@@ -145,37 +145,15 @@ export const dict = {
   },
 
   // ---------------------------------------------------------------------------
-  // Forced password change
+  // Password copy (shared by staff password dialogs)
   // ---------------------------------------------------------------------------
-  'password.title': { ar: 'تغيير كلمة المرور', en: 'Change your password' },
-  'password.subtitle': {
-    ar: 'ستحتاج إلى تحديد كلمة مرور جديدة قبل الدخول إلى لوحة الإدارة.',
-    en: 'You must set a new password before accessing the Admin.',
-  },
-  'password.current': { ar: 'كلمة المرور الحالية', en: 'Current password' },
-  'password.currentPlaceholder': { ar: 'كلمة المرور المؤقتة', en: 'Temporary password' },
   'password.new': { ar: 'كلمة المرور الجديدة', en: 'New password' },
   'password.confirm': { ar: 'تأكيد كلمة المرور', en: 'Confirm password' },
-  'password.submit': { ar: 'تحديث كلمة المرور', en: 'Update password' },
-  'password.submitting': { ar: 'جارٍ التحديث...', en: 'Updating…' },
-  'password.newRequired': { ar: 'أدخل كلمة مرور جديدة.', en: 'Enter a new password.' },
   'password.minLength': {
     ar: 'كلمة المرور لا تقل عن 8 أحرف.',
     en: 'Password must be at least 8 characters.',
   },
   'password.mismatch': { ar: 'كلمتا المرور غير متطابقتين.', en: 'Passwords do not match.' },
-  'password.currentWrong': {
-    ar: 'كلمة المرور الحالية غير صحيحة.',
-    en: 'The current password is incorrect.',
-  },
-  'password.changedError': {
-    ar: 'تعذّر تغيير كلمة المرور. حاول مرة أخرى.',
-    en: 'Could not change the password. Please try again.',
-  },
-  'password.newMismatchCurrent': {
-    ar: 'يجب أن تختلف كلمة المرور الجديدة عن الحالية.',
-    en: 'The new password must differ from the current one.',
-  },
 
   // ---------------------------------------------------------------------------
   // Common actions / labels
@@ -1062,12 +1040,12 @@ export const dict = {
   'staff.setPassword': { ar: 'ضبط كلمة مرور', en: 'Set password' },
   'staff.resetPassword': { ar: 'إعادة تعيين كلمة المرور', en: 'Reset password' },
   'staff.passwordPrompt': {
-    ar: 'أدخل كلمة مرور مؤقتة للموظف. سيُطلب منه تغييرها عند أول تسجيل دخول، وستُلغى كل جلساته الحالية.',
-    en: 'Set a temporary password. The staff member must change it on next sign-in, and all their current sessions are revoked.',
+    ar: 'أدخل كلمة مرور جديدة للموظف. ستُلغى جميع جلساته الحالية بعد الضبط.',
+    en: 'Set a new password for the staff member. All their current sessions are revoked.',
   },
   'staff.passwordPlaceholder': {
-    ar: 'كلمة مرور مؤقتة (8+ أحرف)',
-    en: 'Temporary password (8+ chars)',
+    ar: 'كلمة مرور جديدة (8+ أحرف)',
+    en: 'New password (8+ chars)',
   },
   'staff.passwordSet': { ar: 'تم ضبط كلمة المرور', en: 'Password set' },
   'staff.passwordEmpty': { ar: 'بدون كلمة مرور', en: 'No password set' },

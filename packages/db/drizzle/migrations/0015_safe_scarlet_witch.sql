@@ -1,0 +1,1 @@
+ALTER TABLE "staff_users" DROP COLUMN "must_change_password";

@@ -13,8 +13,8 @@
  *   - Requires CONFIRM_PRODUCTION_PASSWORD_RESET=YES (fail-closed otherwise).
  *   - Refuses to run against the development branch (packages/db/.env).
  *   - Aborts on zero or more than one matching staff member.
- *   - Writes only password_hash + must_change_password=true. status, roles,
- *     name, phone and every other column are preserved.
+ *   - Writes only password_hash. status, roles, name, phone and every other
+ *     column are preserved.
  *   - Never prints the password and never prints the database URL (only a
  *     redacted host + database name).
  *   - Does not create permissions, roles, sessions, or any other data.
@@ -108,12 +108,11 @@ const { id } = rows[0]
 
 const passwordHash = await hashPassword(password)
 const updated =
-  await sql`UPDATE staff_users SET password_hash = ${passwordHash}, must_change_password = true WHERE id = ${id} RETURNING id`
+  await sql`UPDATE staff_users SET password_hash = ${passwordHash} WHERE id = ${id} RETURNING id`
 if (updated.length !== 1) {
   throw new Error('UPDATE did not affect exactly one row — aborting, nothing changed')
 }
 
 console.log(`Password reset for ${email} (id ${id.slice(0, 8)}…) on ${target}`)
 console.log(`PBKDF2-SHA256 @ ${PBKDF2_ITERATIONS} iterations (Cloudflare Workers compatible)`)
-console.log('must_change_password = true — the first sign-in will force a password change.')
 console.log('Password not printed.')

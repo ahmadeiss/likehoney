@@ -27,8 +27,9 @@ import { useState, type ReactNode } from 'react'
 import { Button, Spinner } from '@likehoney/ui'
 
 import { useAuth, AuthProvider } from '../../../lib/admin/auth'
-import { LangProvider, useLang, useT, type DictKey } from '../../../lib/admin/i18n'
+import { isAdminAuthPath } from '../../../lib/admin/auth-paths'
 import { useIdentity, IdentityProvider } from '../../../lib/admin/identity'
+import { LangProvider, useLang, useT, type DictKey } from '../../../lib/admin/i18n'
 import { roleFromPermissions, type AdminRole } from '../../../lib/admin/role'
 import { GlobalSearch } from './global-search'
 
@@ -379,12 +380,6 @@ function TopBar({ onOpenMobile }: { onOpenMobile: () => void }) {
 // Shell
 // ---------------------------------------------------------------------------
 
-const AUTH_PATHS = ['/admin/login', '/admin/change-password']
-
-function isAuthPath(pathname: string): boolean {
-  return AUTH_PATHS.includes(pathname)
-}
-
 function OperationalShell({ children }: { children: ReactNode }) {
   const t = useT()
   const { status, me } = useAuth()
@@ -405,15 +400,6 @@ function OperationalShell({ children }: { children: ReactNode }) {
           <Spinner size="sm" aria-hidden="true" />
           {t('shell.session.checking')}
         </div>
-      </div>
-    )
-  }
-
-  if (status === 'authenticated' && me?.staff.mustChangePassword) {
-    if (typeof window !== 'undefined') router.replace('/admin/change-password')
-    return (
-      <div className="lh-theme-admin flex min-h-svh items-center justify-center bg-canvas">
-        <Spinner size="sm" aria-hidden="true" />
       </div>
     )
   }
@@ -482,7 +468,7 @@ function OperationalShell({ children }: { children: ReactNode }) {
 export function AdminShell({ children }: { children: ReactNode }) {
   const pathname = usePathname()
 
-  if (isAuthPath(pathname)) {
+  if (isAdminAuthPath(pathname)) {
     return (
       <div className="lh-theme-admin min-h-svh bg-canvas">
         <div className="mx-auto flex min-h-svh w-full max-w-md flex-col justify-center px-6 py-10">

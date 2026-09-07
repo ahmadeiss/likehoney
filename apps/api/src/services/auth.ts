@@ -12,7 +12,9 @@
 import { UnauthorizedError } from '@likehoney/shared'
 import {
   createStaffSession,
+  effectivePermissionCodes,
   getLiveSessionByTokenHash,
+  getStaffRoleIds,
   getStaffUser,
   getStaffUserByIdentifier,
   revokeAllStaffSessions,
@@ -89,7 +91,6 @@ function randomToken(): string {
 export interface LoginResult {
   staff: StaffUserRow
   token: string
-  mustChangePassword: boolean
 }
 
 /**
@@ -132,7 +133,33 @@ export async function loginService(
     userAgent: context.userAgent ?? null,
   })
 
-  return { staff, token, mustChangePassword: staff.mustChangePassword }
+  return { staff, token }
+}
+
+/**
+ * Safe `/auth/me` (and login) payload: the signed-in staff member + effective
+ * permissions + role ids. Whitelists only fields in the client `AuthMeDoc`
+ * contract; the password hash never leaves the server.
+ */
+export async function authMePayload(db: DbClient, staffId: string) {
+  const staff = await getStaffUser(db, staffId)
+  if (staff === undefined) throw new UnauthorizedError('authentication required')
+  const [codes, roleIds] = await Promise.all([
+    effectivePermissionCodes(db, staffId),
+    getStaffRoleIds(db, staffId),
+  ])
+  return {
+    staff: {
+      id: staff.id,
+      nameAr: staff.nameAr,
+      nameEn: staff.nameEn,
+      email: staff.email,
+      phoneNormalized: staff.phoneNormalized,
+      status: staff.status,
+    },
+    permissions: codes,
+    roleIds,
+  }
 }
 
 /**
@@ -168,18 +195,16 @@ export async function disableStaffAndRevokeSessions(db: DbClient, staffId: strin
 }
 
 /**
- * Sets a staff password (hash). When `mustChange` is true the next sign-in is
- * forced to change it (used when an Admin sets/resets a password); prior
- * sessions are always revoked so a stolen cookie cannot outlive the change.
+ * Sets a staff password (hash). Prior sessions are always revoked so a stolen
+ * cookie cannot outlive the change.
  */
 export async function setStaffPassword(
   db: DbClient,
   staffId: string,
   password: string,
-  mustChange = false,
 ): Promise<void> {
   const passwordHash = await hashPassword(password)
-  await updateStaffUser(db, staffId, { passwordHash, mustChangePassword: mustChange })
+  await updateStaffUser(db, staffId, { passwordHash })
   await revokeAllStaffSessions(db, staffId)
 }
 

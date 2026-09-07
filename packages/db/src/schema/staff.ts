@@ -29,8 +29,6 @@ export const staffUsers = pgTable(
      * Admin (or bootstrap) assigns one.
      */
     passwordHash: t.text('password_hash'),
-    /** When true the next successful sign-in must change the password. */
-    mustChangePassword: t.boolean('must_change_password').notNull().default(false),
     /** When the last successful sign-in completed. */
     lastLoginAt: t.timestamp('last_login_at', { withTimezone: true }),
     notes: t.text('notes'),

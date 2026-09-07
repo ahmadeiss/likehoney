@@ -48,9 +48,8 @@ import { recordAudit, type AuditActor } from './audit'
 
 /**
  * Safe projection of a staff row for API responses. Whitelists only the fields
- * in the client `StaffDoc` contract — the password hash and the internal
- * forced-change flag never leave the server. The signed-in `/auth/me` payload
- * carries `mustChangePassword` via its own separate whitelist.
+ * in the client `StaffDoc` contract — the password hash never leaves the
+ * server. The signed-in `/auth/me` payload uses its own separate whitelist.
  */
 function staffDoc(staff: StaffUserRow) {
   return {

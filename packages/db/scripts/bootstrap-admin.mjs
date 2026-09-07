@@ -152,7 +152,7 @@ if (!staffId) {
 
 const passwordHash = await hashPassword(password)
 await run(
-  `UPDATE staff_users SET password_hash = ${q(passwordHash)}, must_change_password = true, status = 'active' WHERE id = ${q(staffId)}`,
+  `UPDATE staff_users SET password_hash = ${q(passwordHash)}, status = 'active' WHERE id = ${q(staffId)}`,
 )
 
 // Attach the admin role (idempotent).

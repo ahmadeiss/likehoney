@@ -10,10 +10,6 @@
  * (`checking | authenticated | anonymous`). No role or identity claim stored
  * client-side is ever treated as authoritative — the backend re-checks
  * active status + RBAC on every request.
- *
- * A convenience keeps the last used login identifier (an email/phone, not a
- * secret) in memory so the forced password-change flow can transparently
- * re-establish a fresh session after the change (which revokes the old one).
  */
 import {
   createContext,
@@ -34,17 +30,11 @@ export type AuthStatus = 'checking' | 'authenticated' | 'anonymous'
 interface AuthContextValue {
   status: AuthStatus
   me: AuthMeDoc | null
-  /**
-   * The login identifier used to reach this session (email/phone). Held only to
-   * support the forced password-change re-login; never an authority.
-   */
-  loginIdentifier: string | null
   /** True while the initial session resolution is still in flight. */
   checking: boolean
   refresh: () => Promise<void>
   login: (identifier: string, password: string) => Promise<AuthMeDoc>
   logout: () => Promise<void>
-  completePasswordChange: (currentPassword: string, newPassword: string) => Promise<AuthMeDoc>
   hasPermission: (code: string) => boolean
 }
 
@@ -53,7 +43,6 @@ const AuthContext = createContext<AuthContextValue | null>(null)
 export function AuthProvider({ children }: { children: ReactNode }) {
   const [me, setMe] = useState<AuthMeDoc | null>(null)
   const [status, setStatus] = useState<AuthStatus>('checking')
-  const [loginIdentifier, setLoginIdentifier] = useState<string | null>(null)
   const resolveRef = useRef<number>(0)
 
   const resolve = useCallback(async (): Promise<void> => {
@@ -109,7 +98,6 @@ export function AuthProvider({ children }: { children: ReactNode }) {
 
   const login = useCallback(async (identifier: string, password: string): Promise<AuthMeDoc> => {
     const resolved = await client.login(identifier, password)
-    setLoginIdentifier(identifier.trim())
     setMe(resolved)
     setStatus('authenticated')
     return resolved
@@ -121,24 +109,9 @@ export function AuthProvider({ children }: { children: ReactNode }) {
     } catch {
       // Best-effort server revocation; the cookie is cleared regardless.
     }
-    setLoginIdentifier(null)
     setMe(null)
     setStatus('anonymous')
   }, [])
-
-  const completePasswordChange = useCallback(
-    async (currentPassword: string, newPassword: string): Promise<AuthMeDoc> => {
-      await client.changePassword(currentPassword, newPassword)
-      // The change revoked the old session — establish a fresh one with the new
-      // password so the user is seamlessly signed in.
-      const identifier = loginIdentifier ?? ''
-      const resolved = await client.login(identifier, newPassword)
-      setMe(resolved)
-      setStatus('authenticated')
-      return resolved
-    },
-    [loginIdentifier],
-  )
 
   const hasPermission = useCallback(
     (code: string): boolean => (me ? me.permissions.includes(code) : false),
@@ -149,15 +122,13 @@ export function AuthProvider({ children }: { children: ReactNode }) {
     () => ({
       status,
       me,
-      loginIdentifier,
       checking: status === 'checking',
       refresh: () => resolve(),
       login,
       logout,
-      completePasswordChange,
       hasPermission,
     }),
-    [status, me, loginIdentifier, resolve, login, logout, completePasswordChange, hasPermission],
+    [status, me, resolve, login, logout, hasPermission],
   )
 
   return <AuthContext.Provider value={value}>{children}</AuthContext.Provider>

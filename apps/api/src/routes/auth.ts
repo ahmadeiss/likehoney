@@ -8,18 +8,14 @@
  * member rotate their own password (revoking all their sessions).
  */
 import { Hono } from 'hono'
-import {
-  effectivePermissionCodes,
-  getStaffRoleIds,
-  getStaffUser,
-  type DbClient,
-} from '@likehoney/db'
+import { getStaffUser } from '@likehoney/db'
 import { staffChangePasswordSchema, staffLoginSchema, UnauthorizedError } from '@likehoney/shared'
 
 import { SESSION_COOKIE_NAME, type AppEnv } from '../env'
 import { currentStaffId } from '../http/auth'
 import { parseBody } from '../http/request'
 import {
+  authMePayload,
   loginService,
   logoutService,
   sessionCookieOptions,
@@ -47,28 +43,6 @@ function sessionCookieValue(value: string, opts: { secure: boolean; maxAge: numb
   return opts.secure ? `${base}; Secure` : base
 }
 
-async function staffMePayload(db: DbClient, staffId: string) {
-  const staff = await getStaffUser(db, staffId)
-  if (staff === undefined) throw new UnauthorizedError('authentication required')
-  const [codes, roleIds] = await Promise.all([
-    effectivePermissionCodes(db, staffId),
-    getStaffRoleIds(db, staffId),
-  ])
-  return {
-    staff: {
-      id: staff.id,
-      nameAr: staff.nameAr,
-      nameEn: staff.nameEn,
-      email: staff.email,
-      phoneNormalized: staff.phoneNormalized,
-      status: staff.status,
-      mustChangePassword: staff.mustChangePassword,
-    },
-    permissions: codes,
-    roleIds,
-  }
-}
-
 authRouter.post('/login', async (c) => {
   const input = await parseBody(c, staffLoginSchema)
   const db = getDatabase(c.env)
@@ -82,7 +56,7 @@ authRouter.post('/login', async (c) => {
   const cookie = sessionCookieOptions(c).options
   c.header('Set-Cookie', sessionCookieValue(result.token, cookie))
 
-  return c.json(await staffMePayload(db, result.staff.id), 200)
+  return c.json(await authMePayload(db, result.staff.id), 200)
 })
 
 authRouter.post('/logout', async (c) => {
@@ -103,7 +77,7 @@ authRouter.get('/me', async (c) => {
   // route still re-checks the permission for that identity.
   const staffId = await currentStaffId(c)
   if (staffId === undefined) throw new UnauthorizedError('authentication required')
-  return c.json(await staffMePayload(db, staffId))
+  return c.json(await authMePayload(db, staffId))
 })
 
 authRouter.post('/change-password', async (c) => {

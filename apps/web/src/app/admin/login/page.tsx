@@ -22,7 +22,7 @@ import { useT } from '../../../lib/admin/i18n'
 export default function LoginPage() {
   const t = useT()
   const router = useRouter()
-  const { status, me, login } = useAuth()
+  const { status, login } = useAuth()
   const { setStaffId } = useIdentity()
 
   const [identifier, setIdentifier] = useState('')
@@ -75,12 +75,8 @@ export default function LoginPage() {
     setSubmitting(true)
     setError(null)
     try {
-      const resolved = await login(identifier.trim(), password)
-      if (resolved.staff.mustChangePassword) {
-        router.replace('/admin/change-password')
-      } else {
-        router.replace('/admin')
-      }
+      await login(identifier.trim(), password)
+      router.replace('/admin')
     } catch (cause) {
       if (cause instanceof ApiError) {
         // 401 covers both invalid credentials and inactive accounts; the server
@@ -100,13 +96,11 @@ export default function LoginPage() {
     router.replace('/admin')
   }
 
-  // Already signed in (and not forced to change): skip the form.
-  const authedNotForced = status === 'authenticated' && !me?.staff.mustChangePassword
-  const forceChange = status === 'authenticated' && Boolean(me?.staff.mustChangePassword)
+  // Already signed in: skip the form.
+  const authed = status === 'authenticated'
   useEffect(() => {
-    if (authedNotForced) router.replace('/admin')
-    if (forceChange) router.replace('/admin/change-password')
-  }, [authedNotForced, forceChange, router])
+    if (authed) router.replace('/admin')
+  }, [authed, router])
 
   return (
     <div className="flex flex-col gap-6">

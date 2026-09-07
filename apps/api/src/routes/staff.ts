@@ -194,7 +194,7 @@ staffRouter.put('/:id/password', requirePermission('staff:write'), async (c) => 
   const { id } = parseParams(c, uuidParamSchema)
   const input = await parseBody(c, staffSetPasswordSchema)
   const db = getDatabase(c.env)
-  await setStaffPassword(db, id, input.password, true)
+  await setStaffPassword(db, id, input.password)
   await recordAudit(db, auditActor(await currentStaffId(c)), 'staff.password.reset', 'staff', id)
   return c.json({ ok: true })
 })
