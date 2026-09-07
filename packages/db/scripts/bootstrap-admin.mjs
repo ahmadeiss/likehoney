@@ -60,7 +60,10 @@ if (!phone) {
   phone = `+970${rand}`
 }
 
-const PBKDF2_ITERATIONS = 210_000
+// PBKDF2-SHA256, exactly 100000 iterations (Cloudflare Workers rejects counts
+// above 100000) — 16-byte salt, 32-byte key. Matches apps/api's canonical
+// password.ts so hashes are interchangeable between bootstrap and runtime.
+const PBKDF2_ITERATIONS = 100_000
 const SALT_BYTES = 16
 const KEY_BYTES = 32
 const PREFIX = 'pbkdf2'
