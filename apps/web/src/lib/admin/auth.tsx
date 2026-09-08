@@ -104,11 +104,10 @@ export function AuthProvider({ children }: { children: ReactNode }) {
   }, [])
 
   const logout = useCallback(async (): Promise<void> => {
-    try {
-      await client.logout()
-    } catch {
-      // Best-effort server revocation; the cookie is cleared regardless.
-    }
+    // An HttpOnly cookie can only be cleared by the server. A failed request
+    // must not claim the session was revoked or pretend the user signed out.
+    await client.logout()
+    resolveRef.current += 1
     setMe(null)
     setStatus('anonymous')
   }, [])

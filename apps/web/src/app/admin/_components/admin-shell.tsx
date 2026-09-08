@@ -29,7 +29,7 @@ import { Button, Spinner } from '@likehoney/ui'
 import { useAuth, AuthProvider } from '../../../lib/admin/auth'
 import { isAdminAuthPath } from '../../../lib/admin/auth-paths'
 import { useIdentity, IdentityProvider } from '../../../lib/admin/identity'
-import { LangProvider, useLang, useT, type DictKey } from '../../../lib/admin/i18n'
+import { LangProvider, useLang, useLocale, useT, type DictKey } from '../../../lib/admin/i18n'
 import { roleFromPermissions, type AdminRole } from '../../../lib/admin/role'
 import { GlobalSearch } from './global-search'
 
@@ -280,15 +280,24 @@ function Nav({
 
 function SidebarFoot({ role }: { role: AdminRole }) {
   const t = useT()
+  const locale = useLocale()
   const { me, logout } = useAuth()
   const router = useRouter()
   const [signingOut, setSigningOut] = useState(false)
+  const [signOutFailed, setSignOutFailed] = useState(false)
 
   const signOut = async () => {
     if (signingOut) return
     setSigningOut(true)
-    await logout()
-    router.replace('/admin/login')
+    setSignOutFailed(false)
+    try {
+      await logout()
+      router.replace('/admin/login')
+    } catch {
+      setSignOutFailed(true)
+    } finally {
+      setSigningOut(false)
+    }
   }
 
   const name = me ? `${me.staff.nameAr}${me.staff.nameEn ? ` · ${me.staff.nameEn}` : ''}` : ''
@@ -321,6 +330,13 @@ function SidebarFoot({ role }: { role: AdminRole }) {
               </span>
             </div>
           </div>
+          {signOutFailed ? (
+            <p role="alert" className="text-sm text-ink">
+              {locale === 'ar'
+                ? 'تعذّر تسجيل الخروج. تحقق من الاتصال وحاول مجددًا.'
+                : 'Sign-out failed. Check your connection and try again.'}
+            </p>
+          ) : null}
           <Button
             variant="subtle"
             size="sm"

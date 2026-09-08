@@ -26,35 +26,61 @@ export interface CartLineDetail extends CartLine {
 }
 
 const STORAGE_KEY = 'lh:cart'
+let memoryCart: CartLine[] = []
+let storageUnavailable = false
+
+/** Discard corrupt storage and merge duplicate variants before quoting. */
+export function normalizeCart(value: unknown): CartLine[] {
+  if (!Array.isArray(value)) return []
+  const lines = new Map<string, number>()
+  for (const line of value) {
+    if (
+      typeof line !== 'object' ||
+      line === null ||
+      !('variantId' in line) ||
+      !('quantity' in line)
+    )
+      continue
+    if (
+      typeof line.variantId !== 'string' ||
+      !/^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$/i.test(line.variantId) ||
+      typeof line.quantity !== 'number' ||
+      !Number.isFinite(line.quantity) ||
+      line.quantity < 1
+    )
+      continue
+    lines.set(
+      line.variantId,
+      Math.min(999, (lines.get(line.variantId) ?? 0) + Math.floor(line.quantity)),
+    )
+  }
+  return Array.from(lines, ([variantId, quantity]) => ({ variantId, quantity }))
+}
 
 /** Read cart from localStorage; safe to call on the client only. */
 export function readCart(): CartLine[] {
   if (typeof window === 'undefined') return []
+  if (storageUnavailable) return memoryCart.map((line) => ({ ...line }))
   try {
     const raw = window.localStorage.getItem(STORAGE_KEY)
-    if (!raw) return []
-    const parsed = JSON.parse(raw) as unknown
-    if (!Array.isArray(parsed)) return []
-    return parsed
-      .filter((line): line is CartLine =>
-        Boolean(
-          line &&
-          typeof (line as CartLine).variantId === 'string' &&
-          typeof (line as CartLine).quantity === 'number',
-        ),
-      )
-      .map((line) => ({
-        variantId: line.variantId,
-        quantity: Math.max(1, Math.floor(line.quantity)),
-      }))
+    memoryCart = raw ? normalizeCart(JSON.parse(raw) as unknown) : []
+    return memoryCart.map((line) => ({ ...line }))
   } catch {
-    return []
+    storageUnavailable = true
+    return memoryCart.map((line) => ({ ...line }))
   }
 }
 
 export function writeCart(lines: CartLine[]): void {
   if (typeof window === 'undefined') return
-  window.localStorage.setItem(STORAGE_KEY, JSON.stringify(lines))
+  memoryCart = normalizeCart(lines)
+  try {
+    window.localStorage.setItem(STORAGE_KEY, JSON.stringify(memoryCart))
+    storageUnavailable = false
+  } catch {
+    storageUnavailable = true
+    // Browsers that deny storage can still shop within the current tab.
+  }
   window.dispatchEvent(new CustomEvent('lh:cart'))
 }
 
@@ -86,7 +112,14 @@ export function useCartCount(): number {
   return useSyncExternalStore(
     (onChange) => {
       window.addEventListener('lh:cart', onChange)
-      return () => window.removeEventListener('lh:cart', onChange)
+      const onStorage = (event: StorageEvent) => {
+        if (event.key === STORAGE_KEY || event.key === null) onChange()
+      }
+      window.addEventListener('storage', onStorage)
+      return () => {
+        window.removeEventListener('lh:cart', onChange)
+        window.removeEventListener('storage', onStorage)
+      }
     },
     () => cartCount(readCart()),
     () => 0,

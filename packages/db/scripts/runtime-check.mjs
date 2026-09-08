@@ -140,6 +140,19 @@ const objectChecks = [
   ["enum payment_method → 'electronic'", () => enumHas('payment_method', 'electronic')],
   ["enum payment_status → 'pending'", () => enumHas('payment_status', 'pending')],
   ["enum payment_status → 'expired'", () => enumHas('payment_status', 'expired')],
+  // Gate C (0013) — product detail / customer directory drift
+  [
+    'column product_variants.acquisition_cost_minor',
+    () => columnExists('product_variants', 'acquisition_cost_minor'),
+  ],
+  ['column customers.status', () => columnExists('customers', 'status')],
+  ['column customers.first_seen_at', () => columnExists('customers', 'first_seen_at')],
+  ['column customers.last_seen_at', () => columnExists('customers', 'last_seen_at')],
+  // Reviews Gate (0014)
+  ['table store_reviews', () => tableExists('store_reviews')],
+  ["enum review_status → 'pending'", () => enumHas('review_status', 'pending')],
+  ["enum review_status → 'approved'", () => enumHas('review_status', 'approved')],
+  ["enum review_status → 'rejected'", () => enumHas('review_status', 'rejected')],
 ]
 for (const [label, fn] of objectChecks) {
   try {
@@ -165,8 +178,10 @@ if (problems.length === 0) {
 }
 
 console.error('\n  Database schema is behind the application.')
-console.error('  Required B4 migrations are not applied to this development database.\n')
+console.error('  Required migrations are not applied to this development database.\n')
 for (const p of problems) console.error(`   - ${p}`)
-console.error('\n  Fix: point DATABASE_URL / apps/api/.dev.vars at the b4-development Neon branch')
+console.error(
+  '\n  Fix: point DATABASE_URL / apps/api/.dev.vars at the current development Neon branch',
+)
 console.error('  and run:  pnpm --filter @likehoney/db db:migrate')
 process.exit(1)

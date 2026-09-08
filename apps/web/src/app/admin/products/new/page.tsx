@@ -24,13 +24,6 @@ interface DraftOption {
   values: DraftValue[]
 }
 
-function cartesian<T>(groups: T[][]): T[][] {
-  return groups.reduce<T[][]>(
-    (accumulator, group) => accumulator.flatMap((prefix) => group.map((item) => [...prefix, item])),
-    [[]],
-  )
-}
-
 function FormSection({
   title,
   hint,
@@ -111,14 +104,16 @@ export default function AdminNewProductPage() {
     }),
   )
 
-  const completeValues = options.some((option) =>
-    option.values.some((value) => value.code.trim().length > 0),
-  )
-  const combos = completeValues ? cartesian(options.map((option) => option.values)) : []
-  const comboCount = completeValues
-    ? combos.filter((combo) => combo.length === options.length && combo.every((v) => v.code.trim()))
-        .length
-    : 0
+  // Count combinations without allocating an exponentially large matrix on
+  // every keystroke. The server remains responsible for materializing variants.
+  const comboCount =
+    options.length === 0
+      ? 0
+      : options.reduce(
+          (count, option) =>
+            count * option.values.filter((value) => value.code.trim().length > 0).length,
+          1,
+        )
 
   const submit = async () => {
     if (nameAr.trim().length === 0) return setFieldError(t('products.form.nameArRequired'))
@@ -133,6 +128,9 @@ export default function AdminNewProductPage() {
         for (const value of option.values) {
           if (!/^[A-Z0-9]{1,8}$/.test(value.code.trim().toUpperCase())) {
             return setFieldError(t('products.form.optionCodeInvalid'))
+          }
+          if (!value.valueAr.trim() || !value.valueEn.trim()) {
+            return setFieldError(t('products.form.optionValueRequired'))
           }
         }
       }
@@ -176,7 +174,8 @@ export default function AdminNewProductPage() {
         (option) =>
           option.nameAr.trim().length > 0 &&
           option.nameEn.trim().length > 0 &&
-          option.values.some(
+          option.values.length > 0 &&
+          option.values.every(
             (value) =>
               value.code.trim().length > 0 &&
               value.valueAr.trim().length > 0 &&
@@ -333,9 +332,14 @@ export default function AdminNewProductPage() {
           >
             <div className="sm:max-w-xs">
               <Field
+                htmlFor="product-price"
                 label={mode === 'options' ? t('products.form.basePrice') : t('products.form.price')}
               >
-                <MoneyInput valueMinor={priceMinor} onChangeMinor={setPriceMinor} />
+                <MoneyInput
+                  id="product-price"
+                  valueMinor={priceMinor}
+                  onChangeMinor={setPriceMinor}
+                />
               </Field>
             </div>
 

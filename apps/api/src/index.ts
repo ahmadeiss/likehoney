@@ -1,7 +1,7 @@
 import { Hono } from 'hono'
 
 import type { AppEnv, Env } from './env'
-import { errorHandler, notFoundHandler } from './http/errors'
+import { describeDbFailure, errorHandler, notFoundHandler } from './http/errors'
 import { routes } from './routes'
 import { isDatabaseConfigured, getDatabase } from './services/db'
 import { runReconciliationPass } from './services/payments/reconciliation'
@@ -27,7 +27,12 @@ async function scheduled(_event: ScheduledController, env: Env): Promise<void> {
     const summary = await runReconciliationPass(db, env)
     console.log('reconciliation pass complete', summary)
   } catch (err) {
-    console.error('reconciliation pass failed', err)
+    const dbFailure = describeDbFailure(err)
+    if (dbFailure !== null) {
+      console.error('reconciliation pass failed: database error', dbFailure)
+    } else {
+      console.error('reconciliation pass failed', err)
+    }
   }
 }
 

@@ -2076,3 +2076,17 @@ button.lh-admin-list-row:hover {
   opacity: 0.35;
   cursor: not-allowed;
 }
+.lh .lh-checkout__fields {
+  min-width: 0;
+  border: 0;
+  margin: 0;
+  padding: 0;
+}
+@media (max-width: 47.99rem) {
+  .lh-theme-admin .lh-input,
+  .lh-theme-admin .lh-textarea,
+  .lh-theme-admin .lh-select__control {
+    font-size: 1rem;
+    min-height: 44px;
+  }
+}

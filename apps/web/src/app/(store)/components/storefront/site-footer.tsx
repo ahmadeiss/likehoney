@@ -21,6 +21,7 @@ export function SiteFooter(): ReactElement {
   const explore: { label: string; href: string }[] = [
     { label: t.exploreLinks[0] ?? copy[lang].nav.catalog, href: '/shop' },
     { label: t.exploreLinks[3] ?? copy[lang].nav.home, href: '/#our-world' },
+    { label: lang === 'ar' ? 'شاركنا تجربتك' : 'Write a review', href: '/shop/review' },
   ]
 
   const contact: string[] = [checkout.trustNote, copy[lang].hero.kicker]

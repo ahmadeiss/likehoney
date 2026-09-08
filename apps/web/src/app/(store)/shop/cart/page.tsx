@@ -2,7 +2,7 @@
 
 import { Minus, Plus, ShoppingBag, Trash2 } from 'lucide-react'
 import Link from 'next/link'
-import { useEffect, useState } from 'react'
+import { useEffect, useRef, useState } from 'react'
 
 import { readCart, setCartLines, cartCount, type CartLine } from '../../../../lib/shop/cart'
 import { shopClient, formatMoney, ApiError, type QuoteLine } from '../../../../lib/shop/client'
@@ -32,8 +32,10 @@ export default function CartPage() {
   const [loading, setLoading] = useState(true)
   const [error, setError] = useState<string | null>(null)
   const [notice, setNotice] = useState<string | null>(null)
+  const requestVersion = useRef(0)
 
   async function reconcile(lines: CartLine[]) {
+    const request = ++requestVersion.current
     if (lines.length === 0) {
       setVerified([])
       setSubtotal(0)
@@ -42,6 +44,7 @@ export default function CartPage() {
     }
     try {
       const result = await verifyAgainstAnyZone(lines)
+      if (request !== requestVersion.current) return
       // Truthful reconciliation: adopt the server's per-line reality. A
       // requested quantity above what's actually available is clamped
       // locally and the shopper is told why — never silently overstated.
@@ -64,6 +67,7 @@ export default function CartPage() {
             : copy[lang].cart.qtyAdjusted,
         )
         const recheck = nextLines.length > 0 ? await verifyAgainstAnyZone(nextLines) : null
+        if (request !== requestVersion.current) return
         setVerified(recheck?.lines ?? [])
         setSubtotal(recheck?.subtotalMinor ?? 0)
       } else {
@@ -72,6 +76,7 @@ export default function CartPage() {
       }
       setError(null)
     } catch (err) {
+      if (request !== requestVersion.current) return
       if (err instanceof ApiError && err.code === 'validation_error') {
         // A referenced variant no longer resolves at all (deleted/inactive
         // product) — the whole quote fails; the affected line is identified
@@ -90,7 +95,7 @@ export default function CartPage() {
         setError(copy[lang].errors.network)
       }
     } finally {
-      setLoading(false)
+      if (request === requestVersion.current) setLoading(false)
     }
   }
 
@@ -103,6 +108,7 @@ export default function CartPage() {
     })
     return () => {
       cancelled = true
+      requestVersion.current += 1
     }
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [lang])
@@ -115,9 +121,11 @@ export default function CartPage() {
   }
 
   function changeQuantity(line: QuoteLine, delta: number) {
-    const nextQty = Math.max(1, line.quantity + delta)
-    if (nextQty === line.quantity) return
     const current = readCart()
+    const currentQty = current.find((entry) => entry.variantId === line.variantId)?.quantity
+    if (currentQty === undefined) return
+    const nextQty = Math.min(999, line.availableQuantity, Math.max(1, currentQty + delta))
+    if (nextQty === currentQty) return
     const updated = current.map((entry) =>
       entry.variantId === line.variantId ? { ...entry, quantity: nextQty } : entry,
     )

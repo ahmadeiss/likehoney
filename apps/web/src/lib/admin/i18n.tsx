@@ -458,6 +458,10 @@ export const dict = {
     ar: 'اسم الخيار بالعربية والإنجليزية مطلوب.',
     en: 'Option name in Arabic and English is required.',
   },
+  'products.form.optionValueRequired': {
+    ar: 'أدخل اسم كل قيمة بالعربية والإنجليزية قبل إنشاء المنتج.',
+    en: 'Enter every option value in both Arabic and English before creating the product.',
+  },
   'products.form.optionCodeInvalid': {
     ar: 'رمز القيمة غير صالح — أحرف إنجليزية كبيرة أو أرقام (1–8).',
     en: 'Invalid value code — uppercase letters or digits (1–8).',

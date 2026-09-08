@@ -1,6 +1,7 @@
 'use client'
 
 import { BadgeCheck } from 'lucide-react'
+import Link from 'next/link'
 import { useEffect, useState, type ReactElement } from 'react'
 
 import { shopClient, type PublicReviewDoc } from '../../../../lib/shop/client'
@@ -10,12 +11,12 @@ const HEAD: Record<'ar' | 'en', { kicker: string; title: string; sub: string }> 
   ar: {
     kicker: 'آراء العائلات',
     title: 'ماذا يقول الأهالي',
-    sub: 'آراء حقيقية من طلبات موثقة — بعد الشراء والتأكيد.',
+    sub: 'تجارب العائلات مع زي العسل — تُنشر بعد مراجعة الإدارة.',
   },
   en: {
     kicker: 'From families',
     title: 'What families say',
-    sub: 'Real reviews from verified purchases — after delivery confirmation.',
+    sub: 'Family experiences with Like Honey — published after admin moderation.',
   },
 }
 
@@ -47,13 +48,15 @@ function formatDate(iso: string, lang: 'ar' | 'en'): string {
 
 /**
  * Home reviews — REAL approved store reviews only (`/reviews` already filters
- * to approved, verified truth; nothing here is fabricated). Three-column
+ * to approved reviews; nothing here is fabricated). Three-column
  * grid, star rating, verified-purchase chip when the order truly was
  * verified. A polite empty state handles a fresh store with zero reviews.
  */
 export function Reviews(): ReactElement {
   const { lang, isAr } = useStorefrontLang()
   const [reviews, setReviews] = useState<PublicReviewDoc[] | null>(null)
+  const [failed, setFailed] = useState(false)
+  const [attempt, setAttempt] = useState(0)
 
   useEffect(() => {
     let cancelled = false
@@ -63,23 +66,40 @@ export function Reviews(): ReactElement {
         if (!cancelled) setReviews(res.data)
       })
       .catch(() => {
-        if (!cancelled) setReviews([])
+        if (!cancelled) setFailed(true)
       })
     return () => {
       cancelled = true
     }
-  }, [lang])
+  }, [attempt])
 
   return (
-    <section className="lh-section lh-section--tall">
+    <section className="lh-section lh-section--tall" id="reviews">
       <div className="lh-wrap">
         <header className="lh-section-head">
           <span className="lh-section-kicker">{HEAD[lang].kicker}</span>
           <h2 className="lh-section-title">{HEAD[lang].title}</h2>
           <p className="lh-section-sub">{HEAD[lang].sub}</p>
+          <Link href="/shop/review" className="lh-btn lh-btn--secondary lh-reviews__write">
+            {isAr ? 'شاركنا تجربتك' : 'Write a review'}
+          </Link>
         </header>
 
-        {!reviews ? (
+        {failed ? (
+          <div className="lh-reviews__empty" role="status">
+            <p>{isAr ? 'تعذّر تحميل الآراء حاليًا.' : 'Reviews could not be loaded.'}</p>
+            <button
+              className="lh-btn lh-btn--secondary"
+              type="button"
+              onClick={() => {
+                setFailed(false)
+                setAttempt((value) => value + 1)
+              }}
+            >
+              {isAr ? 'حاول مجددًا' : 'Try again'}
+            </button>
+          </div>
+        ) : !reviews ? (
           <div className="lh-reviews__grid" aria-hidden="true">
             {Array.from({ length: 3 }).map((_, i) => (
               <div key={i} className="lh-skel" style={{ height: '12rem' }} />

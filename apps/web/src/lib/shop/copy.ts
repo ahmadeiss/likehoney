@@ -360,7 +360,7 @@ const ar: CopyShape = {
   },
   checkout: {
     title: 'إتمام الطلب',
-    subtitle: 'الدفع عند الاستلام — لا حاجة لبطاقة.',
+    subtitle: 'أكمل بياناتك، واختر منطقة التوصيل، وراجع طلبك قبل التأكيد.',
     customer: 'بياناتك',
     delivery: 'التوصيل والمنطقة',
     review: 'مراجعة الطلب',
@@ -613,7 +613,8 @@ const en: CopyShape = {
   },
   checkout: {
     title: 'Checkout',
-    subtitle: 'Cash on Delivery — no card needed.',
+    subtitle:
+      'Enter your details, choose your delivery area, and review your order before confirming.',
     customer: 'Your details',
     delivery: 'Delivery & zone',
     review: 'Order review',

@@ -1,7 +1,7 @@
 'use client'
 
 import { useRouter } from 'next/navigation'
-import { useEffect, useState, type FormEvent } from 'react'
+import { useEffect, useRef, useState, type FormEvent } from 'react'
 
 import { readCart, clearCart } from '../../../../lib/shop/cart'
 import {
@@ -70,12 +70,19 @@ export default function CheckoutPage() {
   const [error, setError] = useState<string | null>(null)
   const [submitting, setSubmitting] = useState(false)
   const [loadState, setLoadState] = useState<'loading' | 'empty' | 'ready' | 'error'>('loading')
+  const quoteRequest = useRef(0)
+  const submitLock = useRef(false)
 
   const cartLines = readCart()
 
   async function loadQuote(zoneId: string) {
+    const request = ++quoteRequest.current
+    setQuote(null)
+    setError(null)
+    setLoadState('loading')
     try {
       const result = await shopClient.verifyCart(zoneId, readCart())
+      if (request !== quoteRequest.current) return
       setQuote(result)
       setIdempotencyKey(newIdempotencyKey())
       if (!result.paymentMethods[paymentMethod]) {
@@ -83,6 +90,7 @@ export default function CheckoutPage() {
       }
       setLoadState('ready')
     } catch (err) {
+      if (request !== quoteRequest.current) return
       setError(errorMessage(err, copy[lang].errors))
       setLoadState('error')
     }
@@ -116,9 +124,10 @@ export default function CheckoutPage() {
       })
     return () => {
       cancelled = true
+      quoteRequest.current += 1
     }
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [lang])
+  }, [])
 
   function onZoneChange(zoneId: string) {
     setSelectedZone(zoneId)
@@ -139,7 +148,15 @@ export default function CheckoutPage() {
 
   async function submit(event: FormEvent) {
     event.preventDefault()
-    if (!quote || submitting) return
+    if (
+      !quote ||
+      submitLock.current ||
+      loadState !== 'ready' ||
+      quote.deliveryZone.id !== selectedZone ||
+      !quote.paymentMethods[paymentMethod]
+    )
+      return
+    submitLock.current = true
     setError(null)
     setSubmitting(true)
 
@@ -180,6 +197,7 @@ export default function CheckoutPage() {
       }
       setError(errorMessage(err, copy[lang].errors))
     } finally {
+      submitLock.current = false
       setSubmitting(false)
     }
   }
@@ -210,144 +228,163 @@ export default function CheckoutPage() {
           </div>
         ) : loadState === 'error' && !quote ? (
           <div className="lh-empty">
-            <p className="lh-empty__title">{error}</p>
+            {selectedZone ? (
+              <button
+                className="lh-btn lh-btn--secondary"
+                type="button"
+                onClick={() => void loadQuote(selectedZone)}
+              >
+                {lang === 'ar' ? 'إعادة المحاولة' : 'Try again'}
+              </button>
+            ) : (
+              <a className="lh-btn lh-btn--secondary" href="/shop/cart">
+                {lang === 'ar' ? 'العودة للسلة' : 'Back to cart'}
+              </a>
+            )}
           </div>
         ) : quote ? (
           <div className="lh-checkout__layout">
-            <form className="lh-checkout__form" onSubmit={submit}>
-              <section className="lh-checkout__step">
-                <h2 className="lh-checkout__step-title">{t.stepCustomer}</h2>
-                <div className="lh-field">
-                  <label htmlFor="ck-name">{t.name}</label>
-                  <input
-                    id="ck-name"
-                    required
-                    autoComplete="name"
-                    value={form.name}
-                    onChange={(e) => setField('name', e.target.value)}
-                  />
-                </div>
-                <div className="lh-field">
-                  <label htmlFor="ck-phone">{t.phone}</label>
-                  <input
-                    id="ck-phone"
-                    type="tel"
-                    inputMode="tel"
-                    autoComplete="tel"
-                    required
-                    value={form.phone}
-                    onChange={(e) => setField('phone', e.target.value)}
-                    placeholder="05XXXXXXXX"
-                    dir="ltr"
-                  />
-                </div>
-                <div className="lh-field">
-                  <label htmlFor="ck-city">{t.city}</label>
-                  <input
-                    id="ck-city"
-                    autoComplete="address-level2"
-                    value={form.city}
-                    onChange={(e) => setField('city', e.target.value)}
-                  />
-                </div>
-                <div className="lh-field">
-                  <label htmlFor="ck-addr1">{t.addressLine1}</label>
-                  <input
-                    id="ck-addr1"
-                    autoComplete="street-address"
-                    required
-                    value={form.addressLine1}
-                    onChange={(e) => setField('addressLine1', e.target.value)}
-                  />
-                </div>
-                <div className="lh-field">
-                  <label htmlFor="ck-addr2">{t.addressLine2}</label>
-                  <input
-                    id="ck-addr2"
-                    value={form.addressLine2}
-                    onChange={(e) => setField('addressLine2', e.target.value)}
-                  />
-                </div>
-                <div className="lh-field">
-                  <label htmlFor="ck-note">{t.note}</label>
-                  <textarea
-                    id="ck-note"
-                    rows={3}
-                    value={form.note}
-                    onChange={(e) => setField('note', e.target.value)}
-                  />
-                </div>
-              </section>
+            <form className="lh-checkout__form" onSubmit={submit} aria-busy={submitting}>
+              <fieldset disabled={submitting} className="lh-checkout__fields">
+                <section className="lh-checkout__step">
+                  <h2 className="lh-checkout__step-title">{t.stepCustomer}</h2>
+                  <div className="lh-field">
+                    <label htmlFor="ck-name">{t.name}</label>
+                    <input
+                      id="ck-name"
+                      required
+                      autoComplete="name"
+                      value={form.name}
+                      onChange={(e) => setField('name', e.target.value)}
+                    />
+                  </div>
+                  <div className="lh-field">
+                    <label htmlFor="ck-phone">{t.phone}</label>
+                    <input
+                      id="ck-phone"
+                      type="tel"
+                      inputMode="tel"
+                      autoComplete="tel"
+                      required
+                      value={form.phone}
+                      onChange={(e) => setField('phone', e.target.value)}
+                      placeholder="05XXXXXXXX"
+                      dir="ltr"
+                    />
+                  </div>
+                  <div className="lh-field">
+                    <label htmlFor="ck-city">{t.city}</label>
+                    <input
+                      id="ck-city"
+                      autoComplete="address-level2"
+                      value={form.city}
+                      onChange={(e) => setField('city', e.target.value)}
+                    />
+                  </div>
+                  <div className="lh-field">
+                    <label htmlFor="ck-addr1">{t.addressLine1}</label>
+                    <input
+                      id="ck-addr1"
+                      autoComplete="street-address"
+                      required
+                      value={form.addressLine1}
+                      onChange={(e) => setField('addressLine1', e.target.value)}
+                    />
+                  </div>
+                  <div className="lh-field">
+                    <label htmlFor="ck-addr2">{t.addressLine2}</label>
+                    <input
+                      id="ck-addr2"
+                      value={form.addressLine2}
+                      onChange={(e) => setField('addressLine2', e.target.value)}
+                    />
+                  </div>
+                  <div className="lh-field">
+                    <label htmlFor="ck-note">{t.note}</label>
+                    <textarea
+                      id="ck-note"
+                      rows={3}
+                      value={form.note}
+                      onChange={(e) => setField('note', e.target.value)}
+                    />
+                  </div>
+                </section>
 
-              <section className="lh-checkout__step">
-                <h2 className="lh-checkout__step-title">{t.stepDelivery}</h2>
-                <div className="lh-field">
-                  <label htmlFor="ck-zone">{t.zone}</label>
-                  <select
-                    id="ck-zone"
-                    required
-                    value={selectedZone}
-                    onChange={(e) => onZoneChange(e.target.value)}
-                  >
-                    {zones.map((zone) => (
-                      <option key={zone.id} value={zone.id}>
-                        {lang === 'ar' ? zone.nameAr : zone.nameEn} ·{' '}
-                        {formatMoney(zone.feeMinor, lang)}
-                      </option>
-                    ))}
-                  </select>
-                </div>
-              </section>
+                <section className="lh-checkout__step">
+                  <h2 className="lh-checkout__step-title">{t.stepDelivery}</h2>
+                  <div className="lh-field">
+                    <label htmlFor="ck-zone">{t.zone}</label>
+                    <select
+                      id="ck-zone"
+                      required
+                      value={selectedZone}
+                      onChange={(e) => onZoneChange(e.target.value)}
+                    >
+                      {zones.map((zone) => (
+                        <option key={zone.id} value={zone.id}>
+                          {lang === 'ar' ? zone.nameAr : zone.nameEn} ·{' '}
+                          {formatMoney(zone.feeMinor, lang)}
+                        </option>
+                      ))}
+                    </select>
+                  </div>
+                </section>
 
-              <section className="lh-checkout__step">
-                <h2 className="lh-checkout__step-title">{t.stepPayment}</h2>
-                <div className="lh-checkout__methods">
-                  <button
-                    type="button"
-                    className="lh-checkout__method"
-                    aria-pressed={paymentMethod === 'cod'}
-                    disabled={!quote.paymentMethods.cod}
-                    onClick={() => onMethodChange('cod')}
-                  >
-                    <span className="lh-checkout__method-title">{t.codLabel}</span>
-                    <span className="lh-checkout__method-body">
-                      {quote.paymentMethods.cod ? t.codBody : t.methodUnavailable}
-                    </span>
-                  </button>
-                  <button
-                    type="button"
-                    className="lh-checkout__method"
-                    aria-pressed={paymentMethod === 'electronic'}
-                    disabled={!quote.paymentMethods.electronic}
-                    onClick={() => onMethodChange('electronic')}
-                  >
-                    <span className="lh-checkout__method-title">{t.methodElectronic}</span>
-                    <span className="lh-checkout__method-body">
-                      {quote.paymentMethods.electronic
-                        ? t.methodElectronicBody
-                        : t.methodUnavailable}
-                    </span>
-                  </button>
-                </div>
+                <section className="lh-checkout__step">
+                  <h2 className="lh-checkout__step-title">{t.stepPayment}</h2>
+                  <div className="lh-checkout__methods">
+                    <button
+                      type="button"
+                      className="lh-checkout__method"
+                      aria-pressed={paymentMethod === 'cod'}
+                      disabled={!quote.paymentMethods.cod}
+                      onClick={() => onMethodChange('cod')}
+                    >
+                      <span className="lh-checkout__method-title">{t.codLabel}</span>
+                      <span className="lh-checkout__method-body">
+                        {quote.paymentMethods.cod ? t.codBody : t.methodUnavailable}
+                      </span>
+                    </button>
+                    <button
+                      type="button"
+                      className="lh-checkout__method"
+                      aria-pressed={paymentMethod === 'electronic'}
+                      disabled={!quote.paymentMethods.electronic}
+                      onClick={() => onMethodChange('electronic')}
+                    >
+                      <span className="lh-checkout__method-title">{t.methodElectronic}</span>
+                      <span className="lh-checkout__method-body">
+                        {quote.paymentMethods.electronic
+                          ? t.methodElectronicBody
+                          : t.methodUnavailable}
+                      </span>
+                    </button>
+                  </div>
 
-                <label className="lh-checkout__consent">
-                  <input
-                    type="checkbox"
-                    required
-                    checked={form.consent}
-                    onChange={(e) => setField('consent', e.target.checked)}
-                  />
-                  <span>{t.consent}</span>
-                </label>
-              </section>
+                  <label className="lh-checkout__consent">
+                    <input
+                      type="checkbox"
+                      required
+                      checked={form.consent}
+                      onChange={(e) => setField('consent', e.target.checked)}
+                    />
+                    <span>{t.consent}</span>
+                  </label>
+                </section>
 
-              <button
-                type="submit"
-                className="lh-btn lh-btn--primary lh-btn--lg lh-btn--block"
-                disabled={submitting || !selectedZone}
-              >
-                {submitting ? t.submitting : t.submit}
-              </button>
+                <button
+                  type="submit"
+                  className="lh-btn lh-btn--primary lh-btn--lg lh-btn--block"
+                  disabled={
+                    submitting ||
+                    !selectedZone ||
+                    loadState !== 'ready' ||
+                    !quote.paymentMethods[paymentMethod]
+                  }
+                >
+                  {submitting ? t.submitting : t.submit}
+                </button>
+              </fieldset>
 
               <p className="lh-checkout__sub" style={{ marginBlockStart: '1rem' }}>
                 {t.trustNote}

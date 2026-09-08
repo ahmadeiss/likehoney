@@ -2,7 +2,7 @@
 
 import { AlertTriangle, ArrowRight, Search } from 'lucide-react'
 import Link from 'next/link'
-import type { ReactNode } from 'react'
+import { useState, type ReactNode } from 'react'
 import { Badge, Button, Input, Select } from '@likehoney/ui'
 
 import type { BadgeTone } from '@likehoney/ui'
@@ -26,6 +26,7 @@ import {
 } from '../../../lib/admin/client'
 import { useLocale, useT, type DictKey } from '../../../lib/admin/i18n'
 import { formatPhone } from '../../../lib/admin/format'
+import { parseMoneyDraft } from '../../../lib/admin/money-input'
 
 export const DEFAULT_PAGE_SIZE = 20
 
@@ -674,18 +675,22 @@ export function MoneyInput({
 }) {
   const locale = useLocale()
   const rawAmount = (valueMinor / 100).toFixed(2)
+  const [draft, setDraft] = useState<string | null>(null)
   return (
     <Input
       id={id}
-      inputMode="numeric"
+      inputMode="decimal"
       dir="ltr"
-      aria-label={locale === 'ar' ? 'المبلغ' : 'Amount'}
-      value={rawAmount}
+      aria-label={id ? undefined : locale === 'ar' ? 'المبلغ' : 'Amount'}
+      value={draft ?? rawAmount}
       invalid={invalid}
+      onFocus={() => setDraft(rawAmount)}
+      onBlur={() => setDraft(null)}
       onChange={(event) => {
-        const cleaned = event.target.value.replace(/[^\d.]/g, '')
-        const value = Math.trunc((Number.parseFloat(cleaned) || 0) * 100)
-        onChangeMinor(value)
+        const parsed = parseMoneyDraft(event.target.value)
+        if (!parsed) return
+        setDraft(parsed.text)
+        onChangeMinor(parsed.valueMinor)
       }}
     />
   )

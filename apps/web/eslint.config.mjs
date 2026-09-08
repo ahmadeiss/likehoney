@@ -11,6 +11,10 @@ const eslintConfig = defineConfig([
     '.next/**',
     'out/**',
     'build/**',
+    // Cloudflare/vinext generated bundles are not application source.
+    'dist/**',
+    '.wrangler/**',
+    '.vinext/**',
     'next-env.d.ts',
   ]),
 ])
