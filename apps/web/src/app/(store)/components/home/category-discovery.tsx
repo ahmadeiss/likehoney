@@ -1,6 +1,7 @@
 'use client'
 
 import Link from 'next/link'
+import Image from 'next/image'
 import { ArrowLeft, ArrowRight, Backpack, Shirt, Footprints, Puzzle, Gift } from 'lucide-react'
 import { useEffect, useState, type ReactElement } from 'react'
 
@@ -65,10 +66,24 @@ export function CategoryDiscovery(): ReactElement | null {
                   className="lh-cat-card"
                 >
                   <div className="lh-cat-card__media" aria-hidden="true">
-                    <Icon className="hive-category-icon" strokeWidth={1.3} />
-                    <span className="lh-cat-card__initial">
-                      {String(index + 1).padStart(2, '0')}
-                    </span>
+                    {category.imageUrl !== null ? (
+                      <div className="lh-cat-card__image">
+                        <Image
+                          src={category.imageUrl}
+                          alt=""
+                          fill
+                          sizes="210px"
+                          className="lh-cat-card__image-img"
+                        />
+                      </div>
+                    ) : (
+                      <>
+                        <Icon className="hive-category-icon" strokeWidth={1.3} />
+                        <span className="lh-cat-card__initial">
+                          {String(index + 1).padStart(2, '0')}
+                        </span>
+                      </>
+                    )}
                   </div>
                   <div className="lh-cat-card__body">
                     <h3 className="lh-cat-card__name">{name}</h3>

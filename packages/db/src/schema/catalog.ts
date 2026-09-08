@@ -24,6 +24,14 @@ export const categories = pgTable(
     code: t.varchar('code', { length: 8 }).notNull().unique(),
     descriptionEn: t.text('description_en'),
     descriptionAr: t.text('description_ar'),
+    /**
+     * R2 object key of the category's display image (with extension). Only the
+     * backend mints keys (`categories/{id}/{uuid}.{ext}`); NULL = no image.
+     * Stored as a reference — never a full URL (minted at request time).
+     */
+    imageObjectKey: t.text('image_object_key'),
+    imageMimeType: t.varchar('image_mime_type', { length: 100 }),
+    imageSizeBytes: t.bigint('image_size_bytes', { mode: 'number' }),
     status: entityStatus('status').notNull().default('active'),
     createdAt: t.timestamp('created_at', { withTimezone: true }).notNull().defaultNow(),
     updatedAt: t.timestamp('updated_at', { withTimezone: true }).notNull().defaultNow(),

@@ -1,7 +1,7 @@
 'use client'
 
-import { Tags } from 'lucide-react'
-import { useCallback, useState } from 'react'
+import { Image as ImageIcon, ImagePlus, Tags, Trash2 } from 'lucide-react'
+import { useCallback, useRef, useState } from 'react'
 
 import { Button, Dialog, Field, Input, Select, Textarea } from '@likehoney/ui'
 
@@ -23,6 +23,7 @@ import {
 import { useMutation, useResource } from '../../../lib/admin/hooks'
 import { useLocale, useT, type DictKey } from '../../../lib/admin/i18n'
 import { formatCount } from '../../../lib/admin/format'
+import { AuthedImage } from '../_components/authed-image'
 import {
   AdminEmpty,
   AdminPage,
@@ -220,6 +221,7 @@ function CategoryEditor({
   onClose: () => void
 }) {
   const t = useT()
+  const locale = useLocale()
   const isEdit = initialState !== undefined
   const [nameAr, setNameAr] = useState(initialState?.nameAr ?? '')
   const [nameEn, setNameEn] = useState(initialState?.nameEn ?? '')
@@ -231,10 +233,32 @@ function CategoryEditor({
   const [advanced, setAdvanced] = useState(false)
   const [fieldError, setFieldError] = useState<string | null>(null)
 
+  // Category image — CREATE holds a pending File (created category first, then
+  // uploaded); EDIT applies upload/replace/remove on Save. The storefront falls
+  // back to the icon whenever no image is present.
+  const [pendingFile, setPendingFile] = useState<File | null>(null)
+  const [removeRequested, setRemoveRequested] = useState(false)
+  const [persistingImage, setPersistingImage] = useState(false)
+
   const { run, pending } = useMutation((input: CategoryCreateInput | CategoryUpdateInput) => {
     if (isEdit) return client.updateCategory(initialState.id, input as CategoryUpdateInput)
     return client.createCategory(input as CategoryCreateInput)
   })
+
+  const busy = pending || persistingImage
+
+  /** Runs one image mutation without throwing; returns a localized error or null. */
+  const applyImageOp = async (op: () => Promise<unknown>): Promise<string | null> => {
+    setPersistingImage(true)
+    try {
+      await op()
+      return null
+    } catch (cause) {
+      return errorMessage(cause, t)
+    } finally {
+      setPersistingImage(false)
+    }
+  }
 
   const submit = async () => {
     const values: CategoryFormValues = {
@@ -255,8 +279,30 @@ function CategoryEditor({
       return
     }
     const result = await run(payload)
-    if (result.ok) onSave()
-    else setFieldError(errorMessage(result.error, t))
+    if (!result.ok) {
+      setFieldError(errorMessage(result.error, t))
+      return
+    }
+
+    // Category row exists (created or updated) — now apply the pending image op.
+    const categoryId = result.data.id
+    if (pendingFile !== null) {
+      const form = new FormData()
+      form.append('file', pendingFile)
+      const imageError = await applyImageOp(() => client.uploadCategoryImage(categoryId, form))
+      if (imageError !== null) {
+        setFieldError(imageError)
+        return
+      }
+    } else if (isEdit && removeRequested) {
+      const imageError = await applyImageOp(() => client.removeCategoryImage(categoryId))
+      if (imageError !== null) {
+        setFieldError(imageError)
+        return
+      }
+    }
+
+    onSave()
   }
 
   return (
@@ -291,6 +337,22 @@ function CategoryEditor({
             <option value="inactive">{t('common.inactive')}</option>
           </Select>
         </Field>
+
+        <CategoryImagePicker
+          currentUrl={isEdit ? initialState.imageUrl : null}
+          pendingFile={pendingFile}
+          removeRequested={removeRequested}
+          busy={busy}
+          name={isEdit ? (locale === 'ar' ? initialState.nameAr : initialState.nameEn) : ''}
+          onPick={(file) => {
+            setPendingFile(file)
+            setRemoveRequested(false)
+          }}
+          onRemoveRequest={() => {
+            setPendingFile(null)
+            setRemoveRequested(true)
+          }}
+        />
 
         <div className="rounded-md border border-dashed border-border p-3">
           <button
@@ -343,15 +405,154 @@ function CategoryEditor({
         ) : null}
 
         <div className="flex items-center justify-end gap-2">
-          <Button variant="ghost" onClick={onClose}>
+          <Button variant="ghost" onClick={onClose} disabled={busy}>
             {t('common.cancel')}
           </Button>
-          <Button onClick={submit} loading={pending}>
-            {pending ? t('common.saving') : isEdit ? t('common.save') : t('common.create')}
+          <Button onClick={submit} loading={busy}>
+            {busy ? t('common.saving') : isEdit ? t('common.save') : t('common.create')}
           </Button>
         </div>
       </div>
     </Dialog>
+  )
+}
+
+/**
+ * Category display-image picker. Shows the current/admin-preview image (or a
+ * pending-file preview), and lets the operator pick a replacement or arm a
+ * removal. All mutations apply on Save — nothing is uploaded here.
+ */
+function CategoryImagePicker({
+  currentUrl,
+  pendingFile,
+  removeRequested,
+  busy,
+  name,
+  onPick,
+  onRemoveRequest,
+}: {
+  currentUrl: string | null
+  pendingFile: File | null
+  removeRequested: boolean
+  busy: boolean
+  name: string
+  onPick: (file: File | null) => void
+  onRemoveRequest: () => void
+}) {
+  const t = useT()
+  const fileRef = useRef<HTMLInputElement>(null)
+  const objectUrlRef = useRef<string | null>(null)
+  const [confirming, setConfirming] = useState(false)
+  const [previewUrl, setPreviewUrl] = useState<string | null>(null)
+
+  const pick = () => fileRef.current?.click()
+
+  // Request the confirmation banner (nothing is armed yet).
+  const requestRemove = () => setConfirming(true)
+
+  // Banner "remove": armed now — Save will remove the image.
+  const confirmRemove = () => {
+    setConfirming(false)
+    onRemoveRequest()
+  }
+
+  // Banner "cancel": close the confirmation without arming.
+  const cancelBanner = () => setConfirming(false)
+
+  // Picking a new file replaces any armed removal and builds its preview URL.
+  // Object URLs are created on a user event (never in an effect) and revoked
+  // when superseded.
+  const handlePick = (file: File | null) => {
+    if (objectUrlRef.current !== null) {
+      URL.revokeObjectURL(objectUrlRef.current)
+      objectUrlRef.current = null
+    }
+    if (file !== null) {
+      objectUrlRef.current = URL.createObjectURL(file)
+    }
+    setPreviewUrl(objectUrlRef.current)
+    onPick(file)
+  }
+
+  return (
+    <Field label={t('categories.image')} hint={t('categories.imageHint')}>
+      <div className="flex flex-col gap-3">
+        <div className="flex items-center gap-4">
+          <div
+            className="flex size-28 shrink-0 items-center justify-center overflow-hidden rounded-xl border border-border bg-surface"
+            aria-hidden="true"
+          >
+            {pendingFile !== null && previewUrl !== null && !removeRequested ? (
+              // eslint-disable-next-line @next/next/no-img-element -- local object URL preview
+              <img src={previewUrl} alt="" className="size-full object-cover" />
+            ) : currentUrl === null || removeRequested ? (
+              <div className="flex flex-col items-center gap-1 text-ink-3">
+                <ImageIcon size={22} aria-hidden="true" />
+                <span className="lh-text-caption">{t('categories.imageEmpty')}</span>
+              </div>
+            ) : (
+              <AuthedImage src={currentUrl} alt={name} className="size-full object-cover" />
+            )}
+          </div>
+
+          <div className="flex flex-wrap items-center gap-2">
+            <input
+              ref={fileRef}
+              type="file"
+              accept="image/png,image/jpeg,image/webp,image/gif"
+              className="sr-only"
+              aria-label={t('categories.imageUpload')}
+              disabled={busy}
+              onChange={(e) => {
+                handlePick(e.target.files?.[0] ?? null)
+                e.target.value = ''
+              }}
+            />
+            <Button variant="secondary" size="sm" onClick={pick} disabled={busy}>
+              <ImagePlus size={14} aria-hidden="true" />
+              {pendingFile !== null || currentUrl !== null
+                ? t('categories.imageChange')
+                : t('categories.imageUpload')}
+            </Button>
+            {pendingFile !== null && !removeRequested ? (
+              <Button variant="ghost" size="sm" onClick={() => handlePick(null)} disabled={busy}>
+                {t('common.cancel')}
+              </Button>
+            ) : null}
+            {currentUrl !== null && pendingFile === null && !removeRequested ? (
+              <Button
+                variant="danger"
+                size="sm"
+                onClick={requestRemove}
+                disabled={busy}
+                aria-label={t('categories.imageRemove')}
+              >
+                <Trash2 size={14} aria-hidden="true" />
+                {t('categories.imageRemove')}
+              </Button>
+            ) : null}
+          </div>
+        </div>
+
+        {confirming ? (
+          <div className="flex flex-col gap-2 rounded-lg bg-danger-soft p-2">
+            <p className="text-sm font-medium text-ink">{t('categories.imageConfirmRemove')}</p>
+            <div className="flex flex-wrap items-center gap-2">
+              <Button variant="danger" size="sm" onClick={confirmRemove}>
+                {t('common.remove')}
+              </Button>
+              <Button variant="ghost" size="sm" onClick={cancelBanner}>
+                {t('common.cancel')}
+              </Button>
+            </div>
+          </div>
+        ) : removeRequested ? (
+          <p className="text-sm font-medium text-danger" role="alert">
+            {t('categories.imageConfirmRemove')}
+          </p>
+        ) : null}
+      </div>
+    </Field>
   )
 }
 

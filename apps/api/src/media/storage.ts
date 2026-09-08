@@ -144,9 +144,28 @@ export function buildMediaObjectKey(productId: string, fileName: string): string
   return `products/${productId}/${crypto.randomUUID()}${ext}`
 }
 
+/** Derives the object key for a category display image from secure UUIDs only. */
+export function buildCategoryObjectKey(categoryId: string, fileName: string): string {
+  const ext = safeExtension(fileName)
+  return `categories/${categoryId}/${crypto.randomUUID()}${ext}`
+}
+
 function safeExtension(fileName: string): string {
   const match = /\.([a-zA-Z0-9]{1,8})$/.exec(fileName)
   return match ? `.${match[1]!.toLowerCase()}` : ''
+}
+
+/**
+ * Keys are UUID-prefixed and never user-supplied paths; enforce a narrow
+ * shape. Shared by the product-media routes and the category-image route so
+ * every stream entry point accepts the same safe key vocabulary.
+ */
+export function isSafeObjectKey(key: string): boolean {
+  return (
+    (key.startsWith('products/') || key.startsWith('categories/')) &&
+    /^[a-z0-9/._-]+$/i.test(key) &&
+    key.length <= 512
+  )
 }
 
 /**

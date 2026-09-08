@@ -289,6 +289,21 @@
   clip-path: var(--hive-hex);
   z-index: -1;
 }
+/* Category display-image stage: a rounded square that sits INSIDE the hexagon
+   so the tinted hexagon frame stays visible around it. Covers without
+   distortion; absolute fill respects the rounded mask. */
+.lh .lh-cat-card__image {
+  position: absolute;
+  inset: 9px;
+  overflow: hidden;
+  border-radius: 13px;
+  z-index: 0;
+  background: #fff9e8;
+}
+.lh .lh-cat-card__image-img {
+  object-fit: cover;
+  object-position: center;
+}
 .lh .lh-cat-card:nth-child(2n) .lh-cat-card__media {
   background: #c4e9ef;
 }

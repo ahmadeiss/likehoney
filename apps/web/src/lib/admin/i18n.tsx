@@ -731,6 +731,20 @@ export const dict = {
     ar: 'الرابط يجب أن يكون أحرفًا صغيرة وأرقامًا مفصولة بشرطات، بدون مسافات.',
     en: 'Slug must be lowercase letters/digits separated by hyphens, with no spaces.',
   },
+  'categories.image': { ar: 'صورة التصنيف', en: 'Category image' },
+  'categories.imageHint': {
+    ar: 'تظهر هذه الصورة داخل الشعار السداسي على الواجهة، ويمكن تركها فارغة.',
+    en: 'Shown inside the hexagon on the storefront. May stay empty.',
+  },
+  'categories.imageEmpty': { ar: 'لا صورة بعد', en: 'No image yet' },
+  'categories.imageUpload': { ar: 'رفع صورة', en: 'Upload image' },
+  'categories.imageChange': { ar: 'تغيير الصورة', en: 'Change image' },
+  'categories.imageRemove': { ar: 'إزالة الصورة', en: 'Remove image' },
+  'categories.imageConfirmRemove': {
+    ar: 'إزالة صورة التصنيف؟ ستستخدم الواجهة الرمز الافتراضي.',
+    en: 'Remove the category image? The storefront will fall back to the icon.',
+  },
+  'categories.imageUploading': { ar: 'جارٍ رفع الصورة...', en: 'Uploading image…' },
 
   // ---------------------------------------------------------------------------
   // Suppliers

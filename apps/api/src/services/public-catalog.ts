@@ -256,7 +256,7 @@ export async function getPublicProductDetailService(
   }
 }
 
-export async function listPublicCategoriesService(db: DbClient) {
+export async function listPublicCategoriesService(db: DbClient, origin: string) {
   const rows = await listActiveCategories(db)
   return rows.map((category) => ({
     id: category.id,
@@ -264,6 +264,10 @@ export async function listPublicCategoriesService(db: DbClient) {
     slug: category.slug,
     nameEn: category.nameEn,
     nameAr: category.nameAr,
+    imageUrl:
+      category.imageObjectKey === null
+        ? null
+        : mediaStreamUrl(origin, category.imageObjectKey, { public: true }),
   }))
 }
 

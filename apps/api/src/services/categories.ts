@@ -18,10 +18,37 @@ import {
   listCategories,
   removeCategory,
   updateCategory,
+  type CategoryRow,
   type DbClient,
 } from '@likehoney/db'
 
+import { mediaStreamUrl } from '../media/storage'
 import { auditMeta, recordAudit, type AuditActor } from './audit'
+
+/**
+ * Admin category document. URLs are minted by the backend; the raw R2 object
+ * key is included (parity with product media) but the binary always streams
+ * through the authenticated `/api/v1/media/stream` route.
+ */
+export function serializeCategory(category: CategoryRow, origin: string) {
+  return {
+    id: category.id,
+    code: category.code,
+    slug: category.slug,
+    nameEn: category.nameEn,
+    nameAr: category.nameAr,
+    descriptionEn: category.descriptionEn,
+    descriptionAr: category.descriptionAr,
+    status: category.status,
+    createdAt: category.createdAt,
+    updatedAt: category.updatedAt,
+    imageObjectKey: category.imageObjectKey,
+    imageMimeType: category.imageMimeType,
+    imageSizeBytes: category.imageSizeBytes,
+    imageUrl:
+      category.imageObjectKey === null ? null : mediaStreamUrl(origin, category.imageObjectKey),
+  }
+}
 
 function slugOrThrow(inputSlug: string | undefined, nameEn: string): string {
   if (inputSlug !== undefined) return inputSlug
@@ -32,21 +59,29 @@ function slugOrThrow(inputSlug: string | undefined, nameEn: string): string {
   return derived
 }
 
-export async function listCategoriesService(db: DbClient, query: CategoryListQuery) {
+export async function listCategoriesService(
+  db: DbClient,
+  query: CategoryListQuery,
+  origin: string,
+) {
   const { rows, total } = await listCategories(db, query)
-  return { data: rows, meta: { page: query.page, pageSize: query.pageSize, total } }
+  return {
+    data: rows.map((row) => serializeCategory(row, origin)),
+    meta: { page: query.page, pageSize: query.pageSize, total },
+  }
 }
 
-export async function getCategoryService(db: DbClient, categoryId: string) {
+export async function getCategoryService(db: DbClient, categoryId: string, origin: string) {
   const category = await getCategory(db, categoryId)
   if (category === undefined) throw new NotFoundError('category not found')
-  return category
+  return serializeCategory(category, origin)
 }
 
 export async function createCategoryService(
   db: DbClient,
   input: CategoryCreateInput,
   actor: AuditActor,
+  origin: string,
 ) {
   const byCode = await getCategoryByCode(db, input.code)
   if (byCode !== undefined) {
@@ -77,7 +112,7 @@ export async function createCategoryService(
     category.id,
     auditMeta({ code: category.code }),
   )
-  return category
+  return serializeCategory(category, origin)
 }
 
 export async function updateCategoryService(
@@ -85,6 +120,7 @@ export async function updateCategoryService(
   categoryId: string,
   input: CategoryUpdateInput,
   actor: AuditActor,
+  origin: string,
 ) {
   const existing = await getCategory(db, categoryId)
   if (existing === undefined) throw new NotFoundError('category not found')
@@ -107,10 +143,15 @@ export async function updateCategoryService(
 
   if (category === undefined) throw new NotFoundError('category not found')
   await recordAudit(db, actor, 'category.updated', 'category', category.id)
-  return category
+  return serializeCategory(category, origin)
 }
 
-export async function removeCategoryService(db: DbClient, categoryId: string, actor: AuditActor) {
+export async function removeCategoryService(
+  db: DbClient,
+  categoryId: string,
+  actor: AuditActor,
+  origin: string,
+) {
   const existing = await getCategory(db, categoryId)
   if (existing === undefined) throw new NotFoundError('category not found')
 
@@ -131,5 +172,5 @@ export async function removeCategoryService(db: DbClient, categoryId: string, ac
     removed.id,
     auditMeta({ code: removed.code }),
   )
-  return removed
+  return serializeCategory(removed, origin)
 }

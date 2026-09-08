@@ -16,7 +16,7 @@ import { getOrderByNumber, listOrderItems } from '@likehoney/db'
 import type { AppEnv } from '../env'
 import { parseBody, parseParams, parseQuery } from '../http/request'
 import { getDatabase, isDatabaseConfigured } from '../services/db'
-import { buildMediaResponse, getMediaStorage } from '../media/storage'
+import { buildMediaResponse, getMediaStorage, isSafeObjectKey } from '../media/storage'
 import {
   getPublicProductDetailService,
   listPublicCategoriesService,
@@ -50,7 +50,8 @@ export const publicRouter = new Hono<AppEnv>()
 
 publicRouter.get('/categories', async (c) => {
   const db = getDatabase(c.env)
-  return c.json({ data: await listPublicCategoriesService(db) })
+  const origin = new URL(c.req.url).origin
+  return c.json({ data: await listPublicCategoriesService(db, origin) })
 })
 
 publicRouter.get('/products', async (c) => {
@@ -193,7 +194,3 @@ publicRouter.get('/media/stream', async (c) => {
   }
   return response
 })
-
-function isSafeObjectKey(key: string): boolean {
-  return key.startsWith('products/') && /^[a-z0-9/._-]+$/i.test(key) && key.length <= 512
-}

@@ -18,6 +18,8 @@ export interface PublicCategoryDoc {
   slug: string
   nameAr: string
   nameEn: string
+  /** Public stream URL of the category display image (`/api/v1/public/media/stream`). */
+  imageUrl: string | null
 }
 
 export interface PublicDeliveryZoneDoc {

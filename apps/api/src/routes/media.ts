@@ -11,7 +11,7 @@ import type { AppEnv } from '../env'
 import { requirePermission, currentStaffId } from '../http/auth'
 import { parseBody, parseParams } from '../http/request'
 import { getDatabase } from '../services/db'
-import { buildMediaResponse, getMediaStorage } from '../media/storage'
+import { buildMediaResponse, getMediaStorage, isSafeObjectKey } from '../media/storage'
 import {
   addMediaToProductService,
   listMediaForProductService,
@@ -116,9 +116,4 @@ mediaRouter.get('/stream', requirePermission('catalog:read'), async (c) => {
 
 function stringOrUndefined(value: unknown): string | undefined {
   return typeof value === 'string' && value.length > 0 ? value : undefined
-}
-
-/** Keys are UUID-prefixed and never user-supplied paths; enforce a narrow shape. */
-function isSafeObjectKey(key: string): boolean {
-  return key.startsWith('products/') && /^[a-z0-9/._-]+$/i.test(key) && key.length <= 512
 }

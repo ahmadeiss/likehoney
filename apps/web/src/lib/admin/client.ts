@@ -93,6 +93,12 @@ export interface CategoryDoc {
   status: 'active' | 'inactive'
   createdAt: string
   updatedAt: string
+  /** R2 object key of the category display image, when one is set. */
+  imageObjectKey: string | null
+  imageMimeType: string | null
+  imageSizeBytes: number | null
+  /** Authenticated stream URL (Admin media route) — mints over the same-origin rewrite. */
+  imageUrl: string | null
 }
 
 export interface SupplierDoc {
@@ -879,6 +885,12 @@ export const client = {
     ),
   removeCategory: (id: string) =>
     bump(apiRequest<CategoryDoc>(`/categories/${id}`, { method: 'DELETE' })),
+  /** Replaces the category's display image; returns the updated category doc. */
+  uploadCategoryImage: (id: string, form: FormData) =>
+    bump(apiRequest<CategoryDoc>(`/categories/${id}/image`, { method: 'POST', body: form })),
+  /** Removes the category's display image (idempotent); returns the updated doc. */
+  removeCategoryImage: (id: string) =>
+    bump(apiRequest<CategoryDoc>(`/categories/${id}/image`, { method: 'DELETE' })),
 
   // Suppliers
   listSuppliers: (query: ListQuery & { status?: EntityStatus } = {}) =>
