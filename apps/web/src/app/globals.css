@@ -2191,3 +2191,14 @@ button.lh-admin-list-row:hover {
   border-radius: var(--lh-radius-soft);
   background: var(--lh-color-surface);
 }
+/* Keep desktop gutters stable when drawers and native dialogs lock scrolling. */
+html {
+  scrollbar-gutter: stable;
+}
+:where(input, textarea, select, button, a, [tabindex]) {
+  scroll-margin-block: 7rem 2rem;
+}
+.lh-dialog {
+  max-block-size: calc(100dvh - 2rem);
+  overscroll-behavior: contain;
+}

@@ -56,8 +56,9 @@ export default function AdminSuppliersPage() {
 
   const onSaved = useCallback(() => {
     setEditor({ mode: 'closed' })
+    setFlash(t('common.saved'))
     reload()
-  }, [reload])
+  }, [reload, t])
 
   const suppliers = data?.data ?? []
 
@@ -93,7 +94,7 @@ export default function AdminSuppliersPage() {
         />
       ) : null}
 
-      {loading ? (
+      {loading && !data ? (
         <Panel flush>
           <RowSkeleton rows={4} />
         </Panel>
@@ -203,7 +204,7 @@ export default function AdminSuppliersPage() {
             </div>
           </Panel>
 
-          {data ? <Pagination meta={data.meta} onPage={setPage} /> : null}
+          {data ? <Pagination meta={data.meta} pending={loading} onPage={setPage} /> : null}
         </>
       )}
     </AdminPage>

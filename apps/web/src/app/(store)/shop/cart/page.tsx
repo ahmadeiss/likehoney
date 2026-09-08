@@ -35,6 +35,7 @@ export default function CartPage() {
   const requestVersion = useRef(0)
 
   async function reconcile(lines: CartLine[]) {
+    setLoading(true)
     const request = ++requestVersion.current
     if (lines.length === 0) {
       setVerified([])
@@ -114,6 +115,7 @@ export default function CartPage() {
   }, [lang])
 
   function removeLine(variantId: string) {
+    if (loading) return
     const next = readCart().filter((line) => line.variantId !== variantId)
     setCartLines(next)
     setNotice(null)
@@ -121,6 +123,7 @@ export default function CartPage() {
   }
 
   function changeQuantity(line: QuoteLine, delta: number) {
+    if (loading) return
     const current = readCart()
     const currentQty = current.find((entry) => entry.variantId === line.variantId)?.quantity
     if (currentQty === undefined) return
@@ -176,7 +179,7 @@ export default function CartPage() {
             </Link>
           </div>
         ) : (
-          <div className="lh-cart__layout">
+          <div className="lh-cart__layout" aria-busy={loading}>
             <div className="lh-cart__lines">
               {verified?.map((line) => (
                 <article className="lh-cart-line" key={line.variantId}>
@@ -195,6 +198,7 @@ export default function CartPage() {
                         <button
                           type="button"
                           aria-label={t.decrease}
+                          disabled={loading || line.quantity <= 1}
                           onClick={() => changeQuantity(line, -1)}
                         >
                           <Minus size={14} aria-hidden="true" />
@@ -203,6 +207,9 @@ export default function CartPage() {
                         <button
                           type="button"
                           aria-label={t.increase}
+                          disabled={
+                            loading || line.quantity >= Math.min(999, line.availableQuantity)
+                          }
                           onClick={() => changeQuantity(line, 1)}
                         >
                           <Plus size={14} aria-hidden="true" />
@@ -211,6 +218,7 @@ export default function CartPage() {
                       <button
                         type="button"
                         className="lh-cart-line__remove"
+                        disabled={loading}
                         onClick={() => removeLine(line.variantId)}
                         aria-label={`${t.remove} ${lang === 'ar' ? line.productNameAr : line.productNameEn}`}
                       >
@@ -235,7 +243,28 @@ export default function CartPage() {
                 <span>{t.subtotal}</span>
                 <span>{formatMoney(subtotal, lang)}</span>
               </div>
+              <div className="checkout-update-status" role="status">
+                {loading ? (
+                  lang === 'ar' ? (
+                    'جارٍ تحديث السلة…'
+                  ) : (
+                    'Updating cart…'
+                  )
+                ) : error ? (
+                  <button
+                    type="button"
+                    className="lh-btn lh-btn--secondary"
+                    onClick={() => void reconcile(readCart())}
+                  >
+                    {lang === 'ar' ? 'إعادة المحاولة' : 'Try again'}
+                  </button>
+                ) : null}
+              </div>
               <Link
+                aria-disabled={loading || !!error}
+                onClick={(event) => {
+                  if (loading || error) event.preventDefault()
+                }}
                 href="/shop/checkout"
                 className="lh-btn lh-btn--primary lh-btn--lg lh-btn--block"
               >

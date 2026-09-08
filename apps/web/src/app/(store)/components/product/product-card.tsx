@@ -100,7 +100,7 @@ export function ProductCard({
             type="button"
             className="lh-btn lh-btn--primary"
             onClick={quickAdd}
-            disabled={!product.singleVariantId}
+            disabled={!product.singleVariantId || added}
           >
             <ShoppingBag className="lh-btn__icon" aria-hidden="true" />
             {added ? t.product.added : t.card.add}

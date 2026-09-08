@@ -2,7 +2,7 @@
 
 import { Check, Trash2, Truck } from 'lucide-react'
 import { useRouter } from 'next/navigation'
-import { useState } from 'react'
+import { useEffect, useState } from 'react'
 
 import { Button, Field, Input, Radio, Select, Textarea } from '@likehoney/ui'
 
@@ -70,6 +70,28 @@ export default function AdminNewProductPage() {
     { nameEn: '', nameAr: '', values: [{ code: '', valueEn: '', valueAr: '' }] },
   ])
   const [fieldError, setFieldError] = useState<string | null>(null)
+  const dirty = !!(
+    nameAr ||
+    nameEn ||
+    descriptionAr ||
+    descriptionEn ||
+    shortBlurbAr ||
+    shortBlurbEn ||
+    categoryId ||
+    supplierId ||
+    priceMinor ||
+    mode !== 'simple' ||
+    status !== 'draft'
+  )
+  useEffect(() => {
+    if (!dirty) return
+    const warn = (event: BeforeUnloadEvent) => {
+      event.preventDefault()
+      event.returnValue = ''
+    }
+    window.addEventListener('beforeunload', warn)
+    return () => window.removeEventListener('beforeunload', warn)
+  }, [dirty])
 
   const { run, pending } = useMutation(() =>
     client.createProduct({
@@ -204,13 +226,33 @@ export default function AdminNewProductPage() {
       <PageHeader
         title={t('products.new')}
         actions={
-          <Button variant="ghost" onClick={() => router.push('/admin/products')}>
+          <Button
+            variant="ghost"
+            onClick={() => {
+              if (
+                !dirty ||
+                window.confirm(
+                  locale === 'ar'
+                    ? 'لديك تغييرات غير محفوظة. هل تريد مغادرة الصفحة؟'
+                    : 'You have unsaved changes. Leave this page?',
+                )
+              )
+                router.push('/admin/products')
+            }}
+          >
             {t('common.back')}
           </Button>
         }
       />
 
-      <div className="grid grid-cols-1 gap-6 xl:grid-cols-[1fr_19rem]">
+      <form
+        className="grid grid-cols-1 gap-6 xl:grid-cols-[1fr_19rem]"
+        aria-busy={pending}
+        onSubmit={(event) => {
+          event.preventDefault()
+          void submit()
+        }}
+      >
         <Panel>
           <FormSection
             title={t('products.form.sectionBasic')}
@@ -218,10 +260,15 @@ export default function AdminNewProductPage() {
           >
             <div className="grid grid-cols-1 gap-4 sm:grid-cols-2">
               <Field label={t('products.form.nameAr')} required>
-                <Input value={nameAr} onChange={(e) => setNameAr(e.target.value)} />
+                <Input required value={nameAr} onChange={(e) => setNameAr(e.target.value)} />
               </Field>
               <Field label={t('products.form.nameEn')} required>
-                <Input dir="ltr" value={nameEn} onChange={(e) => setNameEn(e.target.value)} />
+                <Input
+                  required
+                  dir="ltr"
+                  value={nameEn}
+                  onChange={(e) => setNameEn(e.target.value)}
+                />
               </Field>
             </div>
           </FormSection>
@@ -507,12 +554,12 @@ export default function AdminNewProductPage() {
             </div>
           ) : null}
 
-          <Button size="lg" onClick={submit} loading={pending} block>
+          <Button size="lg" type="submit" loading={pending} block>
             {pending ? t('products.form.creating') : t('products.form.create')}
           </Button>
           <p className="text-xs text-ink-3">{t('products.form.submitHint')}</p>
         </aside>
-      </div>
+      </form>
     </AdminPage>
   )
 }

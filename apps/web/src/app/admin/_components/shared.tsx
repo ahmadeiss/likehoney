@@ -619,7 +619,15 @@ export function ErrorState({
 // Pagination
 // ---------------------------------------------------------------------------
 
-export function Pagination({ meta, onPage }: { meta: PageMeta; onPage: (page: number) => void }) {
+export function Pagination({
+  meta,
+  onPage,
+  pending = false,
+}: {
+  meta: PageMeta
+  onPage: (page: number) => void
+  pending?: boolean
+}) {
   const t = useT()
   const total = Math.max(1, Math.ceil(meta.total / Math.max(meta.pageSize, 1)))
   const canPrevious = meta.page > 1
@@ -637,7 +645,7 @@ export function Pagination({ meta, onPage }: { meta: PageMeta; onPage: (page: nu
         <Button
           variant="secondary"
           size="sm"
-          disabled={!canPrevious}
+          disabled={pending || !canPrevious}
           onClick={() => onPage(meta.page - 1)}
         >
           {t('common.previous')}
@@ -648,7 +656,7 @@ export function Pagination({ meta, onPage }: { meta: PageMeta; onPage: (page: nu
         <Button
           variant="secondary"
           size="sm"
-          disabled={!canNext}
+          disabled={pending || !canNext}
           onClick={() => onPage(meta.page + 1)}
         >
           {t('common.next')}

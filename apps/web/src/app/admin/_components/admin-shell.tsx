@@ -22,7 +22,7 @@ import {
 } from 'lucide-react'
 import Link from 'next/link'
 import { usePathname, useRouter } from 'next/navigation'
-import { useState, type ReactNode } from 'react'
+import { useEffect, useRef, useState, type ReactNode } from 'react'
 
 import { Button, Spinner } from '@likehoney/ui'
 
@@ -402,6 +402,40 @@ function OperationalShell({ children }: { children: ReactNode }) {
   const { hasIdentity: devIdentitySelected } = useIdentity()
   const router = useRouter()
   const [mobileOpen, setMobileOpen] = useState(false)
+  const mobilePanel = useRef<HTMLElement>(null)
+  useEffect(() => {
+    if (!mobileOpen) return
+    const trigger = document.activeElement
+    const overflow = document.body.style.overflow
+    document.body.style.overflow = 'hidden'
+    const items = () =>
+      Array.from(
+        mobilePanel.current?.querySelectorAll<HTMLElement>(
+          'a[href], button:not([disabled]), input:not([disabled]), select:not([disabled])',
+        ) ?? [],
+      )
+    items()[0]?.focus({ preventScroll: true })
+    const onKey = (event: KeyboardEvent) => {
+      if (event.key === 'Escape') setMobileOpen(false)
+      if (event.key !== 'Tab') return
+      const focusable = items()
+      const first = focusable[0]
+      const last = focusable.at(-1)
+      if (event.shiftKey && document.activeElement === first) {
+        event.preventDefault()
+        last?.focus()
+      } else if (!event.shiftKey && document.activeElement === last) {
+        event.preventDefault()
+        first?.focus()
+      }
+    }
+    document.addEventListener('keydown', onKey)
+    return () => {
+      document.body.style.overflow = overflow
+      document.removeEventListener('keydown', onKey)
+      if (trigger instanceof HTMLElement) trigger.focus({ preventScroll: true })
+    }
+  }, [mobileOpen])
 
   const isDev = process.env.NODE_ENV !== 'production'
   const devFallback = isDev && devIdentitySelected
@@ -445,6 +479,7 @@ function OperationalShell({ children }: { children: ReactNode }) {
           onClick={() => setMobileOpen(false)}
         >
           <aside
+            ref={mobilePanel}
             className="lh-admin-sidebar lh-admin-shell flex h-full w-[17rem] max-w-[85vw] flex-col overflow-hidden"
             role="dialog"
             aria-modal="true"

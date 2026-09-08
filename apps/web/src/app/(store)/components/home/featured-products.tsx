@@ -3,9 +3,10 @@
 import Link from 'next/link'
 import { useCatalogProducts } from '../../../../lib/shop/use-catalog-products'
 import { ArrowLeft, ArrowRight, RotateCcw } from 'lucide-react'
-import { useEffect, useState } from 'react'
+import { useEffect, useRef, useState } from 'react'
 import { shopClient, type PublicCategoryDoc } from '../../../../lib/shop/client'
 import { useStorefrontLang } from '../../../../lib/shop/locale'
+import { CatalogFrame } from '../product/catalog-frame'
 import { ProductCard } from '../product/product-card'
 import { LazyOptionSheet as OptionSheet } from '../product/lazy-option-sheet'
 
@@ -17,7 +18,11 @@ export function FeaturedProducts() {
   const [category, setCategory] = useState('')
   const [page, setPage] = useState(1)
   const [sheetProductId, setSheetProductId] = useState<string | null>(null)
-  const { result: current, retry } = useCatalogProducts(page, category, '')
+  const { result: current, retry, pending, failed } = useCatalogProducts(page, category, '')
+  const pageLock = useRef(false)
+  useEffect(() => {
+    if (!pending) pageLock.current = false
+  }, [pending])
   const pages = current ? Math.ceil(current.total / PAGE_SIZE) : 0
 
   useEffect(() => {
@@ -38,13 +43,10 @@ export function FeaturedProducts() {
     setPage(1)
   }
   function changePage(next: number) {
-    setPage(next)
-    document.getElementById('collection')?.scrollIntoView({
-      block: 'start',
-      behavior: window.matchMedia('(prefers-reduced-motion: reduce)').matches
-        ? 'instant'
-        : 'smooth',
-    })
+    if (pageLock.current || pending || next < 1 || next > pages) return
+    pageLock.current = true
+    if (next === page) retry()
+    else setPage(next)
   }
 
   return (
@@ -95,10 +97,10 @@ export function FeaturedProducts() {
                 : 'Collection'}
           </span>
         </div>
-        <div aria-busy={!current}>
+        <CatalogFrame pending={pending}>
           {!current ? (
             <div className="lh-grid" aria-label={isAr ? 'جارٍ تحميل المنتجات' : 'Loading products'}>
-              {Array.from({ length: 4 }, (_, i) => (
+              {Array.from({ length: PAGE_SIZE }, (_, i) => (
                 <div className="collection-skeleton" key={i} aria-hidden="true">
                   <div className="lh-skel" />
                   <div className="lh-skel" />
@@ -141,7 +143,7 @@ export function FeaturedProducts() {
               )}
             </div>
           ) : (
-            <div className="lh-grid">
+            <div className="lh-grid catalog-page-enter" key={current.key}>
               {current.products.map((product, index) => (
                 <ProductCard
                   key={product.id}
@@ -152,6 +154,24 @@ export function FeaturedProducts() {
               ))}
             </div>
           )}
+        </CatalogFrame>
+        <div className="collection-feedback" role="status">
+          {pending ? (
+            isAr ? (
+              'جارٍ تحديث المنتجات…'
+            ) : (
+              'Updating products…'
+            )
+          ) : failed && current && !current.failed ? (
+            <span>
+              {isAr
+                ? 'تعذّر تحديث المنتجات. اختياراتك السابقة ما زالت ظاهرة.'
+                : 'Could not update products. Your previous selection is still shown.'}{' '}
+              <button type="button" onClick={retry}>
+                {isAr ? 'إعادة المحاولة' : 'Try again'}
+              </button>
+            </span>
+          ) : null}
         </div>
         {current && !current.failed && pages > 1 && (
           <nav
@@ -161,19 +181,19 @@ export function FeaturedProducts() {
             <button
               type="button"
               className="lh-btn lh-btn--secondary"
-              disabled={page === 1}
-              onClick={() => changePage(page - 1)}
+              disabled={pending || current.page === 1}
+              onClick={() => changePage(current.page - 1)}
             >
               {isAr ? 'السابق' : 'Previous'}
             </button>
             <span aria-live="polite">
-              {page} / {pages}
+              {current.page} / {pages}
             </span>
             <button
               type="button"
               className="lh-btn lh-btn--secondary"
-              disabled={page >= pages}
-              onClick={() => changePage(page + 1)}
+              disabled={pending || current.page >= pages}
+              onClick={() => changePage(current.page + 1)}
             >
               {isAr ? 'التالي' : 'Next'}
             </button>

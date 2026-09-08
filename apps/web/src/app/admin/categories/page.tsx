@@ -89,8 +89,9 @@ export default function AdminCategoriesPage() {
   const closeEditor = () => setEditor({ mode: 'closed' })
   const onSaved = useCallback(() => {
     closeEditor()
+    setFlash(t('common.saved'))
     reload()
-  }, [reload])
+  }, [reload, t])
 
   const categories = data?.data ?? []
 
@@ -126,7 +127,7 @@ export default function AdminCategoriesPage() {
         />
       ) : null}
 
-      {loading ? (
+      {loading && !data ? (
         <Panel flush>
           <RowSkeleton rows={4} />
         </Panel>
@@ -196,7 +197,7 @@ export default function AdminCategoriesPage() {
               </tbody>
             </table>
           </Panel>
-          {data ? <Pagination meta={data.meta} onPage={setPage} /> : null}
+          {data ? <Pagination meta={data.meta} pending={loading} onPage={setPage} /> : null}
         </>
       )}
     </AdminPage>

@@ -12,6 +12,7 @@ import {
   parseCatalogPage,
 } from '../../../lib/shop/catalog-pagination'
 import { useStorefrontLang } from '../../../lib/shop/locale'
+import { CatalogFrame } from '../components/product/catalog-frame'
 import { ProductCard } from '../components/product/product-card'
 
 import { LazyOptionSheet as OptionSheet } from '../components/product/lazy-option-sheet'
@@ -47,7 +48,7 @@ function CatalogSearch({
 function CatalogSkeleton() {
   return (
     <div className="lh-grid catalog-grid" aria-busy="true">
-      {Array.from({ length: 8 }, (_, index) => (
+      {Array.from({ length: CATALOG_PAGE_SIZE }, (_, index) => (
         <div key={index} className="collection-skeleton" aria-hidden="true">
           <div className="lh-skel" />
           <div className="lh-skel" />
@@ -66,7 +67,8 @@ function ShopInner() {
   const page = parseCatalogPage(params.get('page'))
   const [categories, setCategories] = useState<PublicCategoryDoc[]>([])
   const [sheetProductId, setSheetProductId] = useState<string | null>(null)
-  const { result, retry } = useCatalogProducts(page, category, search)
+  const { result, retry, pending, failed } = useCatalogProducts(page, category, search)
+  const shownPage = result?.page ?? page
   const totalPages = result ? Math.max(1, Math.ceil(result.total / CATALOG_PAGE_SIZE)) : 1
   const active = categories.find((item) => item.slug === category)
   const activeName = active ? (isAr ? active.nameAr : active.nameEn) : category
@@ -122,6 +124,7 @@ function ShopInner() {
                 href={href(1, '')}
                 aria-current={!category ? 'true' : undefined}
                 prefetch={false}
+                scroll={false}
               >
                 {isAr ? 'جميع المنتجات' : 'All products'}
                 <Arrow size={17} />
@@ -132,6 +135,7 @@ function ShopInner() {
                   href={href(1, item.slug)}
                   aria-current={category === item.slug ? 'true' : undefined}
                   prefetch={false}
+                  scroll={false}
                 >
                   {isAr ? item.nameAr : item.nameEn}
                   <Arrow size={17} />
@@ -163,7 +167,7 @@ function ShopInner() {
                       ? 'تعذّر الاتصال'
                       : 'Unable to connect'
                     : result.total > 0 && page <= totalPages
-                      ? `${(page - 1) * CATALOG_PAGE_SIZE + 1}–${Math.min(page * CATALOG_PAGE_SIZE, result.total)} ${isAr ? 'من' : 'of'} ${result.total} ${isAr ? 'منتج' : 'products'}`
+                      ? `${(shownPage - 1) * CATALOG_PAGE_SIZE + 1}–${Math.min(shownPage * CATALOG_PAGE_SIZE, result.total)} ${isAr ? 'من' : 'of'} ${result.total} ${isAr ? 'منتج' : 'products'}`
                       : isAr
                         ? 'لا توجد نتائج'
                         : 'No results'}
@@ -189,10 +193,12 @@ function ShopInner() {
                     “{search}”<X size={14} />
                   </Link>
                 )}
-                <Link href="/shop">{isAr ? 'مسح الكل' : 'Clear all'}</Link>
+                <Link href="/shop" scroll={false}>
+                  {isAr ? 'مسح الكل' : 'Clear all'}
+                </Link>
               </div>
             )}
-            <div aria-busy={!result}>
+            <CatalogFrame pending={pending}>
               {!result ? (
                 <CatalogSkeleton />
               ) : result.failed ? (
@@ -226,7 +232,7 @@ function ShopInner() {
                   </Link>
                 </div>
               ) : (
-                <div className="lh-grid catalog-grid">
+                <div className="lh-grid catalog-grid catalog-page-enter" key={result.key}>
                   {result.products.map((product, index) => (
                     <ProductCard
                       key={product.id}
@@ -238,16 +244,34 @@ function ShopInner() {
                   ))}
                 </div>
               )}
+            </CatalogFrame>
+            <div className="collection-feedback" role="status">
+              {pending ? (
+                isAr ? (
+                  'جارٍ تحديث المنتجات…'
+                ) : (
+                  'Updating products…'
+                )
+              ) : failed && result && !result.failed ? (
+                <button type="button" onClick={retry}>
+                  {isAr ? 'تعذّر التحديث. إعادة المحاولة' : 'Update failed. Try again'}
+                </button>
+              ) : null}
             </div>
             {result && !result.failed && totalPages > 1 && (
               <nav
                 className="catalog-pagination"
+                aria-busy={pending}
+                onClick={(event) => {
+                  if (pending) event.preventDefault()
+                }}
                 aria-label={isAr ? 'صفحات المنتجات' : 'Product pages'}
               >
                 {page > 1 ? (
                   <Link
                     href={href(Math.min(page - 1, totalPages))}
                     prefetch={false}
+                    scroll={false}
                     aria-label={isAr ? 'الصفحة السابقة' : 'Previous page'}
                   >
                     {isAr ? <ArrowRight size={18} /> : <ArrowLeft size={18} />}
@@ -257,7 +281,7 @@ function ShopInner() {
                     {isAr ? <ArrowRight size={18} /> : <ArrowLeft size={18} />}
                   </span>
                 )}
-                {catalogPages(page, totalPages).map((item, index) =>
+                {catalogPages(shownPage, totalPages).map((item, index) =>
                   item === 'gap' ? (
                     <span key={`gap-${index}`}>…</span>
                   ) : (
@@ -265,8 +289,9 @@ function ShopInner() {
                       key={item}
                       href={href(item)}
                       prefetch={false}
+                      scroll={false}
                       aria-label={isAr ? `صفحة ${item}` : `Page ${item}`}
-                      aria-current={page === item ? 'page' : undefined}
+                      aria-current={shownPage === item ? 'page' : undefined}
                     >
                       {item}
                     </Link>
@@ -276,6 +301,7 @@ function ShopInner() {
                   <Link
                     href={href(page + 1)}
                     prefetch={false}
+                    scroll={false}
                     aria-label={isAr ? 'الصفحة التالية' : 'Next page'}
                   >
                     <Arrow size={18} />

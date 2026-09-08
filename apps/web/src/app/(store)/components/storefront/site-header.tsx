@@ -50,7 +50,7 @@ export function SiteHeader(): ReactElement {
           'a[href], button:not([disabled]), input:not([disabled])',
         ) ?? [],
       )
-    focusable()[0]?.focus()
+    focusable()[0]?.focus({ preventScroll: true })
     const onKey = (event: KeyboardEvent) => {
       if (event.key === 'Escape') {
         setDrawerOpen(false)
@@ -72,7 +72,7 @@ export function SiteHeader(): ReactElement {
     return () => {
       document.body.style.overflow = previousOverflow
       document.removeEventListener('keydown', onKey)
-      if (previousFocus instanceof HTMLElement) previousFocus.focus()
+      if (previousFocus instanceof HTMLElement) previousFocus.focus({ preventScroll: true })
     }
   }, [drawerOpen, searchOpen])
 

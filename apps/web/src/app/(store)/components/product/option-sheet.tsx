@@ -65,7 +65,7 @@ export function OptionSheet({
       Array.from(
         panelRef.current?.querySelectorAll<HTMLButtonElement>('button:not([disabled])') ?? [],
       )
-    buttons()[0]?.focus()
+    buttons()[0]?.focus({ preventScroll: true })
     const onKey = (e: KeyboardEvent) => {
       if (e.key === 'Escape') onClose()
       if (e.key !== 'Tab') return
@@ -84,7 +84,7 @@ export function OptionSheet({
     return () => {
       window.removeEventListener('keydown', onKey)
       document.body.style.overflow = previousOverflow
-      if (previousFocus instanceof HTMLElement) previousFocus.focus()
+      if (previousFocus instanceof HTMLElement) previousFocus.focus({ preventScroll: true })
     }
   }, [onClose])
 

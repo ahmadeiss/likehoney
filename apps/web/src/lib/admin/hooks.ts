@@ -118,21 +118,28 @@ export function useMutation<TArgs extends unknown[], TResult>(
   fn: (...args: TArgs) => Promise<TResult>,
 ): { run: (...args: TArgs) => Promise<MutationResult<TResult>>; pending: boolean } {
   const [pending, setPending] = useState(false)
+  const active = useRef<Promise<MutationResult<TResult>> | null>(null)
   const fnRef = useRef(fn)
   useEffect(() => {
     fnRef.current = fn
   })
 
-  const run = useCallback(async (...args: TArgs): Promise<MutationResult<TResult>> => {
+  const run = useCallback((...args: TArgs): Promise<MutationResult<TResult>> => {
+    if (active.current) return active.current
     setPending(true)
-    try {
-      const data = await fnRef.current(...args)
-      return { ok: true, data }
-    } catch (cause) {
-      return { ok: false, error: normalizeError(cause) }
-    } finally {
-      setPending(false)
-    }
+    const request = (async (): Promise<MutationResult<TResult>> => {
+      try {
+        const data = await Promise.resolve().then(() => fnRef.current(...args))
+        return { ok: true, data }
+      } catch (cause) {
+        return { ok: false, error: normalizeError(cause) }
+      } finally {
+        active.current = null
+        setPending(false)
+      }
+    })()
+    active.current = request
+    return request
   }, [])
 
   return { run, pending }

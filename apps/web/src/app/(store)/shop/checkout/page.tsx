@@ -77,7 +77,6 @@ export default function CheckoutPage() {
 
   async function loadQuote(zoneId: string) {
     const request = ++quoteRequest.current
-    setQuote(null)
     setError(null)
     setLoadState('loading')
     try {
@@ -216,7 +215,7 @@ export default function CheckoutPage() {
           </p>
         ) : null}
 
-        {loadState === 'loading' ? (
+        {loadState === 'loading' && !quote ? (
           <div className="lh-cart__lines" aria-hidden="true">
             <div className="lh-skel" style={{ height: '6rem' }} />
             <div className="lh-skel" style={{ height: '6rem' }} />
@@ -391,7 +390,28 @@ export default function CheckoutPage() {
               </p>
             </form>
 
-            <aside className="lh-cart__summary" aria-label={t.orderSummary}>
+            <aside
+              className="lh-cart__summary"
+              aria-label={t.orderSummary}
+              aria-busy={loadState === 'loading'}
+            >
+              <div className="checkout-update-status" role="status">
+                {loadState === 'loading' ? (
+                  lang === 'ar' ? (
+                    'جارٍ تحديث رسوم التوصيل…'
+                  ) : (
+                    'Updating delivery…'
+                  )
+                ) : loadState === 'error' ? (
+                  <button
+                    type="button"
+                    className="lh-btn lh-btn--secondary"
+                    onClick={() => void loadQuote(selectedZone)}
+                  >
+                    {lang === 'ar' ? 'إعادة المحاولة' : 'Try again'}
+                  </button>
+                ) : null}
+              </div>
               <h2 className="lh-cart__summary-title">{t.stepSummary}</h2>
               {quote.lines.map((line) => (
                 <div className="lh-cart__summary-row" key={line.variantId}>

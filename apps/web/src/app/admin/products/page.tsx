@@ -265,7 +265,7 @@ export default function AdminProductsPage() {
         </Dialog>
       ) : null}
 
-      {loading ? (
+      {loading && !data ? (
         <Panel flush>
           <RowSkeleton rows={6} />
         </Panel>
@@ -424,7 +424,7 @@ export default function AdminProductsPage() {
             </div>
           </Panel>
 
-          <Pagination meta={data.meta} onPage={setPage} />
+          <Pagination meta={data.meta} pending={loading} onPage={setPage} />
         </>
       )}
     </AdminPage>

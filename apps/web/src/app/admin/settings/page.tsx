@@ -345,13 +345,19 @@ function DeliveryZonesPanel() {
     zone: DeliveryZoneDoc | null
   } | null>(null)
   const { run, pending } = useMutation((id: string) => client.removeDeliveryZone(id))
+  const [zoneMessage, setZoneMessage] = useState<{ tone: 'ok' | 'error'; text: string } | null>(
+    null,
+  )
   const zones = data?.data ?? []
 
   const remove = async (zone: DeliveryZoneDoc) => {
+    setZoneMessage(null)
     const result = await run(zone.id)
     if (result.ok) {
       setConfirmDelete(null)
       reload()
+    } else {
+      setZoneMessage({ tone: 'error', text: errorMessage(result.error, t) })
     }
   }
 
@@ -371,7 +377,8 @@ function DeliveryZonesPanel() {
         }
       />
 
-      {loading ? (
+      {zoneMessage ? <Flash tone={zoneMessage.tone}>{zoneMessage.text}</Flash> : null}
+      {loading && !data ? (
         <RowSkeleton rows={3} />
       ) : error ? (
         <div className="p-5">
@@ -458,6 +465,7 @@ function DeliveryZonesPanel() {
           onClose={() => setEditor(null)}
           onSaved={() => {
             setEditor(null)
+            setZoneMessage({ tone: 'ok', text: t('common.saved') })
             reload()
           }}
         />
