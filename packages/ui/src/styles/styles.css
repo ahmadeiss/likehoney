@@ -32,6 +32,8 @@
   --lh-color-ink-4: #9a9180;
   --lh-color-border: #e6ddc9;
   --lh-color-border-strong: #d2c5a9;
+  --lh-color-control-border: #9c9171;
+  --lh-color-control-border-strong: #857a64;
 
   /* Brand honey */
   --lh-color-honey: #c3891b;
@@ -126,6 +128,8 @@
   --lh-color-ink-4: #a19a89;
   --lh-color-border: #e5dfd0;
   --lh-color-border-strong: #ccc4ae;
+  --lh-color-control-border: #95896d;
+  --lh-color-control-border-strong: #887d68;
 
   /* Brand honey — restrained accent, not dominant */
   --lh-color-honey: #b8860b;
@@ -166,6 +170,8 @@
   --lh-color-ink-4: #615c52;
   --lh-color-border: #2b2a26;
   --lh-color-border-strong: #3d3a33;
+  --lh-color-control-border: #6a645b;
+  --lh-color-control-border-strong: #726c62;
   --lh-color-honey: #d7ae55;
   --lh-color-honey-strong: #e3bc67;
   --lh-color-honey-deep: #e8c273;
@@ -638,7 +644,7 @@
   line-height: 1.5;
   color: var(--lh-color-ink);
   background: var(--lh-color-surface);
-  border: 1px solid var(--lh-color-border);
+  border: 1px solid var(--lh-color-control-border);
   border-radius: var(--lh-radius-control);
   padding: var(--lh-space-2) var(--lh-space-3);
   transition:
@@ -659,7 +665,7 @@
 
 .lh-input:hover:not(:disabled),
 .lh-textarea:hover:not(:disabled) {
-  border-color: var(--lh-color-ink-4);
+  border-color: var(--lh-color-control-border-strong);
 }
 
 .lh-input:focus-visible,
@@ -733,7 +739,7 @@
   width: 1.125rem;
   height: 1.125rem;
   margin-block-start: 0.1875rem;
-  border: 1px solid var(--lh-color-border-strong);
+  border: 1px solid var(--lh-color-control-border);
   border-radius: var(--lh-radius-control);
   background: var(--lh-color-surface);
   color: var(--lh-color-on-honey);
@@ -807,7 +813,7 @@
   width: 1.125rem;
   height: 1.125rem;
   margin-block-start: 0.1875rem;
-  border: 1px solid var(--lh-color-border-strong);
+  border: 1px solid var(--lh-color-control-border);
   border-radius: 50%;
   background: var(--lh-color-surface);
   color: var(--lh-color-surface);
@@ -1153,7 +1159,7 @@
   line-height: 1.4;
   color: var(--lh-color-ink);
   background: var(--lh-color-surface);
-  border: 1px solid var(--lh-color-border);
+  border: 1px solid var(--lh-color-control-border);
   border-radius: var(--lh-radius-control);
   padding: var(--lh-space-2) calc(var(--lh-space-3) + 1.25rem) var(--lh-space-2) var(--lh-space-3);
   cursor: pointer;
@@ -1191,7 +1197,7 @@
 }
 
 .lh-select__control:hover:not(:disabled) {
-  border-color: var(--lh-color-ink-4);
+  border-color: var(--lh-color-control-border-strong);
 }
 
 .lh-select__control:focus-visible {
