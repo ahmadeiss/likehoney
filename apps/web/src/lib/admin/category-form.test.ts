@@ -25,6 +25,8 @@ function createValues(overrides: Partial<CategoryFormValues> = {}): CategoryForm
     descriptionAr: '',
     descriptionEn: '',
     status: 'active',
+    iconKey: '',
+    visualMode: 'auto',
     ...overrides,
   }
 }
@@ -132,4 +134,67 @@ test('update still requires the bilingual names', () => {
   const { payload, errors } = buildCategoryUpdatePayload(createValues({ nameEn: '  ' }))
   assert.equal(payload, undefined)
   assert.equal(errors.nameEn, 'required')
+})
+
+test('create payload sends a valid icon key (trimmed and lowercased)', () => {
+  const { payload } = buildCategoryCreatePayload(createValues({ iconKey: '  SHIRT ' }))
+  assert.ok(payload)
+  assert.equal(payload.iconKey, 'shirt')
+  assert.equal(categoryCreateSchema.safeParse(payload).success, true)
+})
+
+test('create payload omits a blank icon key (auto fallback)', () => {
+  const { payload } = buildCategoryCreatePayload(createValues())
+  assert.ok(payload)
+  assert.equal('iconKey' in payload, false)
+  assert.equal(categoryCreateSchema.safeParse(payload).success, true)
+})
+
+test('update payload sends null for a blank icon key (clears to auto)', () => {
+  const { payload } = buildCategoryUpdatePayload(createValues())
+  assert.ok(payload)
+  assert.equal(payload.iconKey, null)
+  assert.equal(categoryUpdateSchema.safeParse(payload).success, true)
+})
+
+test('update payload sends a valid icon key verbatim', () => {
+  const { payload } = buildCategoryUpdatePayload(createValues({ iconKey: 'backpack' }))
+  assert.ok(payload)
+  assert.equal(payload.iconKey, 'backpack')
+  assert.equal(categoryUpdateSchema.safeParse(payload).success, true)
+})
+
+test('create payload always sends the visual mode (defaults auto)', () => {
+  const { payload } = buildCategoryCreatePayload(createValues())
+  assert.ok(payload)
+  assert.equal(payload.visualMode, 'auto')
+  assert.equal(categoryCreateSchema.safeParse(payload).success, true)
+})
+
+test('update payload always sends the visual mode', () => {
+  const { payload } = buildCategoryUpdatePayload(createValues({ visualMode: 'icon' }))
+  assert.ok(payload)
+  assert.equal(payload.visualMode, 'icon')
+  assert.equal(categoryUpdateSchema.safeParse(payload).success, true)
+})
+
+test('every visual mode is accepted by the API contracts', () => {
+  for (const visualMode of ['auto', 'image', 'icon'] as const) {
+    const { payload: createPayload } = buildCategoryCreatePayload(createValues({ visualMode }))
+    const { payload: updatePayload } = buildCategoryUpdatePayload(
+      createValues({ visualMode, iconKey: 'shirt' }),
+    )
+    assert.ok(createPayload && updatePayload)
+    assert.equal(createPayload.visualMode, visualMode)
+    assert.equal(updatePayload.visualMode, visualMode)
+    assert.equal(categoryCreateSchema.safeParse(createPayload).success, true)
+    assert.equal(categoryUpdateSchema.safeParse(updatePayload).success, true)
+  }
+})
+
+test('a registry-only (non-curated) icon key can be sent via Advanced', () => {
+  const { payload } = buildCategoryCreatePayload(createValues({ iconKey: ' camera ' }))
+  assert.ok(payload)
+  assert.equal(payload.iconKey, 'camera')
+  assert.equal(categoryCreateSchema.safeParse(payload).success, true)
 })

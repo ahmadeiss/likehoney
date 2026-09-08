@@ -21,6 +21,7 @@ import {
   type AdminReviewDetail,
   type AdminReviewListItem,
   type AdminReviewListResponse,
+  type CategoryVisualMode,
   type OrderCancelInput,
   type OrderStockReturnRequest,
   type PaymentSettingsReadModel,
@@ -99,6 +100,10 @@ export interface CategoryDoc {
   imageSizeBytes: number | null
   /** Authenticated stream URL (Admin media route) — mints over the same-origin rewrite. */
   imageUrl: string | null
+  /** Safe curated icon key (e.g. "shirt", "shoe"). null = none chosen. */
+  iconKey: string | null
+  /** Storefront display mode: auto | image | icon (image survives a mode switch). */
+  visualMode: CategoryVisualMode
 }
 
 export interface SupplierDoc {
@@ -644,6 +649,10 @@ export interface CategoryCreateInput {
   descriptionEn?: string
   descriptionAr?: string
   status?: EntityStatus
+  /** Approved-registry icon key (curated grid or registry-only); omit for auto. */
+  iconKey?: string
+  /** Display mode; defaults to `auto` when omitted. */
+  visualMode?: CategoryVisualMode
 }
 
 export interface CategoryUpdateInput {
@@ -653,6 +662,10 @@ export interface CategoryUpdateInput {
   descriptionEn?: string
   descriptionAr?: string
   status?: EntityStatus
+  /** `null` clears the icon back to auto; omit to leave it untouched. */
+  iconKey?: string | null
+  /** Display mode; omitted leaves it untouched. */
+  visualMode?: CategoryVisualMode
 }
 
 export interface SupplierCreateInput {

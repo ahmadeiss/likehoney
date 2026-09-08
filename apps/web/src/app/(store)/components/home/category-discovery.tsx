@@ -5,6 +5,7 @@ import Image from 'next/image'
 import { ArrowLeft, ArrowRight, Backpack, Shirt, Footprints, Puzzle, Gift } from 'lucide-react'
 import { useEffect, useState, type ReactElement } from 'react'
 
+import { categoryIconComponent, resolveCategoryVisual } from '../../../../lib/category-icons'
 import { shopClient, type PublicCategoryDoc } from '../../../../lib/shop/client'
 import { copy } from '../../../../lib/shop/copy'
 import { useStorefrontLang } from '../../../../lib/shop/locale'
@@ -59,6 +60,11 @@ export function CategoryDiscovery(): ReactElement | null {
             {categories.map((category, index) => {
               const name = isAr ? category.nameAr : category.nameEn
               const Icon = CATEGORY_ICONS[category.code.toUpperCase()] ?? Gift
+              const visual = resolveCategoryVisual(category)
+              const CustomIcon =
+                visual === 'icon' && category.iconKey !== null
+                  ? categoryIconComponent(category.iconKey)
+                  : undefined
               return (
                 <Link
                   key={category.id}
@@ -66,10 +72,10 @@ export function CategoryDiscovery(): ReactElement | null {
                   className="lh-cat-card"
                 >
                   <div className="lh-cat-card__media" aria-hidden="true">
-                    {category.imageUrl !== null ? (
+                    {visual === 'image' ? (
                       <div className="lh-cat-card__image">
                         <Image
-                          src={category.imageUrl}
+                          src={category.imageUrl!}
                           alt=""
                           fill
                           sizes="210px"
@@ -78,7 +84,11 @@ export function CategoryDiscovery(): ReactElement | null {
                       </div>
                     ) : (
                       <>
-                        <Icon className="hive-category-icon" strokeWidth={1.3} />
+                        {CustomIcon !== undefined ? (
+                          <CustomIcon className="hive-category-icon" strokeWidth={1.3} />
+                        ) : (
+                          <Icon className="hive-category-icon" strokeWidth={1.3} />
+                        )}
                         <span className="lh-cat-card__initial">
                           {String(index + 1).padStart(2, '0')}
                         </span>

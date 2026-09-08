@@ -20,6 +20,10 @@ export interface PublicCategoryDoc {
   nameEn: string
   /** Public stream URL of the category display image (`/api/v1/public/media/stream`). */
   imageUrl: string | null
+  /** Safe icon key from the approved registry (e.g. "shirt", "camera"); null = none chosen. */
+  iconKey: string | null
+  /** Storefront display mode: auto | image | icon. */
+  visualMode: 'auto' | 'image' | 'icon'
 }
 
 export interface PublicDeliveryZoneDoc {

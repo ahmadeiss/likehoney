@@ -12,6 +12,13 @@
  * return field-level error codes that the UI localizes.
  */
 import type { CategoryCreateInput, CategoryUpdateInput, EntityStatus } from './client'
+import type { CategoryVisualMode } from '@likehoney/shared'
+
+/** Blank → `undefined` (clears/keeps clear the icon on update). */
+function optionalIconKey(value: string): string | undefined {
+  const value_ = value.trim()
+  return value_.length > 0 ? value_.toLowerCase() : undefined
+}
 
 export interface CategoryFormValues {
   nameAr: string
@@ -22,6 +29,14 @@ export interface CategoryFormValues {
   descriptionAr: string
   descriptionEn: string
   status: EntityStatus
+  /** Selected icon key or blank for auto. Validated against the icon registry. */
+  iconKey: string
+  /**
+   * Storefront display mode. `auto` prefers image → icon → code fallback;
+   * `image` shows the image; `icon` shows the icon even when an image is
+   * stored. Switching modes never deletes a stored image.
+   */
+  visualMode: CategoryVisualMode
 }
 
 export type CategoryField = 'nameAr' | 'nameEn' | 'code' | 'slug'
@@ -82,6 +97,9 @@ export function buildCategoryCreatePayload(values: CategoryFormValues): {
   if (descriptionAr !== undefined) payload.descriptionAr = descriptionAr
   const descriptionEn = optionalTrimmed(values.descriptionEn)
   if (descriptionEn !== undefined) payload.descriptionEn = descriptionEn
+  const iconKey = optionalIconKey(values.iconKey)
+  if (iconKey !== undefined) payload.iconKey = iconKey
+  payload.visualMode = values.visualMode
   return { payload, errors }
 }
 
@@ -103,5 +121,7 @@ export function buildCategoryUpdatePayload(values: CategoryFormValues): {
   if (descriptionAr !== undefined) payload.descriptionAr = descriptionAr
   const descriptionEn = optionalTrimmed(values.descriptionEn)
   if (descriptionEn !== undefined) payload.descriptionEn = descriptionEn
+  payload.iconKey = optionalIconKey(values.iconKey) ?? null
+  payload.visualMode = values.visualMode
   return { payload, errors }
 }

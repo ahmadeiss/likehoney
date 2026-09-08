@@ -739,12 +739,54 @@ export const dict = {
   'categories.imageEmpty': { ar: 'لا صورة بعد', en: 'No image yet' },
   'categories.imageUpload': { ar: 'رفع صورة', en: 'Upload image' },
   'categories.imageChange': { ar: 'تغيير الصورة', en: 'Change image' },
-  'categories.imageRemove': { ar: 'إزالة الصورة', en: 'Remove image' },
+  'categories.imageRemove': {
+    ar: 'حذف الصورة نهائيًا',
+    en: 'Remove image permanently',
+  },
   'categories.imageConfirmRemove': {
-    ar: 'إزالة صورة التصنيف؟ ستستخدم الواجهة الرمز الافتراضي.',
-    en: 'Remove the category image? The storefront will fall back to the icon.',
+    ar: 'إزالة الصورة نهائيًا؟ سيُحذف الملف من التخزين وتعرض الواجهة الرمز المحفوظ إن وُجد.',
+    en: 'Remove the image permanently? The file will be deleted from storage and the storefront will show the saved icon if one exists.',
   },
   'categories.imageUploading': { ar: 'جارٍ رفع الصورة...', en: 'Uploading image…' },
+  'categories.visual': { ar: 'مظهر التصنيف', en: 'Category appearance' },
+  'categories.visualTypeHint': {
+    ar: 'حدد كيف يظهر التصنيف على الواجهة. تبديل الوضع لا يحذف الصورة أو الأيقونة المحفوظة؛ حذف الصورة إجراء منفصل ونهائي.',
+    en: 'Choose how the category appears on the storefront. Switching modes never deletes your saved image or icon; removing the image is a separate, permanent action.',
+  },
+  'categories.visualImage': { ar: 'صورة', en: 'Image' },
+  'categories.visualIcon': { ar: 'أيقونة', en: 'Icon' },
+  'categories.visualAuto': { ar: 'تلقائي', en: 'Automatic' },
+  'categories.iconEmpty': { ar: 'لا توجد أيقونة', en: 'No icon' },
+  'categories.iconClear': { ar: 'بدون أيقونة', en: 'No icon' },
+  'categories.iconSearch': { ar: 'بحث عن أيقونة', en: 'Search icons' },
+  'categories.iconSearchPlaceholder': {
+    ar: 'مثال: حذاء، هدية، مدرسة…',
+    en: 'e.g. shoe, gift, school…',
+  },
+  'categories.iconSearchEmpty': {
+    ar: 'لا توجد نتيجة مطابقة.',
+    en: 'No matching icons.',
+  },
+  'categories.iconPriorityHint': {
+    ar: 'عند وجود صورة تُعرض قبل الأيقونة، وتبقى الأيقونة محفوظة لتعود للظهور عند إزالة الصورة.',
+    en: 'An image displays before the icon; the icon stays saved and returns when the image is removed.',
+  },
+  'categories.iconKeyName': { ar: 'اسم الأيقونة', en: 'Icon name' },
+  'categories.iconKeyHint': {
+    ar: 'اكتب اسم أيقونة متاحة في مكتبة الأيقونات الكاملة (تتجاوز الشبكة الجاهزة أعلاه).',
+    en: 'Type an icon name from the full icon library (beyond the ready-made grid above).',
+  },
+  'categories.iconKeyExample': { ar: 'مثال: camera', en: 'Example: camera' },
+  'categories.iconKeyInvalid': {
+    ar: 'الأيقونة غير موجودة. اختر من القائمة أو اكتب اسمًا صالحًا.',
+    en: 'Icon not found. Choose from the list or type a valid name.',
+  },
+  'categories.iconKeyVerified': { ar: 'أيقونة صالحة', en: 'Valid icon' },
+  'categories.visualAutoDesc': {
+    ar: 'يعرض المتجر الصورة إن وُجدت، ثم الرمز المحفوظ إن وُجد، ثم الرمز التلقائي للتصنيف.',
+    en: 'The storefront shows the image if present, then the saved icon, then the automatic category icon.',
+  },
+  'categories.iconSelected': { ar: 'محدد', en: 'Selected' },
 
   // ---------------------------------------------------------------------------
   // Suppliers

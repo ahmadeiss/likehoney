@@ -7,7 +7,7 @@
 import { sql } from 'drizzle-orm'
 import { check, index, pgTable, uniqueIndex } from 'drizzle-orm/pg-core'
 
-import { entityStatus, mediaType, productStatus } from './enums'
+import { entityStatus, categoryVisualMode, mediaType, productStatus } from './enums'
 import { suppliers } from './suppliers'
 
 export const categories = pgTable(
@@ -32,6 +32,19 @@ export const categories = pgTable(
     imageObjectKey: t.text('image_object_key'),
     imageMimeType: t.varchar('image_mime_type', { length: 100 }),
     imageSizeBytes: t.bigint('image_size_bytes', { mode: 'number' }),
+    /**
+     * Safe icon key from a curated whitelist (e.g. "shirt", "sport-shoe",
+     * "gift"). Only set when the user has explicitly chosen an icon. NULL =
+     * use automatic fallback (code-mapped icon + numbered initial).
+     */
+    iconKey: t.text('icon_key'),
+    /**
+     * Storefront display mode: `auto` (image → icon → fallback), `image` (show
+     * the image when present), or `icon` (show the icon even when an image is
+     * stored). Switching modes never deletes the stored image — only an
+     * explicit image deletion does.
+     */
+    visualMode: categoryVisualMode('visual_mode').notNull().default('auto'),
     status: entityStatus('status').notNull().default('active'),
     createdAt: t.timestamp('created_at', { withTimezone: true }).notNull().defaultNow(),
     updatedAt: t.timestamp('updated_at', { withTimezone: true }).notNull().defaultNow(),

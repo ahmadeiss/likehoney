@@ -12,6 +12,7 @@ export const API_PREFIX = `/api/${API_VERSION}` as const
 // shared by the storefront, the API and the database layer. Pure helpers only —
 // no database imports; database lives in packages/db.
 export * from './domain/customer-analytics'
+export * from './domain/category-icons'
 export * from './domain/errors'
 export * from './domain/fingerprint'
 export * from './domain/identifiers'

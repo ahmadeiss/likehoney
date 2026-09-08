@@ -78,6 +78,13 @@ export const contentStatus = pgEnum('content_status', ['draft', 'published', 'ar
 export const entityStatus = pgEnum('entity_status', ['active', 'inactive'])
 
 /**
+ * Storefront display mode for a category tile. `auto` prefers image → icon →
+ * automatic code fallback; `image` shows the image when present; `icon` shows
+ * the icon even when an image is stored (the image may remain intact).
+ */
+export const categoryVisualMode = pgEnum('category_visual_mode', ['auto', 'image', 'icon'])
+
+/**
  * Store / shopping-experience review moderation lifecycle (Reviews Gate).
  * A public submission is ALWAYS created `pending`; only an Admin with
  * `reviews:moderate` moves it to `approved` (the sole status the public

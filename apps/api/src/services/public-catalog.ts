@@ -268,6 +268,8 @@ export async function listPublicCategoriesService(db: DbClient, origin: string) 
       category.imageObjectKey === null
         ? null
         : mediaStreamUrl(origin, category.imageObjectKey, { public: true }),
+    iconKey: category.iconKey,
+    visualMode: category.visualMode,
   }))
 }
 

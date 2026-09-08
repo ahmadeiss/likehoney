@@ -2090,3 +2090,104 @@ button.lh-admin-list-row:hover {
     min-height: 44px;
   }
 }
+
+/* Category visual picker — segmented mode switch */
+.lh-segmented {
+  display: flex;
+  gap: var(--lh-space-1);
+  padding: var(--lh-space-1);
+  background: color-mix(in srgb, var(--lh-color-ink-4) 8%, var(--lh-color-surface));
+  border: 1px solid var(--lh-color-border);
+  border-radius: var(--lh-radius-control);
+}
+.lh-segmented__item {
+  flex: 1;
+  min-width: 0;
+  padding: var(--lh-space-2) var(--lh-space-3);
+  border: 0;
+  border-radius: calc(var(--lh-radius-control) - 2px);
+  background: transparent;
+  color: var(--lh-color-ink-3);
+  font-size: var(--lh-type-label);
+  font-weight: 600;
+  cursor: pointer;
+  transition:
+    background 0.15s ease,
+    color 0.15s ease;
+}
+.lh-segmented__item:hover:not(:disabled) {
+  color: var(--lh-color-ink-2);
+}
+.lh-segmented__item.is-active {
+  background: var(--lh-color-surface-raised);
+  color: var(--lh-color-ink);
+  box-shadow: var(--lh-shadow-xs);
+}
+.lh-segmented__item:focus-visible {
+  outline: 2px solid var(--lh-color-honey);
+  outline-offset: 2px;
+}
+
+/* Category visual picker — curated icon grid */
+.lh-icon-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(5.5rem, 1fr));
+  gap: var(--lh-space-2);
+  max-height: 17rem;
+  overflow-y: auto;
+  padding-inline-end: var(--lh-space-2);
+}
+.lh-icon-option {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: var(--lh-space-2);
+  padding: var(--lh-space-3) var(--lh-space-2);
+  border: 1px solid var(--lh-color-border);
+  border-radius: var(--lh-radius-soft);
+  background: var(--lh-color-surface);
+  color: var(--lh-color-ink-2);
+  cursor: pointer;
+  transition:
+    border-color 0.15s ease,
+    background 0.15s ease,
+    color 0.15s ease;
+}
+.lh-icon-option:hover:not(:disabled) {
+  border-color: var(--lh-color-border-strong);
+  color: var(--lh-color-ink);
+}
+.lh-icon-option.is-selected {
+  border-color: var(--lh-color-honey-strong);
+  background: var(--lh-color-honey-soft);
+  color: var(--lh-color-ink);
+}
+.lh-icon-option.is-selected .lh-icon-option__icon {
+  color: var(--lh-color-honey-deep);
+}
+.lh-icon-option:focus-visible {
+  outline: 2px solid var(--lh-color-honey);
+  outline-offset: 2px;
+}
+.lh-icon-option:disabled {
+  opacity: 0.5;
+  cursor: not-allowed;
+}
+.lh-icon-option__label {
+  font-size: var(--lh-type-caption);
+  font-weight: 600;
+  line-height: 1.3;
+  text-align: center;
+  overflow-wrap: anywhere;
+}
+
+/* Category visual picker — automatic fallback panel */
+.lh-auto-panel {
+  display: flex;
+  flex-direction: column;
+  gap: var(--lh-space-3);
+  padding: var(--lh-space-4);
+  border: 1px dashed var(--lh-color-border-strong);
+  border-radius: var(--lh-radius-soft);
+  background: var(--lh-color-surface);
+}

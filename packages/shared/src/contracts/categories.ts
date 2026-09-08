@@ -7,6 +7,7 @@
  */
 import { z } from 'zod'
 
+import { CATEGORY_VISUAL_MODES, resolveCategoryIconKey } from '../domain/category-icons'
 import { entityStatusSchema } from './common'
 
 export const categoryCreateSchema = z.object({
@@ -23,6 +24,32 @@ export const categoryCreateSchema = z.object({
   descriptionEn: z.string().max(2000).optional(),
   descriptionAr: z.string().max(2000).optional(),
   status: entityStatusSchema.optional(),
+  /**
+   * Safe category icon key. Optional; when present it must be a key from the
+   * approved icon registry (curated grid or the larger registry-only set) —
+   * never arbitrary SVG/URL/HTML. The API rejects anything not in the allowed
+   * registry, and only the canonical lowercase key is accepted. Frontend
+   * validation alone is not trusted.
+   * `null` (or omitted) clears/keeps-clear the icon so the storefront falls
+   * back to the automatic behavior.
+   */
+  iconKey: z
+    .string()
+    .trim()
+    .max(64)
+    .refine((value) => {
+      const resolved = resolveCategoryIconKey(value)
+      return resolved !== null && resolved === value
+    }, 'icon key must be a canonical key from the approved icon registry')
+    .nullish(),
+  /**
+   * Persistent storefront display mode: `auto` (prefer image → icon →
+   * fallback), `image` (show the image when present), or `icon` (show the icon
+   * even when an image is stored). Optional; absent defaults to `auto`. The
+   * stored image always survives a mode switch — only an explicit image
+   * deletion clears it.
+   */
+  visualMode: z.enum(CATEGORY_VISUAL_MODES).optional(),
 })
 
 export const categoryUpdateSchema = categoryCreateSchema

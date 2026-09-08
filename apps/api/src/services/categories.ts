@@ -47,6 +47,8 @@ export function serializeCategory(category: CategoryRow, origin: string) {
     imageSizeBytes: category.imageSizeBytes,
     imageUrl:
       category.imageObjectKey === null ? null : mediaStreamUrl(origin, category.imageObjectKey),
+    iconKey: category.iconKey,
+    visualMode: category.visualMode,
   }
 }
 
@@ -102,6 +104,8 @@ export async function createCategoryService(
     descriptionEn: input.descriptionEn ?? null,
     descriptionAr: input.descriptionAr ?? null,
     status: input.status ?? 'active',
+    iconKey: input.iconKey ?? null,
+    visualMode: input.visualMode ?? 'auto',
   })
 
   await recordAudit(
@@ -139,6 +143,8 @@ export async function updateCategoryService(
     descriptionEn: input.descriptionEn,
     descriptionAr: input.descriptionAr,
     status: input.status,
+    iconKey: input.iconKey,
+    visualMode: input.visualMode,
   })
 
   if (category === undefined) throw new NotFoundError('category not found')
