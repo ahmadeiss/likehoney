@@ -1,0 +1,290 @@
+/* Like Honey editorial storefront. Independent of the retired shelf hero. */
+.lh .boutique-hero {
+  background: #fff9ed;
+  color: #513822;
+  padding-block: 34px 0;
+  overflow: clip;
+}
+.lh .boutique-hero__layout {
+  display: grid;
+  grid-template-columns: 0.88fr 1.25fr;
+  align-items: center;
+  gap: clamp(26px, 4vw, 64px);
+  padding-block: 15px 40px;
+}
+.lh .boutique-hero__copy {
+  padding-block: 18px;
+  min-width: 0;
+}
+.lh .boutique-hero__eyebrow {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  font-size: 12px;
+  font-weight: 700;
+  margin-block-end: 23px;
+}
+.lh .boutique-hero__eyebrow > span {
+  width: 24px;
+  height: 3px;
+  background: #e59549;
+  flex-shrink: 0;
+}
+.lh .boutique-hero h1 {
+  font-size: clamp(38px, 4.25vw, 65px);
+  line-height: 1.48;
+  font-weight: 750;
+  letter-spacing: -1.6px;
+  margin: 0;
+}
+.lh .boutique-hero h1 > span {
+  color: #a94732;
+}
+.lh .boutique-hero__lead {
+  color: #796550;
+  font-size: clamp(15px, 1.25vw, 18px);
+  line-height: 2;
+  max-width: 400px;
+  margin-block: 24px 30px;
+}
+.lh .boutique-hero__actions {
+  display: flex;
+  gap: 24px;
+  flex-wrap: wrap;
+  align-items: center;
+}
+.lh .boutique-hero__cta {
+  display: inline-flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 28px;
+  min-height: 54px;
+  padding: 12px 24px;
+  background: #ee9b45;
+  color: #3b281c;
+  font-size: 15px;
+  font-weight: 700;
+  border-radius: 6px;
+  transition:
+    background 180ms ease,
+    transform 180ms ease;
+  text-decoration: none;
+}
+.lh .boutique-hero__cta:hover {
+  background: #efa954;
+  transform: translateY(-2px);
+}
+.lh .boutique-hero__browse {
+  color: #513822;
+  font-size: 14px;
+  font-weight: 600;
+  text-decoration: underline;
+  text-underline-offset: 7px;
+  text-decoration-color: #bcac94;
+  padding-block: 12px;
+}
+.lh .boutique-hero__signature {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  margin-block-start: 32px;
+}
+.lh .boutique-hero__signature img {
+  width: 55px;
+  height: 55px;
+  object-fit: contain;
+}
+.lh .boutique-hero__signature p {
+  margin: 0;
+  font-size: 11px;
+  line-height: 1.9;
+  color: #86735b;
+}
+.lh .boutique-hero__signature strong {
+  color: #62472e;
+  font-weight: 600;
+}
+.lh .boutique-hero__visual {
+  position: relative;
+  margin: 0;
+  min-width: 0;
+  align-self: stretch;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+}
+.lh .boutique-hero__photo {
+  background: #f3d987;
+  border-start-start-radius: 80px;
+  border-start-end-radius: 8px;
+  border-end-start-radius: 8px;
+  border-end-end-radius: 8px;
+  overflow: hidden;
+  aspect-ratio: 1.25;
+}
+.lh .boutique-hero__photo img {
+  display: block;
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  object-position: 50% 50%;
+}
+.lh .boutique-hero__visual figcaption {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  gap: 12px;
+  padding-block: 13px 0;
+  font-size: 11px;
+  color: #796550;
+}
+.lh .boutique-hero__visual figcaption > span:first-child {
+  font-weight: 700;
+  color: #513822;
+}
+.lh .boutique-hero__index {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  gap: 24px;
+  border-top: 1px solid #e7dcc8;
+  padding-block: 23px;
+}
+.lh .boutique-hero__index > p {
+  margin: 0;
+  font-size: 12px;
+  font-weight: 600;
+  color: #796550;
+}
+.lh .boutique-hero__index > div {
+  display: flex;
+  gap: clamp(20px, 4vw, 60px);
+  align-items: center;
+}
+.lh .boutique-hero__index > div > span {
+  display: flex;
+  gap: 10px;
+  align-items: baseline;
+  font-size: 16px;
+  font-weight: 650;
+}
+.lh .boutique-hero__index small {
+  color: #ae9375;
+  font-size: 10px;
+  font-weight: 400;
+}
+.lh .boutique-hero__index > a {
+  display: grid;
+  place-items: center;
+  width: 44px;
+  height: 44px;
+  border: 1px solid #deccb1;
+  border-radius: 50%;
+  color: #513822;
+  flex-shrink: 0;
+}
+.lh .boutique-hero a:focus-visible {
+  outline: 2px solid #674125;
+  outline-offset: 5px;
+}
+@media (max-width: 1050px) and (min-width: 761px) {
+  .lh .boutique-hero__layout {
+    grid-template-columns: 1fr 1.05fr;
+    gap: 24px;
+  }
+  .lh .boutique-hero h1 {
+    font-size: 40px;
+  }
+  .lh .boutique-hero__photo {
+    aspect-ratio: 1.25;
+  }
+  .lh .boutique-hero__actions {
+    gap: 14px;
+  }
+  .lh .boutique-hero__index > p {
+    display: none;
+  }
+}
+@media (max-width: 760px) {
+  .lh .boutique-hero {
+    padding-block-start: 20px;
+  }
+  .lh .boutique-hero__layout {
+    grid-template-columns: 1fr;
+    gap: 22px;
+    padding-block: 0 25px;
+  }
+  .lh .boutique-hero__copy {
+    padding-block: 8px 0;
+  }
+  .lh .boutique-hero__eyebrow {
+    font-size: 11px;
+    margin-block-end: 13px;
+  }
+  .lh .boutique-hero h1 {
+    font-size: clamp(37px, 10vw, 52px);
+    line-height: 1.4;
+    letter-spacing: -1px;
+  }
+  .lh .boutique-hero__lead {
+    margin-block: 16px 21px;
+    max-width: 36ch;
+    font-size: 15px;
+    line-height: 1.9;
+  }
+  .lh .boutique-hero__actions {
+    gap: 18px;
+  }
+  .lh .boutique-hero__cta {
+    font-size: 14px;
+    padding-inline: 19px;
+    min-height: 50px;
+    gap: 20px;
+  }
+  .lh .boutique-hero__browse {
+    font-size: 12px;
+  }
+  .lh .boutique-hero__signature {
+    display: none;
+  }
+  .lh .boutique-hero__photo {
+    aspect-ratio: 1.4;
+    border-start-start-radius: 42px;
+  }
+  .lh .boutique-hero__visual figcaption {
+    padding-block-start: 10px;
+    font-size: 9px;
+  }
+  .lh .boutique-hero__index {
+    gap: 12px;
+    padding-block: 16px;
+  }
+  .lh .boutique-hero__index > p {
+    display: none;
+  }
+  .lh .boutique-hero__index > div {
+    flex: 1;
+    justify-content: space-between;
+    gap: 8px;
+  }
+  .lh .boutique-hero__index > div > span {
+    font-size: 12px;
+    gap: 4px;
+  }
+  .lh .boutique-hero__index small {
+    display: none;
+  }
+  .lh .boutique-hero__index > a {
+    width: 36px;
+    height: 44px;
+    border: 0;
+  }
+}
+@media (prefers-reduced-motion: reduce) {
+  .lh .boutique-hero__cta {
+    transition: none;
+  }
+  .lh .boutique-hero__cta:hover {
+    transform: none;
+  }
+}

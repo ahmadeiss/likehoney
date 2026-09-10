@@ -102,6 +102,19 @@ export interface AdminOrderListResponse {
   nextCursor: string | null
 }
 
+/**
+ * Live per-status order counts — the lightweight aggregate powering the
+ * Admin "needs attention/badge" surface. Always returns all four buckets
+ * (each `0` when no order is in that status); a single indexed count query,
+ * never the orders list.
+ */
+export interface AdminOrderStatusCounts {
+  processing: number
+  delivering: number
+  completed: number
+  cancelled: number
+}
+
 export interface AdminOrderDetailItem {
   orderItemId: string
   productId: string

@@ -1,6 +1,7 @@
 import type { ReactNode } from 'react'
 
 import { StorefrontLangProvider } from '../../lib/shop/locale'
+import { CartDock } from './components/cart/cart-dock'
 import { SiteFooter } from './components/storefront/site-footer'
 import { SiteHeader } from './components/storefront/site-header'
 import { SkipLink } from './components/storefront/skip-link'
@@ -29,6 +30,7 @@ export default function StoreLayout({ children }: { children: ReactNode }): Reac
           {children}
         </main>
         <SiteFooter />
+        <CartDock />
       </StorefrontLangProvider>
     </div>
   )

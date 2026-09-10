@@ -122,7 +122,7 @@ export function SiteHeader(): ReactElement {
             </button>
             <Link href="/" className="lh-logo" aria-label="Like Honey — زي العسل">
               <Image
-                src="/brand/merch/like-honey-logo-primary.png"
+                src="/brand/merch/main-logo-bg.png"
                 alt=""
                 width={64}
                 height={64}
@@ -220,7 +220,7 @@ export function SiteHeader(): ReactElement {
             >
               <div className="lh-drawer__head">
                 <Image
-                  src="/brand/merch/like-honey-logo-primary.png"
+                  src="/brand/merch/main-logo-bg.png"
                   alt=""
                   width={40}
                   height={40}

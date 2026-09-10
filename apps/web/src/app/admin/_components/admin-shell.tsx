@@ -30,6 +30,12 @@ import { useAuth, AuthProvider } from '../../../lib/admin/auth'
 import { isAdminAuthPath } from '../../../lib/admin/auth-paths'
 import { useIdentity, IdentityProvider } from '../../../lib/admin/identity'
 import { LangProvider, useLang, useLocale, useT, type DictKey } from '../../../lib/admin/i18n'
+import {
+  formatBadgeCount,
+  shouldShowOrderBadge,
+  useActionableOrderCount,
+  type OrderCountState,
+} from '../../../lib/admin/order-counts'
 import { roleFromPermissions, type AdminRole } from '../../../lib/admin/role'
 import { GlobalSearch } from './global-search'
 
@@ -232,10 +238,12 @@ function Brand() {
 function Nav({
   role,
   permissions,
+  orderCount,
   onNavigate,
 }: {
   role: AdminRole
   permissions: string[]
+  orderCount: OrderCountState
   onNavigate: () => void
 }) {
   const t = useT()
@@ -258,16 +266,25 @@ function Nav({
             {items.map((item) => {
               const Icon = item.icon
               const active = isActive(pathname, item)
+              const isOrders = item.labelKey === 'shell.nav.orders'
+              const showBadge = isOrders && shouldShowOrderBadge(orderCount)
+              const badge = showBadge ? formatBadgeCount(orderCount.processing) : null
               return (
                 <Link
                   key={item.labelKey}
                   href={item.href}
                   onClick={onNavigate}
                   aria-current={active ? 'page' : undefined}
+                  aria-label={showBadge ? t('orders.badge', { n: badge ?? '0' }) : t(item.labelKey)}
                   className={`lh-admin-nav-item${active ? ' lh-admin-nav-item--active' : ''}`}
                 >
                   <Icon size={18} aria-hidden="true" />
                   <span>{t(item.labelKey)}</span>
+                  {badge !== null ? (
+                    <span className="lh-admin-nav-badge" aria-hidden="true">
+                      {badge}
+                    </span>
+                  ) : null}
                 </Link>
               )
             })}
@@ -403,6 +420,7 @@ function OperationalShell({ children }: { children: ReactNode }) {
   const router = useRouter()
   const [mobileOpen, setMobileOpen] = useState(false)
   const mobilePanel = useRef<HTMLElement>(null)
+  const orderCount = useActionableOrderCount()
   useEffect(() => {
     if (!mobileOpen) return
     const trigger = document.activeElement
@@ -468,7 +486,12 @@ function OperationalShell({ children }: { children: ReactNode }) {
     <div id="admin-root" className="flex min-h-svh">
       <aside className="lh-admin-sidebar lh-admin-shell sticky top-0 hidden h-svh w-64 shrink-0 flex-col lg:flex">
         <Brand />
-        <Nav role={role} permissions={permissions} onNavigate={() => setMobileOpen(false)} />
+        <Nav
+          role={role}
+          permissions={permissions}
+          orderCount={orderCount}
+          onNavigate={() => setMobileOpen(false)}
+        />
         <SidebarFoot role={role} />
       </aside>
 
@@ -497,7 +520,12 @@ function OperationalShell({ children }: { children: ReactNode }) {
                 <X size={18} aria-hidden="true" />
               </button>
             </div>
-            <Nav role={role} permissions={permissions} onNavigate={() => setMobileOpen(false)} />
+            <Nav
+              role={role}
+              permissions={permissions}
+              orderCount={orderCount}
+              onNavigate={() => setMobileOpen(false)}
+            />
             <SidebarFoot role={role} />
           </aside>
         </div>

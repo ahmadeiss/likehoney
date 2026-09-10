@@ -33,6 +33,7 @@ import {
   type AdminOrderListItem,
   type AdminOrderListQuery,
   type AdminOrderListResponse,
+  type AdminOrderStatusCounts,
   type AdminOrderStockReturnReceipt,
   type AdminOrderTimelineEntry,
   type OrderCancelInput,
@@ -48,6 +49,7 @@ import {
   getOrderForUpdate,
   getOrderById,
   getOrderItemCounts,
+  getOrderStatusCounts,
   getCustomerById,
   getReturnByIdempotencyKey,
   getStaffUser,
@@ -156,6 +158,15 @@ export async function listAdminOrdersService(
     items,
     nextCursor: hasMore ? encodeCursor(page[page.length - 1]!) : null,
   }
+}
+
+// ---------------------------------------------------------------------------
+// Status counts (lightweight badge aggregate)
+// ---------------------------------------------------------------------------
+
+/** Live per-status counts for the Admin order badge — one aggregate query. */
+export async function listOrderStatusCountsService(db: DbClient): Promise<AdminOrderStatusCounts> {
+  return getOrderStatusCounts(db)
 }
 
 // ---------------------------------------------------------------------------

@@ -35,10 +35,17 @@ export function Dialog({
     const dialog = ref.current
     if (dialog === null) return
     if (open && !dialog.open) {
+      const previousOverflow = document.body.style.overflow
+      document.body.style.overflow = 'hidden'
       dialog.showModal()
+      return () => {
+        dialog.close()
+        document.body.style.overflow = previousOverflow
+      }
     } else if (!open && dialog.open) {
       dialog.close()
     }
+    return undefined
   }, [open])
 
   useEffect(() => {

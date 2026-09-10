@@ -1,0 +1,476 @@
+/* Reference-led storefront: cream canvas, pastel corners and a merchandise shelf. */
+.lh .reference-hero {
+  position: relative;
+  isolation: isolate;
+  overflow: clip;
+  background: radial-gradient(ellipse at 25% 60%, #f9e9d880, transparent 55%), #fff7ee;
+  color: #654327;
+}
+.lh .reference-hero__art {
+  position: absolute;
+  inset: 0;
+  overflow: hidden;
+  pointer-events: none;
+  z-index: -1;
+}
+.lh .reference-hero__art i {
+  position: absolute;
+  width: 240px;
+  height: 190px;
+  border-radius: 45% 55% 63% 37% / 41% 41% 59% 59%;
+}
+.lh .reference-hero__art i:nth-child(1) {
+  background: #cce5e5;
+  top: -115px;
+  left: -105px;
+  transform: rotate(-24deg);
+}
+.lh .reference-hero__art i:nth-child(2) {
+  background: #fbe0b9;
+  top: -110px;
+  right: -70px;
+  transform: rotate(26deg);
+}
+.lh .reference-hero__art i:nth-child(3) {
+  background: #f6cbc9;
+  bottom: -85px;
+  left: -100px;
+  width: 300px;
+  height: 230px;
+  transform: rotate(36deg);
+}
+.lh .reference-hero__art i:nth-child(4) {
+  background: #d2e9e7;
+  bottom: -100px;
+  right: -70px;
+  width: 290px;
+  height: 235px;
+  transform: rotate(-24deg);
+}
+.lh .reference-hero__heart {
+  position: absolute;
+  top: 22%;
+  left: 4%;
+  color: #eabb76;
+  transform: rotate(-18deg);
+}
+.lh .reference-hero__inner {
+  display: grid;
+  grid-template-columns: 0.94fr 1.3fr;
+  align-items: center;
+  gap: clamp(25px, 4vw, 76px);
+  padding-block: 64px 40px;
+}
+.lh .reference-hero__copy {
+  min-width: 0;
+  padding-block: 16px;
+}
+.lh .reference-hero__eyebrow {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  font-size: 12px;
+  font-weight: 650;
+  margin: 0 0 28px;
+}
+.lh .reference-hero__eyebrow > span {
+  width: 7px;
+  height: 7px;
+  background: #bd285b;
+  clip-path: polygon(25% 0, 75% 0, 100% 50%, 75% 100%, 25% 100%, 0 50%);
+  flex-shrink: 0;
+}
+.lh .reference-hero h1 {
+  font-size: clamp(38px, 3.9vw, 70px);
+  font-weight: 750;
+  line-height: 1.6;
+  letter-spacing: -1.5px;
+  margin: 0;
+}
+.lh .reference-hero h1 span {
+  color: #be285a;
+  white-space: nowrap;
+}
+.lh .reference-hero__lead {
+  font-size: clamp(15px, 1.2vw, 19px);
+  line-height: 2;
+  color: #876b51;
+  margin-block: 23px 28px;
+  max-width: 530px;
+}
+.lh .reference-hero__actions {
+  display: flex;
+  align-items: center;
+  gap: 24px;
+  flex-wrap: wrap;
+}
+.lh .reference-hero__button,
+.lh .reference-hero__link {
+  display: inline-flex;
+  align-items: center;
+  gap: 20px;
+  min-height: 54px;
+  text-decoration: none;
+  font-size: 15px;
+  font-weight: 650;
+}
+.lh .reference-hero__button {
+  background: #e9a13d;
+  color: #4c321f;
+  padding: 12px 23px;
+  border-radius: 12px;
+  box-shadow: 0 4px 0 #d98b26;
+  transition:
+    background 0.18s,
+    transform 0.18s;
+}
+.lh .reference-hero__button:hover {
+  background: #f0b259;
+  transform: translateY(-2px);
+}
+.lh .reference-hero__link {
+  color: #6c4e35;
+  padding-block: 10px;
+}
+.lh .reference-hero__link:hover {
+  text-decoration: underline;
+  text-underline-offset: 5px;
+}
+.lh .reference-hero a:focus-visible {
+  outline: 2px solid #a22955;
+  outline-offset: 6px;
+}
+.lh .reference-hero__origin {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  font-size: 11px;
+  color: #8c7157;
+  margin-block: 30px 0;
+}
+.lh .reference-hero__visual {
+  min-width: 0;
+}
+.lh .reference-hero__visual > p {
+  text-align: center;
+  color: #806246;
+  font-size: 13px;
+  margin: 6px 0 0;
+}
+.lh .reference-display {
+  position: relative;
+  aspect-ratio: 800 / 560;
+  width: 100%;
+}
+.lh .reference-display__set {
+  position: absolute;
+  inset: 0;
+  width: 100%;
+  height: 100%;
+  overflow: visible;
+}
+.lh .reference-display__logo {
+  position: absolute;
+  left: 34%;
+  top: 26%;
+  width: 31%;
+  height: 40%;
+}
+.lh .reference-display img {
+  object-fit: contain;
+}
+.lh .reference-display__product {
+  position: absolute;
+  filter: drop-shadow(0 7px 5px #67472220);
+}
+.lh .reference-display__pink-bag {
+  left: 8%;
+  top: 24%;
+  width: 28%;
+  height: 47%;
+}
+.lh .reference-display__blue-bag {
+  left: 70%;
+  top: 25%;
+  width: 25%;
+  height: 52%;
+}
+.lh .reference-display__pink-shoes {
+  left: 9%;
+  top: 69%;
+  width: 30%;
+  height: 24%;
+}
+.lh .reference-display__blue-shoes {
+  left: 66%;
+  top: 69%;
+  width: 32%;
+  height: 25%;
+}
+.lh .reference-display__accessories {
+  left: 39%;
+  top: 75%;
+  width: 21%;
+  height: 17%;
+}
+.lh .reference-hero__foot {
+  border-top: 1px solid #dbc6ad80;
+  padding-block: 19px;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  gap: 20px;
+  font-size: 12px;
+  color: #896d51;
+}
+.lh .reference-hero__foot a {
+  display: inline-flex;
+  align-items: center;
+  gap: 13px;
+  color: #6c4e35;
+  text-decoration: none;
+  min-height: 44px;
+}
+@media (min-width: 1500px) {
+  .lh .reference-hero__inner {
+    padding-block: 74px 45px;
+  }
+}
+@media (min-width: 761px) and (max-width: 1050px) {
+  .lh .reference-hero__inner {
+    gap: 20px;
+    grid-template-columns: 1fr 1.1fr;
+    padding-block: 40px 30px;
+  }
+  .lh .reference-hero h1 {
+    font-size: 36px;
+  }
+  .lh .reference-hero__actions {
+    gap: 12px;
+  }
+  .lh .reference-hero__button,
+  .lh .reference-hero__link {
+    font-size: 13px;
+    gap: 12px;
+  }
+}
+@media (max-width: 760px) {
+  .lh .reference-hero__inner {
+    grid-template-columns: 1fr;
+    gap: 25px;
+    padding-block: 33px 22px;
+  }
+  .lh .reference-hero__copy {
+    text-align: center;
+    padding: 0;
+  }
+  .lh .reference-hero__eyebrow {
+    justify-content: center;
+    font-size: 10px;
+    margin-block-end: 15px;
+  }
+  .lh .reference-hero h1 {
+    font-size: clamp(32px, 8.4vw, 49px);
+    line-height: 1.6;
+    letter-spacing: -0.8px;
+  }
+  .lh .reference-hero__lead {
+    font-size: 14px;
+    line-height: 1.95;
+    max-width: 37ch;
+    margin: 14px auto 20px;
+  }
+  .lh .reference-hero__actions {
+    justify-content: center;
+    gap: 16px;
+  }
+  .lh .reference-hero__button,
+  .lh .reference-hero__link {
+    font-size: 12px;
+    gap: 12px;
+    min-height: 48px;
+  }
+  .lh .reference-hero__button {
+    padding: 10px 17px;
+  }
+  .lh .reference-hero__origin {
+    justify-content: center;
+    margin-block-start: 23px;
+    font-size: 10px;
+  }
+  .lh .reference-hero__visual {
+    margin-inline: -7px;
+  }
+  .lh .reference-hero__visual > p {
+    font-size: 11px;
+  }
+  .lh .reference-hero__foot {
+    font-size: 10px;
+    padding-block: 10px;
+    gap: 12px;
+  }
+  .lh .reference-hero__art i {
+    scale: 0.65;
+  }
+  .lh .reference-hero__heart {
+    top: 43%;
+    left: 3%;
+    width: 16px;
+  }
+}
+@media (prefers-reduced-motion: reduce) {
+  .lh .reference-hero__button {
+    transition: none;
+  }
+  .lh .reference-hero__button:hover {
+    transform: none;
+  }
+}
+
+/* Keep the white soles true to their colour rather than tinting them with multiply. */
+.lh .reference-display__blue-shoes {
+  width: 28%;
+  left: 67%;
+  height: auto;
+  aspect-ratio: 3 / 2;
+  top: 69%;
+  filter: drop-shadow(0 5px 4px #67472224);
+}
+.lh .reference-display__blue-shoes img {
+  clip-path: polygon(
+    1% 76%,
+    3% 61%,
+    7% 47%,
+    8% 28%,
+    7% 21%,
+    10% 17%,
+    15% 18%,
+    22% 15%,
+    30% 14%,
+    31% 10%,
+    34% 9%,
+    39% 15%,
+    45% 13%,
+    51% 12%,
+    54% 4%,
+    58% 3%,
+    62% 10%,
+    63% 16%,
+    68% 19%,
+    74% 28%,
+    76% 38%,
+    79% 43%,
+    81% 49%,
+    87% 53%,
+    94% 59%,
+    98% 66%,
+    99% 74%,
+    97% 81%,
+    88% 85%,
+    79% 88%,
+    77% 93%,
+    71% 96%,
+    61% 97%,
+    50% 93%,
+    40% 89%,
+    34% 85%,
+    27% 85%,
+    19% 83%,
+    11% 82%,
+    5% 80%
+  );
+}
+@keyframes reference-product-float {
+  0%,
+  100% {
+    transform: translateY(0);
+  }
+  50% {
+    transform: translateY(-2px);
+  }
+}
+@media (prefers-reduced-motion: no-preference) {
+  .lh .reference-display__product {
+    animation: reference-product-float 6s ease-in-out infinite;
+  }
+  .lh .reference-display__blue-bag {
+    animation-delay: -3s;
+  }
+  .lh .reference-display__pink-shoes {
+    animation-delay: -1.5s;
+  }
+  .lh .reference-display__blue-shoes {
+    animation-delay: -4.5s;
+  }
+  .lh .reference-display__accessories {
+    animation-delay: -2s;
+    animation-duration: 7s;
+  }
+}
+/* A small, readable accessory edit, using the same pastel palette as the display. */
+.lh .reference-display__accessories {
+  left: 37.5%;
+  top: 70%;
+  width: 25%;
+  height: auto;
+  aspect-ratio: 3 / 2;
+  mix-blend-mode: multiply;
+  filter: none;
+}
+@media (max-width: 760px) {
+  .lh .reference-hero__visual {
+    order: -1;
+  }
+  .lh .reference-hero__inner {
+    padding-block-start: 19px;
+    gap: 24px;
+  }
+  .lh .reference-hero__visual > p {
+    margin-block-start: 10px;
+    font-size: 11px;
+    font-weight: 600;
+  }
+  .lh .reference-hero__eyebrow {
+    margin-block-end: 10px;
+  }
+  .lh .reference-hero__lead {
+    margin-block-start: 12px;
+  }
+}
+/* Anchor smaller merchandise to the top of each plinth. */
+.lh .reference-display__product img {
+  object-position: center bottom;
+}
+.lh .reference-display__pink-bag {
+  left: 8.4%;
+  top: auto;
+  bottom: 34.5%;
+  width: 23%;
+  height: 36%;
+}
+.lh .reference-display__blue-bag {
+  left: 70.8%;
+  top: auto;
+  bottom: 30%;
+  width: 21%;
+  height: 37%;
+}
+.lh .reference-display__pink-shoes {
+  left: 8.3%;
+  top: auto;
+  bottom: 8.5%;
+  width: 25%;
+  height: 19.5%;
+}
+.lh .reference-display__blue-shoes {
+  left: 69.4%;
+  top: auto;
+  bottom: 8%;
+  width: 24%;
+}
+.lh .reference-display__accessories {
+  left: 39.1%;
+  top: auto;
+  bottom: 10%;
+  width: 21%;
+}

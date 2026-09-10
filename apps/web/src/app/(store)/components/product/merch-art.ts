@@ -9,10 +9,8 @@
  */
 
 export const CATEGORY_MERCH: Readonly<Record<string, string>> = {
-  clothing: '/brand/merch/clothing.png',
-  shoes: '/brand/merch/shoes.png',
-  bags: '/brand/merch/bags.png',
-  toys: '/brand/merch/toys.png',
+  shoes: '/brand/merch/girl-shoes.png',
+  bags: '/brand/merch/boy-bag.png',
 }
 
 export function merchForCategory(code: string | null | undefined): string | null {

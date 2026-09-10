@@ -2,7 +2,7 @@
 
 import Image from 'next/image'
 import Link from 'next/link'
-import { ArrowLeft, ArrowRight } from 'lucide-react'
+import { ArrowLeft, ArrowRight, Gift } from 'lucide-react'
 import { useEffect, useState, type ReactElement } from 'react'
 
 import { shopClient, type PublicCategoryDoc } from '../../../../lib/shop/client'
@@ -13,12 +13,12 @@ const TILES = [
   {
     code: 'shoes',
     scene: 1 as const,
-    art: '/brand/merch/shoes.png',
+    art: '/brand/merch/girl-shoes.png',
   },
   {
     code: 'toys',
     scene: 2 as const,
-    art: '/brand/merch/toys.png',
+    art: null,
   },
 ]
 
@@ -72,7 +72,11 @@ export function SecondaryDiscovery(): ReactElement | null {
                 className="lh-secondary__tile"
               >
                 <div className="lh-secondary__media" aria-hidden="true">
-                  <Image src={art} alt="" width={360} height={360} />
+                  {art ? (
+                    <Image src={art} alt="" width={360} height={360} />
+                  ) : (
+                    <Gift size={64} strokeWidth={1} />
+                  )}
                 </div>
                 <div className="lh-secondary__body">
                   <span className="lh-secondary__kicker">{sceneCopy.kicker}</span>

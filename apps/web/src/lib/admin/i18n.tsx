@@ -1867,6 +1867,7 @@ export const dict = {
   // Orders (Gate B3)
   // ---------------------------------------------------------------------------
   'orders.title': { ar: 'الطلبات', en: 'Orders' },
+  'orders.badge': { ar: '{n} طلب بانتظار التجهيز', en: '{n} orders awaiting preparation' },
   'orders.description': {
     ar: 'إدارة طلبات الموقع ومتابعة تجهيزها وتسليمها.',
     en: 'Manage online orders and track preparation and delivery.',

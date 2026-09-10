@@ -16,6 +16,7 @@ import {
   type AdminOrderCommandResult,
   type AdminOrderDetail,
   type AdminOrderListResponse,
+  type AdminOrderStatusCounts,
   type AdminOrderStockReturnReceipt,
   type AdminOrderTimelineEntry,
   type AdminReviewDetail,
@@ -45,6 +46,7 @@ export type {
   AdminOrderCommandResult,
   AdminOrderDetail,
   AdminOrderListResponse,
+  AdminOrderStatusCounts,
   AdminOrderStockReturnReceipt,
   AdminOrderTimelineEntry,
   AdminReviewDetail,
@@ -1080,6 +1082,8 @@ export const client = {
       search?: string
     } = {},
   ) => apiRequest<AdminOrderListResponse>(`/orders${queryString(query)}`),
+  /** Live per-status counts — one light aggregate for the orders badge. */
+  orderStatusCounts: () => apiRequest<AdminOrderStatusCounts>('/orders/status-counts'),
   getOrder: (id: string) => apiRequest<AdminOrderDetail>(`/orders/${id}`),
   getOrderTimeline: (id: string) =>
     apiRequest<{ data: AdminOrderTimelineEntry[] }>(`/orders/${id}/timeline`).then((r) => r.data),

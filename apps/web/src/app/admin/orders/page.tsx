@@ -8,6 +8,7 @@ import { Button, Field, Input, Select } from '@likehoney/ui'
 
 import { ApiError, client, type AdminOrderListItem } from '../../../lib/admin/client'
 import { useResource } from '../../../lib/admin/hooks'
+import { useActionableOrderCount, formatBadgeCount } from '../../../lib/admin/order-counts'
 import { subscribeOrders } from '../../../lib/admin/revalidate'
 import { useAuth } from '../../../lib/admin/auth'
 import { useLocale, useT, type DictKey } from '../../../lib/admin/i18n'
@@ -125,6 +126,9 @@ export default function AdminOrdersPage() {
   const [filtersOpen, setFiltersOpen] = useState(false)
 
   const debouncedQ = useDebounced(q.trim(), 350)
+
+  // Shared order badge store (same single poller as the sidebar/mobile badge).
+  const orderCount = useActionableOrderCount()
 
   // Keyset pagination — accumulate pages, dedup by id. `cursor === undefined`
   // means "first page"; every query-shaping change resets it (in the setters
@@ -295,6 +299,8 @@ export default function AdminOrdersPage() {
       >
         {QUEUES.map((queue) => {
           const selected = displayQueue === queue
+          const count =
+            queue === 'processing' && orderCount.processing > 0 ? orderCount.processing : null
           return (
             <button
               key={queue}
@@ -308,6 +314,11 @@ export default function AdminOrdersPage() {
               }}
             >
               {t(QUEUE_LABEL_KEY[queue])}
+              {count !== null ? (
+                <span className="lh-admin-hub-tab-count" aria-hidden="true">
+                  {formatBadgeCount(count)}
+                </span>
+              ) : null}
             </button>
           )
         })}

@@ -929,3 +929,227 @@
     transition: none;
   }
 }
+
+/* ── Hero art-directed stage (additive layers around the preserved hero) ── */
+.lh .hive-display {
+  --merch-bag-w: clamp(56px, 7vw, 140px);
+  --merch-shoes-w: clamp(46px, 6.2vw, 128px);
+  --merch-access-w: clamp(50px, 3.8vw, 72px);
+  --podium-shoe-w: 150px;
+  --podium-shoe-h: 28px;
+  --ledge-bag-w: 168px;
+  --ledge-bag-h: 12px;
+  --alcove-w: clamp(200px, 34vw, 392px);
+}
+
+/* Layer 1 — recessed alcove behind the central chamber */
+.lh .hive-display__alcove {
+  position: absolute;
+  inset-inline: 0;
+  margin-inline: auto;
+  top: 45px;
+  width: var(--alcove-w);
+  aspect-ratio: 1.1;
+  clip-path: var(--hive-hex);
+  background: rgba(126, 79, 34, 0.05);
+  box-shadow: inset 0 0 0 1px rgba(126, 79, 34, 0.12);
+  z-index: 0;
+}
+
+/* Layer 2 — cells read as physical architecture */
+.lh .hive-display__cell {
+  box-shadow:
+    inset 0 1px 0 #ffffffd9,
+    0 9px 16px #7e4f2218;
+}
+.lh .hive-display__cell > span {
+  box-shadow: inset 0 -3px 0 #7e4f2210;
+}
+.lh .hive-display__cell--mint {
+  inset-inline-start: 16px;
+  top: 118px;
+  width: 88px;
+  height: 78px;
+  z-index: 0;
+}
+.lh .hive-display__cell--mint > span {
+  background: #d8efe1;
+}
+
+/* Pale aqua chamber behind the boys bag — breaks the central hex edge */
+.lh .hive-display__chamber {
+  position: absolute;
+  clip-path: var(--hive-hex);
+  padding: 10px;
+  background: #fffefb;
+  box-shadow:
+    inset 0 1px 0 #ffffffd9,
+    0 9px 16px #7e4f2218;
+  z-index: 1;
+}
+.lh .hive-display__chamber > span {
+  display: block;
+  width: 100%;
+  height: 100%;
+  clip-path: var(--hive-hex);
+  box-shadow: inset 0 -3px 0 #7e4f2210;
+}
+.lh .hive-display__chamber--aqua {
+  inset-inline-end: 22px;
+  bottom: 44px;
+  width: 150px;
+  height: 133px;
+}
+.lh .hive-display__chamber--aqua > span {
+  background: #cde6df;
+}
+
+/* Shelf — evolved material, same DNA */
+.lh .hive-display__shelf {
+  background: linear-gradient(180deg, #fffefb 55%, #f9f1de);
+  border-bottom-color: #e4d7b8;
+  border-radius: 5px 5px 3px 3px;
+}
+
+/* Podium + ledge surfaces (grounding) */
+.lh .hive-display__podium,
+.lh .hive-display__ledge {
+  position: absolute;
+  background: linear-gradient(180deg, #fffefb 62%, #fbf3e1);
+  border: 1px solid #efe5cd;
+  border-bottom-width: 4px;
+  border-bottom-color: #e4d7b8;
+  border-radius: 10px 10px 6px 6px;
+  box-shadow: 0 10px 18px #9e6a1e24;
+  z-index: 2;
+}
+.lh .hive-display__podium--shoe {
+  inset-inline-start: 12px;
+  bottom: 82px;
+  width: var(--podium-shoe-w);
+  height: var(--podium-shoe-h);
+}
+.lh .hive-display__ledge {
+  inset-inline-end: 8px;
+  bottom: 82px;
+  width: var(--ledge-bag-w);
+  height: var(--ledge-bag-h);
+  border-radius: 8px 8px 5px 5px;
+}
+
+/* Products */
+.lh .hive-display__merch {
+  position: absolute;
+  pointer-events: none;
+  user-select: none;
+  z-index: 4;
+}
+.lh .hive-display__merch::before {
+  content: '';
+  position: absolute;
+  inset-inline: 8%;
+  bottom: -6px;
+  height: 16px;
+  border-radius: 50%;
+  background: radial-gradient(ellipse at center, #7e4f2240 0%, #7e4f2200 66%);
+  z-index: 0;
+}
+.lh .hive-display__merch .hive-display__merch-img {
+  position: absolute;
+  inset: 0;
+  z-index: 1;
+  filter: drop-shadow(0 14px 16px #7e4f2223);
+}
+.lh .hive-display__merch-idle {
+  position: absolute;
+  inset: 0;
+}
+.lh .hive-display__merch--bag {
+  inset-inline-end: 8px;
+  bottom: 82px;
+  width: var(--merch-bag-w);
+  aspect-ratio: 1211 / 1299;
+}
+.lh .hive-display__merch--bag::before {
+  inset-inline: 14%;
+}
+.lh .hive-display__merch--shoes {
+  inset-inline-start: 12px;
+  bottom: 110px;
+  width: var(--merch-shoes-w);
+  aspect-ratio: 1369 / 1149;
+}
+.lh .hive-display__merch--shoes::before {
+  inset-inline: 12%;
+}
+.lh .hive-display__merch--access {
+  inset-inline-start: 24px;
+  bottom: 327px;
+  width: var(--merch-access-w);
+  aspect-ratio: 1312 / 1199;
+}
+.lh .hive-display__merch--access::before {
+  inset-inline: 20%;
+  bottom: -5px;
+  height: 10px;
+  background: radial-gradient(ellipse at center, #7e4f2238 0%, #7e4f2200 70%);
+}
+
+/* Breakpoint ladder — progressive disclosure of the stage layers */
+@media (max-width: 1350px) {
+  .lh .hive-display__main {
+    width: 345px;
+  }
+  .lh .hive-display__merch--access {
+    display: none;
+  }
+}
+@media (max-width: 1200px) {
+  .lh .hive-display__main {
+    width: 330px;
+  }
+  .lh .hive-display__podium,
+  .lh .hive-display__ledge,
+  .lh .hive-display__chamber--aqua,
+  .lh .hive-display__cell--mint {
+    display: none;
+  }
+  .lh .hive-display__merch--shoes {
+    bottom: 82px;
+  }
+}
+@media (max-width: 1050px) {
+  .lh .hive-display__main {
+    width: 310px;
+  }
+}
+@media (max-width: 900px) {
+  .lh .hive-display__main {
+    width: 300px;
+  }
+  .lh .hive-display__alcove,
+  .lh .hive-display__merch {
+    display: none;
+  }
+}
+@media (max-width: 760px) {
+  .lh .hive-display {
+    --merch-bag-w: clamp(56px, 17vw, 84px);
+    --merch-shoes-w: clamp(48px, 18vw, 78px);
+  }
+  .lh .hive-display__main {
+    width: 235px;
+  }
+  .lh .hive-display__merch--bag {
+    inset-inline-end: 8px;
+    bottom: 59px;
+  }
+  .lh .hive-display__merch--shoes {
+    inset-inline-start: 8px;
+    bottom: 59px;
+  }
+  .lh .hive-display__merch::before {
+    bottom: -4px;
+    height: 14px;
+  }
+}

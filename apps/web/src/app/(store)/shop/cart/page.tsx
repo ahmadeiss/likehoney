@@ -5,24 +5,22 @@ import Link from 'next/link'
 import { useEffect, useRef, useState } from 'react'
 
 import { readCart, setCartLines, cartCount, type CartLine } from '../../../../lib/shop/cart'
-import { shopClient, formatMoney, ApiError, type QuoteLine } from '../../../../lib/shop/client'
+import {
+  formatMoney,
+  ApiError,
+  quoteAgainstAnyZone,
+  type QuoteLine,
+} from '../../../../lib/shop/client'
 import { copy } from '../../../../lib/shop/copy'
 import { useStorefrontLang } from '../../../../lib/shop/locale'
 
 /**
  * The Cart page only ever needs LINE truth (price/availability) and a
  * subtotal — the real delivery zone is chosen at Checkout. `/cart/verify`
- * requires a `deliveryZoneId` regardless, so this fetches the zone list once
- * and quotes against the first active zone purely as context; only
- * `subtotalMinor` and the per-line truth are shown here (never that zone's
- * delivery fee).
+ * requires a `deliveryZoneId` regardless, so `quoteAgainstAnyZone` quotes
+ * against the first active zone purely as context; only `subtotalMinor` and the
+ * per-line truth are shown here (never that zone's delivery fee).
  */
-async function verifyAgainstAnyZone(lines: CartLine[]) {
-  const zones = await shopClient.listDeliveryZones()
-  const zoneId = zones.data[0]?.id
-  if (!zoneId) throw new ApiError(0, 'checkout_unavailable', 'no delivery zone configured')
-  return shopClient.verifyCart(zoneId, lines)
-}
 
 export default function CartPage() {
   const { lang } = useStorefrontLang()
@@ -44,7 +42,7 @@ export default function CartPage() {
       return
     }
     try {
-      const result = await verifyAgainstAnyZone(lines)
+      const result = await quoteAgainstAnyZone(lines)
       if (request !== requestVersion.current) return
       // Truthful reconciliation: adopt the server's per-line reality. A
       // requested quantity above what's actually available is clamped
@@ -67,7 +65,7 @@ export default function CartPage() {
             ? copy[lang].cart.itemRemoved
             : copy[lang].cart.qtyAdjusted,
         )
-        const recheck = nextLines.length > 0 ? await verifyAgainstAnyZone(nextLines) : null
+        const recheck = nextLines.length > 0 ? await quoteAgainstAnyZone(nextLines) : null
         if (request !== requestVersion.current) return
         setVerified(recheck?.lines ?? [])
         setSubtotal(recheck?.subtotalMinor ?? 0)

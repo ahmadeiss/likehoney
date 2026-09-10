@@ -369,6 +369,31 @@ export const shopClient = {
   },
 }
 
+let pendingZones: ReturnType<typeof shopClient.listDeliveryZones> | null = null
+
+/**
+ * Canonical storefront subtotal quote. `/cart/verify` requires a real
+ * `deliveryZoneId` (there is no zone-less quote), so the first active zone is
+ * used purely as quote context — only `subtotalMinor` (and per-line truth) is
+ * meaningful to callers who haven't picked a zone yet. Shared by the Cart page
+ * and the cart dock so the substotal always comes from the same server path.
+ */
+export async function quoteAgainstAnyZone(
+  lines: {
+    variantId: string
+    quantity: number
+  }[],
+): Promise<QuoteResponse> {
+  if (lines.length === 0) throw new ApiError(0, 'empty_cart', 'cart is empty')
+  pendingZones ??= shopClient.listDeliveryZones().finally(() => {
+    pendingZones = null
+  })
+  const zones = await pendingZones
+  const zoneId = zones.data[0]?.id
+  if (!zoneId) throw new ApiError(0, 'checkout_unavailable', 'no delivery zone configured')
+  return shopClient.verifyCart(zoneId, lines)
+}
+
 /** Formats integer ILS minor units as a bare amount string (e.g. `149.00`). */
 export function formatILS(minor: number): string {
   return (minor / 100).toFixed(2)

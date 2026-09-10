@@ -105,6 +105,13 @@ interface CopyShape {
     qtyAdjusted: string
     itemRemoved: string
   }
+  /** Persistent cart dock — the minimal summary bar pinned while browsing. */
+  dock: {
+    count: string
+    items: string
+    subtotal: string
+    viewCart: string
+  }
   checkout: {
     title: string
     subtitle: string
@@ -358,6 +365,12 @@ const ar: CopyShape = {
     qtyAdjusted: 'تم تعديل الكمية حسب المتوفر من المخزون.',
     itemRemoved: 'لم يعد أحد المنتجات متوفرًا، وتم إزالته من السلة.',
   },
+  dock: {
+    count: 'قطعة',
+    items: 'قطع',
+    subtotal: 'المجموع الفرعي',
+    viewCart: 'عرض السلة',
+  },
   checkout: {
     title: 'إتمام الطلب',
     subtitle: 'أكمل بياناتك، واختر منطقة التوصيل، وراجع طلبك قبل التأكيد.',
@@ -610,6 +623,12 @@ const en: CopyShape = {
     inCart: 'in your cart',
     qtyAdjusted: 'Quantity adjusted to what is currently in stock.',
     itemRemoved: 'One item is no longer available and was removed from your cart.',
+  },
+  dock: {
+    count: 'item',
+    items: 'items',
+    subtotal: 'Subtotal',
+    viewCart: 'View cart',
   },
   checkout: {
     title: 'Checkout',

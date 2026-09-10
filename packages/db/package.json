@@ -23,8 +23,10 @@
     "db:reset:admin-password": "node scripts/reset-admin-password.mjs",
     "db:create:production-admin": "node scripts/create-production-admin.mjs",
     "db:bootstrap:production-rbac": "node scripts/bootstrap-production-rbac.mjs",
+    "db:seed:production-catalog": "node scripts/seed-production-catalog.mjs",
     "db:cleanup:dev-fixtures": "node scripts/cleanup-dev-fixtures.mjs",
-    "test": "node --test scripts/connection-target.test.mjs scripts/rbac-bootstrap.test.mjs"
+    "db:reset:production-data": "node scripts/reset-production-data.mjs",
+    "test": "node --test scripts/connection-target.test.mjs scripts/rbac-bootstrap.test.mjs scripts/catalog-seed.test.mjs scripts/production-snapshot.test.mjs scripts/production-audit.test.mjs scripts/resume-plan.test.mjs scripts/r2-endpoint.test.mjs scripts/reset-production-data.test.mjs"
   },
   "dependencies": {
     "@neondatabase/serverless": "^1.1.0",

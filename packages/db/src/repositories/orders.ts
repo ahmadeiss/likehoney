@@ -231,6 +231,26 @@ export async function getOrderItemCounts(
   return out
 }
 
+export type OrderStatusCountRow = Record<OrderRow['status'], number>
+
+/**
+ * Live per-status order counts for the Admin "needs action" badge. One indexed
+ * count/groupBy — deliberately NOT the orders list, so a badge never pulls
+ * rows a staff member lacks permission to see beyond `orders:read`.
+ */
+export async function getOrderStatusCounts(db: DbClient): Promise<OrderStatusCountRow> {
+  const rows = await db
+    .select({ status: orders.status, n: count() })
+    .from(orders)
+    .groupBy(orders.status)
+  const out: OrderStatusCountRow = { processing: 0, delivering: 0, completed: 0, cancelled: 0 }
+  for (const r of rows) {
+    const status = r.status as OrderRow['status']
+    if (status in out) out[status] = Number(r.n)
+  }
+  return out
+}
+
 export async function listOrderItemsForOrders(
   db: DbClient,
   orderIds: string[],

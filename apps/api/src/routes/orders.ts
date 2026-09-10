@@ -17,6 +17,7 @@ import {
   getAdminOrderDetailService,
   getAdminOrderTimelineService,
   listAdminOrdersService,
+  listOrderStatusCountsService,
   recordOrderStockReturnService,
   startDeliveryService,
 } from '../services/admin-orders'
@@ -39,6 +40,13 @@ async function actor(c: Context<AppEnv>): Promise<string> {
 ordersRouter.get('/', requirePermission('orders:read'), async (c) => {
   const query = parseQuery(c, adminOrderListQuerySchema)
   return c.json(await listAdminOrdersService(getDatabase(c.env), query))
+})
+
+// Registered BEFORE `/:orderId` so the static path always wins: Hono routes in
+// registration order and a bare `/:orderId` segment must never swallow a
+// well-formed `/status-counts` read for staff who may only hold `orders:read`.
+ordersRouter.get('/status-counts', requirePermission('orders:read'), async (c) => {
+  return c.json(await listOrderStatusCountsService(getDatabase(c.env)))
 })
 
 ordersRouter.get('/:orderId', requirePermission('orders:read'), async (c) => {

@@ -31,7 +31,7 @@ export function SiteFooter(): ReactElement {
       <div className="lh-footer__top lh-wrap">
         <div className="lh-footer__brand">
           <Image
-            src="/brand/merch/like-honey-logo-primary.png"
+            src="/brand/merch/main-logo-bg.png"
             alt="Like Honey — زي العسل"
             width={48}
             height={48}

@@ -105,23 +105,65 @@ export function cartCount(lines: CartLine[]): number {
 }
 
 /**
+ * One opaque subscribe function shared by every reactive cart hook: it listens
+ * to the same-tab `lh:cart` custom event (every `writeCart`) and the cross-tab
+ * `storage` event (another tab changed `localStorage`), so the header badge and
+ * the cart dock stay in sync with any mutation without effect-driven state.
+ */
+function subscribeCart(onChange: () => void): () => void {
+  window.addEventListener('lh:cart', onChange)
+  const onStorage = (event: StorageEvent) => {
+    if (event.key === STORAGE_KEY || event.key === null) onChange()
+  }
+  window.addEventListener('storage', onStorage)
+  return () => {
+    window.removeEventListener('lh:cart', onChange)
+    window.removeEventListener('storage', onStorage)
+  }
+}
+
+let cartSnapshot: CartLine[] | null = null
+
+/**
+ * Stable snapshot reference for `useSyncExternalStore`. `readCart()` always
+ * returns a fresh array; returning the previous reference when nothing changed
+ * avoids an infinite re-render loop in consumers that receive the array.
+ */
+export function readCartSnapshot(): CartLine[] {
+  const next = readCart()
+  if (
+    cartSnapshot !== null &&
+    cartSnapshot.length === next.length &&
+    cartSnapshot.every((line, index) => {
+      const other = next[index]
+      return (
+        other !== undefined &&
+        line.variantId === other.variantId &&
+        line.quantity === other.quantity
+      )
+    })
+  ) {
+    return cartSnapshot
+  }
+  cartSnapshot = next
+  return cartSnapshot
+}
+
+/**
  * Reactive item count, SSR-safe. Subscribes to the `lh:cart` custom event so the
  * header badge stays in sync with any cart mutation without effect-driven state.
  */
 export function useCartCount(): number {
   return useSyncExternalStore(
-    (onChange) => {
-      window.addEventListener('lh:cart', onChange)
-      const onStorage = (event: StorageEvent) => {
-        if (event.key === STORAGE_KEY || event.key === null) onChange()
-      }
-      window.addEventListener('storage', onStorage)
-      return () => {
-        window.removeEventListener('lh:cart', onChange)
-        window.removeEventListener('storage', onStorage)
-      }
-    },
-    () => cartCount(readCart()),
+    subscribeCart,
+    () => cartCount(readCartSnapshot()),
     () => 0,
   )
+}
+
+/** Reactive cart snapshot (normalized lines), SSR-safe — powers the cart dock. */
+const SERVER_CART_LINES: CartLine[] = []
+
+export function useCartLines(): CartLine[] {
+  return useSyncExternalStore(subscribeCart, readCartSnapshot, () => SERVER_CART_LINES)
 }

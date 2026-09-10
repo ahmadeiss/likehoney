@@ -2669,3 +2669,174 @@ html[dir='rtl'] .lh {
   padding-block-start: 0.75rem;
   margin-block-start: 0.5rem;
 }
+
+/* ── Persistent cart dock (browse summary bar) ─────────────────── */
+/* Pinned on every storefront route except cart/checkout/success. On the
+   mobile PDP it floats above the sticky buy bar instead of fighting it.
+   The reserved-height spacer below the footer is released as soon as the
+   dock hides (and instantly under reduced motion via the global rule). */
+.lh-cart-dock {
+  position: fixed;
+  inset-inline: 0.75rem;
+  inset-block-end: calc(0.75rem + env(safe-area-inset-bottom, 0px));
+  z-index: 90;
+  margin-inline: auto;
+  max-width: 30rem;
+}
+
+.lh-cart-dock__link {
+  display: flex;
+  align-items: center;
+  gap: 0.75rem;
+  padding: 0.65rem 0.75rem;
+  background: var(--lh-paper);
+  border: 1px solid var(--lh-line);
+  border-radius: 1.125rem;
+  box-shadow: 0 10px 30px -12px rgba(53, 35, 31, 0.22);
+  color: var(--lh-ink);
+  text-decoration: none;
+}
+
+@media (hover: hover) {
+  .lh-cart-dock__link:hover {
+    border-color: var(--lh-line-strong);
+    box-shadow: 0 14px 34px -12px rgba(53, 35, 31, 0.26);
+    transform: translateY(-1px);
+  }
+}
+
+.lh-cart-dock__icon {
+  position: relative;
+  display: grid;
+  place-items: center;
+  flex: 0 0 auto;
+  width: 2.5rem;
+  height: 2.5rem;
+  border-radius: 0.75rem;
+  background: var(--lh-coral-soft);
+  color: var(--lh-coral);
+}
+
+.lh-cart-dock__pill {
+  position: absolute;
+  inset-block-start: -0.375rem;
+  inset-inline-start: -0.375rem;
+  display: grid;
+  place-items: center;
+  min-width: 1.25rem;
+  height: 1.25rem;
+  padding-inline: 0.3rem;
+  border: 2px solid var(--lh-paper);
+  border-radius: 999px;
+  background: var(--lh-coral);
+  color: #fff;
+  font-size: 0.6875rem;
+  font-weight: 700;
+  line-height: 1;
+  pointer-events: none;
+}
+
+@keyframes lh-dock-pop {
+  0% {
+    transform: scale(0.8);
+  }
+  60% {
+    transform: scale(1.12);
+  }
+  100% {
+    transform: scale(1);
+  }
+}
+
+@media (prefers-reduced-motion: no-preference) {
+  .lh-cart-dock__pill {
+    animation: lh-dock-pop 0.3s var(--lh-ease);
+  }
+}
+
+.lh-cart-dock__summary {
+  display: flex;
+  flex-direction: column;
+  gap: 0.125rem;
+  min-width: 0;
+  flex: 1 1 auto;
+}
+
+.lh-cart-dock__units {
+  font-size: 0.875rem;
+  font-weight: 700;
+  line-height: 1.2;
+  color: var(--lh-cocoa);
+  white-space: nowrap;
+}
+
+.lh-cart-dock__subtotal {
+  display: flex;
+  align-items: baseline;
+  gap: 0.375rem;
+  font-size: 0.75rem;
+  line-height: 1.2;
+  color: var(--lh-ink-3);
+}
+
+.lh-cart-dock__subtotal span:last-child {
+  font-weight: 600;
+  color: var(--lh-ink-2);
+}
+
+.lh-cart-dock__dash {
+  font-size: 0.75rem;
+  line-height: 1.2;
+  color: var(--lh-ink-4);
+}
+
+.lh-cart-dock__cta {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.125rem;
+  flex: 0 0 auto;
+  font-size: 0.875rem;
+  font-weight: 700;
+  color: var(--lh-coral);
+  white-space: nowrap;
+}
+
+/* Cart sits inline-start, so the chevron points toward it and mirrors in RTL. */
+[dir='rtl'] .lh-cart-dock__arrow {
+  transform: scaleX(-1);
+}
+
+/* In-flow spacer: raised only while the dock is visible, declared per
+   breakpoint so it tracks the dock's real footprint on that viewport. */
+.lh-cart-dock__reserve {
+  height: 0;
+  transition: height 0.28s var(--lh-ease);
+}
+
+@media (max-width: 63.99rem) {
+  .lh-cart-dock__reserve--on {
+    height: calc(4.5rem + env(safe-area-inset-bottom, 0px));
+  }
+  .lh-cart-dock__reserve--on--pdp {
+    height: calc(8rem + env(safe-area-inset-bottom, 0px));
+  }
+  .lh-cart-dock--pdp {
+    inset-block-end: calc(4.6rem + env(safe-area-inset-bottom, 0px));
+  }
+}
+
+@media (min-width: 64rem) {
+  .lh-cart-dock {
+    inset-inline: 0;
+    width: fit-content;
+    max-width: calc(100% - 2rem);
+  }
+  .lh-cart-dock__link {
+    gap: 0.9rem;
+    padding: 0.7rem 1.1rem;
+    border-radius: 999px;
+  }
+  .lh-cart-dock__reserve--on {
+    height: 4.75rem;
+  }
+}
