@@ -12,18 +12,24 @@ import {
   type CustomerListItem,
   type CustomerListQuery,
   type CustomerListResponse,
+  type CustomerRegionOption,
   type CustomerTimelineEntry,
 } from '@likehoney/shared'
 import {
   getCustomerById,
   getCustomerCommercialSummary,
   getCustomerTimeline,
+  listCustomerRegions,
   listCustomers,
   setCustomerStatus,
   type DbClient,
 } from '@likehoney/db'
 
 const TIMELINE_LIMIT = 50
+
+export async function listCustomerRegionsService(db: DbClient): Promise<CustomerRegionOption[]> {
+  return listCustomerRegions(db)
+}
 
 export async function listCustomersService(
   db: DbClient,
@@ -33,6 +39,7 @@ export async function listCustomersService(
     page: query.page,
     pageSize: query.pageSize,
     search: query.search,
+    region: query.region,
     status: query.status,
     channel: query.channel,
     type: query.type,

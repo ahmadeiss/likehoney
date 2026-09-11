@@ -1486,6 +1486,8 @@ export const dict = {
     ar: 'ابحث بالاسم أو رقم الهاتف…',
     en: 'Search by name or phone…',
   },
+  'customers.filterRegion': { ar: 'المنطقة', en: 'Region' },
+  'customers.regionPlaceholder': { ar: 'ابحث بالمنطقة أو المدينة…', en: 'Filter by region or city…' },
   'customers.filterStatus': { ar: 'الحالة', en: 'Status' },
   'customers.filterAll': { ar: 'الكل', en: 'All' },
   'customers.filterChannel': { ar: 'القناة', en: 'Channel' },

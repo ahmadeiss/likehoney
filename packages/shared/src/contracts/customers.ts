@@ -36,6 +36,7 @@ export const customerTypeFilterSchema = z.enum(['new', 'returning', 'no_purchase
 
 export const customerListQuerySchema = paginationQuerySchema.extend({
   search: searchQuerySchema,
+  region: z.string().trim().max(120).optional(),
   status: entityStatusSchema.optional(),
   channel: customerChannelFilterSchema.optional(),
   type: customerTypeFilterSchema.optional(),
@@ -73,6 +74,11 @@ export interface CustomerListItem {
 export interface CustomerListResponse {
   data: CustomerListItem[]
   meta: { page: number; pageSize: number; total: number }
+}
+
+export interface CustomerRegionOption {
+  cityAr: string | null
+  cityEn: string | null
 }
 
 /** One line in the Customer 360 cross-channel purchase timeline. */

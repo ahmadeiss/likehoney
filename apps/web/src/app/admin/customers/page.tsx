@@ -34,6 +34,7 @@ const INACTIVE_DAYS = [30, 60, 90, 180, 365]
 interface DirState {
   page: number
   search: string
+  region: string
   status: EntityStatus | ''
   channel: Channel | ''
   type: CustType | ''
@@ -45,6 +46,7 @@ function readDir(sp: URLSearchParams): DirState {
   return {
     page: num(sp.get('page')) || 1,
     search: sp.get('search') ?? '',
+    region: sp.get('region') ?? '',
     status: (sp.get('status') as EntityStatus | null) ?? '',
     channel: (sp.get('channel') as Channel | null) ?? '',
     type: (sp.get('type') as CustType | null) ?? '',
@@ -77,6 +79,7 @@ export default function AdminCustomersPage() {
       const params = new URLSearchParams()
       if (merged.page > 1) params.set('page', String(merged.page))
       if (merged.search) params.set('search', merged.search)
+      if (merged.region) params.set('region', merged.region)
       if (merged.status) params.set('status', merged.status)
       if (merged.channel) params.set('channel', merged.channel)
       if (merged.type) params.set('type', merged.type)
@@ -93,6 +96,11 @@ export default function AdminCustomersPage() {
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [debounced])
 
+  const { data: regionData } = useResource(
+    () => (canRead ? client.listCustomerRegions() : Promise.resolve({ data: [] })),
+    [canRead],
+  )
+
   const setPage = (p: number) => writeDir({ page: p }, false)
 
   const { data, error, loading, reload } = useResource(
@@ -102,13 +110,14 @@ export default function AdminCustomersPage() {
             page: dir.page,
             pageSize: DEFAULT_PAGE_SIZE,
             search: dir.search || undefined,
+            region: dir.region || undefined,
             status: dir.status || undefined,
             channel: dir.channel || undefined,
             type: dir.type || undefined,
             inactiveDays: dir.inactiveDays || undefined,
           })
         : Promise.resolve(null),
-    [dir.page, dir.search, dir.status, dir.channel, dir.type, dir.inactiveDays, canRead],
+    [dir.page, dir.search, dir.region, dir.status, dir.channel, dir.type, dir.inactiveDays, canRead],
   )
 
   if (!canRead) {
@@ -139,6 +148,23 @@ export default function AdminCustomersPage() {
             onChange={setSearchRaw}
             placeholder={t('customers.searchPlaceholder')}
           />
+          <LabeledSelect
+            label={t('customers.filterRegion')}
+            value={dir.region}
+            onChange={(value) => writeDir({ region: value })}
+          >
+            <option value="">{t('customers.filterAll')}</option>
+            {(regionData?.data ?? []).map((region) => {
+              const value =
+                (locale === 'ar' ? (region.cityAr ?? region.cityEn) : (region.cityEn ?? region.cityAr)) ?? ''
+              const label = value
+              return (
+                <option key={`${region.cityAr ?? ''}-${region.cityEn ?? ''}`} value={value}>
+                  {label}
+                </option>
+              )
+            })}
+          </LabeledSelect>
           <LabeledSelect
             label={t('customers.filterStatus')}
             value={dir.status}

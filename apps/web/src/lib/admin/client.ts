@@ -37,6 +37,7 @@ import {
   type ReportsSupplierDrilldown,
   type ReportsSales,
   type Sellability,
+  type CustomerRegionOption,
 } from '@likehoney/shared'
 
 import { getCurrentStaffId } from './identity-store'
@@ -66,6 +67,7 @@ export type {
   ReportsSupplierDrilldown,
   ReportsSales,
   Sellability,
+  CustomerRegionOption,
 }
 
 export type AdminOrderListItem = AdminOrderListResponse['items'][number]
@@ -1023,12 +1025,14 @@ export const client = {
   // Customers (internal CRM Directory + 360 — `customers:read`)
   listCustomers: (
     query: ListQuery & {
+      region?: string
       status?: EntityStatus
       channel?: 'online' | 'store' | 'both'
       type?: 'new' | 'returning' | 'no_purchase'
       inactiveDays?: number
     } = {},
   ) => apiRequest<Paged<CustomerListItem>>(`/customers${queryString(query)}`),
+  listCustomerRegions: () => apiRequest<{ data: CustomerRegionOption[] }>('/customers/regions'),
   getCustomer360: (id: string) => apiRequest<Customer360Detail>(`/customers/${id}`),
   setCustomerStatus: (id: string, status: EntityStatus) =>
     apiRequest<{ id: string; status: EntityStatus }>(`/customers/${id}/status`, {

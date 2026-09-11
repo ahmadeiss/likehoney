@@ -22,6 +22,7 @@ import type { DbClient } from '../client'
 import {
   categories,
   customers,
+  deliveryZones,
   inventoryBalances,
   orderItems,
   orders,
@@ -797,13 +798,26 @@ export async function getZoneBreakdown(
   const q = sql`
     select
       coalesce(nullif(o.delivery_zone_code_snapshot, ''), '__none__') as code,
-      max(coalesce(o.delivery_zone_name_ar_snapshot, o.city_ar)) as ar,
-      max(coalesce(o.delivery_zone_name_en_snapshot, o.city_en)) as en,
+      max(coalesce(
+        nullif(o.delivery_zone_name_ar_snapshot, ''),
+        nullif(dz.name_ar, ''),
+        nullif(o.city_ar, ''),
+        nullif(dz.name_en, '')
+      )) as ar,
+      max(coalesce(
+        nullif(o.delivery_zone_name_en_snapshot, ''),
+        nullif(dz.name_en, ''),
+        nullif(o.city_en, ''),
+        nullif(dz.name_ar, '')
+      )) as en,
       count(*)::bigint as n,
       count(distinct coalesce(o.customer_id::text, o.customer_phone_normalized))::bigint as uniq,
       coalesce(sum(o.subtotal_minor), 0)::bigint as revenue,
       max(o.completed_at) as last_at
     from orders o
+    left join delivery_zones dz
+      on dz.id = o.delivery_zone_id
+      or dz.code = nullif(o.delivery_zone_code_snapshot, '')
     where o.status = 'completed' and o.completed_at >= ${fromUtc} and o.completed_at < ${toUtc}
     group by 1
   `
@@ -826,6 +840,41 @@ export async function getZoneBreakdown(
       }
     })
     .sort((a, b) => b.revenueMinor - a.revenueMinor)
+}
+
+export interface CustomerRegionRequestRow {
+  labelAr: string
+  labelEn: string
+  requestsCount: number
+}
+
+/** Most-requested customer region for the overview insight. */
+export async function getCustomerRegionRequests(
+  db: DbClient,
+  fromUtc: Date,
+  toUtc: Date,
+): Promise<CustomerRegionRequestRow[]> {
+  const q = sql`
+    select
+      max(nullif(btrim(c.city_ar), '')) as ar,
+      max(nullif(btrim(c.city_en), '')) as en,
+      count(*)::bigint as requests
+    from orders o
+    join ${customers} c on c.id = o.customer_id
+    where o.status = 'completed'
+      and o.completed_at >= ${fromUtc} and o.completed_at < ${toUtc}
+      and nullif(btrim(coalesce(c.city_ar, c.city_en)), '') is not null
+    group by lower(coalesce(nullif(btrim(c.city_ar), ''), nullif(btrim(c.city_en), '')))
+  `
+  const result = await db.execute(q)
+  const raw = (result as unknown as { rows?: Record<string, unknown>[] }).rows ?? []
+  return raw
+    .map((r) => ({
+      labelAr: (r.ar as string | null) ?? (r.en as string | null) ?? '',
+      labelEn: (r.en as string | null) ?? (r.ar as string | null) ?? '',
+      requestsCount: Number(r.requests ?? 0),
+    }))
+    .sort((a, b) => b.requestsCount - a.requestsCount)
 }
 
 // ---------------------------------------------------------------------------

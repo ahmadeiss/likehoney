@@ -40,6 +40,7 @@ import {
   getCategoryBreakdown,
   getCompletedTotals,
   getContactsWithoutPurchase,
+  getCustomerRegionRequests,
   getCustomerLinkCoverage,
   getDailySeries,
   getPipeline,
@@ -255,6 +256,7 @@ export function buildInsights(
   newCustomers: number,
   stagnantNoSales: number,
   topSeller: { nameAr: string; nameEn: string; units: number } | null,
+  topRegion?: { labelAr: string; labelEn: string; requestsCount: number } | null,
 ): ReportsInsight[] {
   const out: ReportsInsight[] = []
 
@@ -311,6 +313,15 @@ export function buildInsights(
     })
   }
 
+  if (topRegion && topRegion.requestsCount > 0 && out.length < 6) {
+    out.push({
+      kind: 'positive',
+      code: 'top_region',
+      textAr: `أكثر منطقة طلبًا: ${topRegion.labelAr} (${topRegion.requestsCount} طلبات).`,
+      textEn: `Most-requested region: ${topRegion.labelEn} (${topRegion.requestsCount} orders).`,
+    })
+  }
+
   if (topSeller && topSeller.units > 0 && out.length < 6) {
     out.push({
       kind: 'neutral',
@@ -333,7 +344,7 @@ export async function getReportsOverviewService(
 ): Promise<ReportsOverview> {
   const p = resolvePeriod(q, new Date())
 
-  const [current, previous, pipeline, windowCustomers, topSellers, stagnant] = await Promise.all([
+  const [current, previous, pipeline, windowCustomers, topSellers, stagnant, customerRegions] = await Promise.all([
     getCompletedTotals(db, p.fromUtc, p.toUtc),
     getCompletedTotals(db, p.compareFromUtc, p.compareToUtc),
     getPipeline(db),
@@ -345,6 +356,7 @@ export async function getReportsOverviewService(
       neverSoldOnly: false,
       limit: 500,
     }),
+    getCustomerRegionRequests(db, p.fromUtc, p.toUtc),
   ])
 
   const curTx = current.completedOrders + current.completedStoreSales
@@ -378,6 +390,27 @@ export async function getReportsOverviewService(
           'en',
         ),
         units: topSellers[0].unitsSold,
+      }
+    : null
+  const topRegion = customerRegions[0]
+    ? {
+        labelAr: safeHistoricalText(
+          {
+            ar: customerRegions[0].labelAr,
+            en: customerRegions[0].labelEn,
+            sku: customerRegions[0].labelEn,
+          },
+          'ar',
+        ),
+        labelEn: safeHistoricalText(
+          {
+            ar: customerRegions[0].labelAr,
+            en: customerRegions[0].labelEn,
+            sku: customerRegions[0].labelEn,
+          },
+          'en',
+        ),
+        requestsCount: customerRegions[0].requestsCount,
       }
     : null
 
@@ -434,6 +467,7 @@ export async function getReportsOverviewService(
       windowCustomers.newCount,
       stagnantNoSales,
       top,
+      topRegion,
     ),
   }
 }

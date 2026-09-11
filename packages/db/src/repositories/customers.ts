@@ -107,6 +107,7 @@ export interface CustomerListQuery {
   page: number
   pageSize: number
   search?: string
+  region?: string
   status?: 'active' | 'inactive'
   /** Derived from linked COMPLETED transaction history (§Gate C). */
   channel?: 'online' | 'store' | 'both'
@@ -152,6 +153,10 @@ export async function listCustomers(
     filters.push(
       sql`(c.phone_normalized ILIKE ${like} OR c.first_name_ar ILIKE ${like} OR c.first_name_en ILIKE ${like} OR c.last_name_ar ILIKE ${like} OR c.last_name_en ILIKE ${like})`,
     )
+  }
+  if (query.region !== undefined && query.region.length > 0) {
+    const like = `%${query.region}%`
+    filters.push(sql`(c.city_ar ILIKE ${like} OR c.city_en ILIKE ${like})`)
   }
   if (query.channel === 'online') filters.push(sql`(a.online_completed > 0 AND a.store_count = 0)`)
   else if (query.channel === 'store')
@@ -215,6 +220,36 @@ export async function listCustomers(
   }))
 
   return { rows, total }
+}
+
+export interface CustomerRegionOptionRow {
+  cityAr: string | null
+  cityEn: string | null
+}
+
+export async function listCustomerRegions(db: DbClient): Promise<CustomerRegionOptionRow[]> {
+  const result = await db.execute(sql`
+    WITH region_values AS (
+      SELECT NULLIF(BTRIM(c.city_ar), '') AS value, 'ar' AS language
+      FROM customers c
+      WHERE NULLIF(BTRIM(c.city_ar), '') IS NOT NULL
+      UNION
+      SELECT NULLIF(BTRIM(c.city_en), '') AS value, 'en' AS language
+      FROM customers c
+      WHERE NULLIF(BTRIM(c.city_en), '') IS NOT NULL
+    )
+    SELECT
+      MAX(value) FILTER (WHERE language = 'ar') AS city_ar,
+      MAX(value) FILTER (WHERE language = 'en') AS city_en
+    FROM region_values
+    GROUP BY LOWER(value)
+    ORDER BY LOWER(MIN(value))
+  `)
+  const raw = (result as unknown as { rows?: Record<string, unknown>[] }).rows ?? []
+  return raw.map((row) => ({
+    cityAr: (row.city_ar as string | null) ?? null,
+    cityEn: (row.city_en as string | null) ?? null,
+  }))
 }
 
 /**

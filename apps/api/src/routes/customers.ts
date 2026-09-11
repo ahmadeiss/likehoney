@@ -11,6 +11,7 @@ import { parseBody, parseParams, parseQuery } from '../http/request'
 import { getDatabase } from '../services/db'
 import {
   getCustomer360Service,
+  listCustomerRegionsService,
   listCustomersService,
   setCustomerStatusService,
 } from '../services/customers'
@@ -25,6 +26,10 @@ export const customersRouter = new Hono<AppEnv>()
 customersRouter.get('/', requirePermission('customers:read'), async (c) => {
   const query = parseQuery(c, customerListQuerySchema)
   return c.json(await listCustomersService(getDatabase(c.env), query))
+})
+
+customersRouter.get('/regions', requirePermission('customers:read'), async (c) => {
+  return c.json({ data: await listCustomerRegionsService(getDatabase(c.env)) })
 })
 
 customersRouter.get('/:customerId', requirePermission('customers:read'), async (c) => {
