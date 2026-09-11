@@ -1,0 +1,198 @@
+/* Client reference: bee on the left, live copy in the centre, merchandise on the right. */
+.lh .client-hero {
+  position: relative;
+  isolation: isolate;
+  background: #fff;
+  color: #714630;
+}
+.lh .client-hero__scene {
+  position: relative;
+  aspect-ratio: 3 / 1;
+  overflow: hidden;
+}
+.lh .client-hero__panorama {
+  display: block;
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+}
+.lh .client-hero__mobile-art {
+  display: none;
+}
+.lh .client-hero__copy {
+  position: absolute;
+  width: 30%;
+  left: 35%;
+  top: 50%;
+  transform: translateY(-50%);
+  text-align: center;
+}
+.lh .client-hero__eyebrow {
+  font-size: clamp(15px, 1.8vw, 27px);
+  line-height: 1.6;
+  font-weight: 700;
+  margin: 0 0 7px;
+}
+.lh .client-hero h1 {
+  font-size: clamp(27px, 3.45vw, 55px);
+  line-height: 1.45;
+  letter-spacing: -0.7px;
+  font-weight: 750;
+  color: #e77e8d;
+  margin: 0;
+}
+.lh .client-hero h1 > span {
+  display: block;
+}
+.lh .client-hero__headline-line {
+  white-space: nowrap;
+}
+.lh .client-hero h1 em {
+  color: #72abaa;
+  font-style: normal;
+}
+.lh .client-hero__description {
+  margin: 9px 0 18px;
+  font-size: clamp(13px, 1.6vw, 24px);
+  line-height: 1.7;
+  font-weight: 650;
+}
+.lh .client-hero__cta {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 10px;
+  min-height: 48px;
+  padding: 10px 27px;
+  background: #e96e88;
+  color: #fff;
+  border-radius: 999px;
+  font-size: clamp(14px, 1.5vw, 21px);
+  font-weight: 650;
+  text-decoration: none;
+  box-shadow: 0 4px 12px #db71851a;
+  transition:
+    background 0.18s,
+    transform 0.18s;
+}
+.lh .client-hero__cta:hover {
+  background: #d95474;
+  transform: translateY(-2px);
+}
+.lh .client-hero__cta:focus-visible {
+  outline: 3px solid #714630;
+  outline-offset: 5px;
+}
+@media (min-width: 1800px) {
+  .lh .client-hero__copy {
+    max-width: 540px;
+    left: calc(50% - 270px);
+  }
+}
+@media (min-width: 761px) and (max-width: 1000px) {
+  .lh .client-hero__eyebrow {
+    font-size: 15px;
+    margin-block-end: 3px;
+  }
+  .lh .client-hero h1 {
+    font-size: 27px;
+  }
+  .lh .client-hero__description {
+    font-size: 12px;
+    margin-block: 6px 10px;
+  }
+  .lh .client-hero__cta {
+    min-height: 42px;
+    padding: 8px 21px;
+    font-size: 13px;
+  }
+}
+@media (max-width: 760px) {
+  .lh .client-hero {
+    background: #fff7eb;
+    padding-bottom: 34px;
+    overflow: hidden;
+    border-radius: 0 0 45% 5% / 0 0 3% 1%;
+  }
+  .lh .client-hero__scene {
+    aspect-ratio: auto;
+    height: 51.7vw;
+    max-height: 360px;
+  }
+  .lh .client-hero__panorama {
+    display: none;
+  }
+  .lh .client-hero__mobile-art {
+    display: block;
+    position: absolute;
+    top: 0;
+    bottom: 0;
+    overflow: hidden;
+  }
+  .lh .client-hero__mobile-art--bee {
+    left: 0;
+    width: 38%;
+  }
+  .lh .client-hero__mobile-art--products {
+    right: 0;
+    width: 62%;
+  }
+  .lh .client-hero__mobile-art img {
+    position: absolute;
+    top: 0;
+    width: 155vw;
+    max-width: none;
+    height: auto;
+  }
+  .lh .client-hero__mobile-art--bee img {
+    left: 0;
+  }
+  .lh .client-hero__mobile-art--products img {
+    right: 0;
+  }
+  .lh .client-hero__copy {
+    position: relative;
+    width: auto;
+    left: auto;
+    top: auto;
+    transform: none;
+    padding: 17px 20px 0;
+  }
+  .lh .client-hero__eyebrow {
+    font-size: 18px;
+    margin-block-end: 6px;
+  }
+  .lh .client-hero h1 {
+    font-size: clamp(32px, 7.5vw, 46px);
+    line-height: 1.5;
+  }
+  .lh .client-hero__description {
+    font-size: 16px;
+    margin: 10px 0 19px;
+  }
+  .lh .client-hero__cta {
+    font-size: 16px;
+    min-height: 49px;
+    padding-inline: 30px;
+  }
+}
+@media (prefers-reduced-motion: reduce) {
+  .lh .client-hero__cta {
+    transition: none;
+  }
+  .lh .client-hero__cta:hover {
+    transform: none;
+  }
+}
+@media (max-width: 760px) {
+  .lh .client-hero__mobile-art--bee {
+    width: 42%;
+  }
+  .lh .client-hero__mobile-art--products {
+    width: 58%;
+  }
+  .lh .client-hero__mobile-art--bee img {
+    width: 130vw;
+    height: 100%;
+  }
+}
