@@ -1,33 +1,33 @@
 'use client'
 
-import Image from 'next/image'
 import Link from 'next/link'
 import { ShoppingBag } from 'lucide-react'
 import { useStorefrontLang } from '../../../../lib/shop/locale'
 import '../../styles/client-hero.css'
-
-const campaignImage = '/media/campaign/client-hero-v3.png'
 
 export function Hero() {
   const { isAr } = useStorefrontLang()
   return (
     <section className="client-hero" aria-labelledby="campaign-title">
       <div className="client-hero__scene" aria-hidden="true">
-        <Image
-          className="client-hero__panorama"
-          src={campaignImage}
-          alt=""
-          width={2172}
-          height={724}
-          sizes="100vw"
-          preload
-        />
-        <div className="client-hero__mobile-art client-hero__mobile-art--bee">
-          <Image src={campaignImage} alt="" width={2172} height={724} sizes="155vw" />
-        </div>
-        <div className="client-hero__mobile-art client-hero__mobile-art--products">
-          <Image src={campaignImage} alt="" width={2172} height={724} sizes="155vw" />
-        </div>
+        <picture>
+          <source
+            media="(max-width: 760px)"
+            srcSet="/media/campaign/client-hero-mobile-v4.webp"
+            width={1536}
+            height={1024}
+          />
+          {/* Static, pre-optimized art direction works identically in Next and the Cloudflare asset worker. */}
+          <img
+            className="client-hero__panorama"
+            src="/media/campaign/client-hero-desktop-v4.webp"
+            alt=""
+            width={2172}
+            height={724}
+            fetchPriority="high"
+            decoding="async"
+          />
+        </picture>
       </div>
       <div className="client-hero__copy">
         <p className="client-hero__eyebrow">
@@ -46,7 +46,7 @@ export function Hero() {
         </p>
         <Link className="client-hero__cta" href="/shop">
           <ShoppingBag size={21} strokeWidth={1.6} aria-hidden="true" />
-          {isAr ? 'تسوّقي الآن' : 'Shop now'}
+          {isAr ? 'تسوّق الآن' : 'Shop now'}
         </Link>
       </div>
     </section>

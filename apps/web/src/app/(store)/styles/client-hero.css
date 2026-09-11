@@ -16,9 +16,6 @@
   height: 100%;
   object-fit: cover;
 }
-.lh .client-hero__mobile-art {
-  display: none;
-}
 .lh .client-hero__copy {
   position: absolute;
   width: 30%;
@@ -115,40 +112,12 @@
     border-radius: 0 0 45% 5% / 0 0 3% 1%;
   }
   .lh .client-hero__scene {
-    aspect-ratio: auto;
-    height: 51.7vw;
-    max-height: 360px;
-  }
-  .lh .client-hero__panorama {
-    display: none;
-  }
-  .lh .client-hero__mobile-art {
-    display: block;
-    position: absolute;
-    top: 0;
-    bottom: 0;
-    overflow: hidden;
-  }
-  .lh .client-hero__mobile-art--bee {
-    left: 0;
-    width: 38%;
-  }
-  .lh .client-hero__mobile-art--products {
-    right: 0;
-    width: 62%;
-  }
-  .lh .client-hero__mobile-art img {
-    position: absolute;
-    top: 0;
-    width: 155vw;
-    max-width: none;
+    aspect-ratio: 3 / 2;
     height: auto;
   }
-  .lh .client-hero__mobile-art--bee img {
-    left: 0;
-  }
-  .lh .client-hero__mobile-art--products img {
-    right: 0;
+  .lh .client-hero__panorama {
+    display: block;
+    object-fit: contain;
   }
   .lh .client-hero__copy {
     position: relative;
@@ -184,15 +153,23 @@
     transform: none;
   }
 }
+
+.lh .client-hero__scene picture {
+  display: block;
+  width: 100%;
+  height: 100%;
+}
 @media (max-width: 760px) {
-  .lh .client-hero__mobile-art--bee {
-    width: 42%;
+  .lh .client-hero__scene::after {
+    content: '';
+    position: absolute;
+    inset-inline: 0;
+    bottom: -1px;
+    height: 16%;
+    background: linear-gradient(to bottom, #fff7eb00, #fff7eb 94%);
+    pointer-events: none;
   }
-  .lh .client-hero__mobile-art--products {
-    width: 58%;
-  }
-  .lh .client-hero__mobile-art--bee img {
-    width: 130vw;
-    height: 100%;
+  .lh .client-hero__copy {
+    padding-block-start: 0;
   }
 }
